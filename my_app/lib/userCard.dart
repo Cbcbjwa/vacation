@@ -1,7 +1,7 @@
 /*
 *Ella Muro
 *7 May 2026
-*Class to Represent Record Cards
+*Class to Represent User Record Cards
 */
 
 //Imports section
@@ -28,11 +28,12 @@ class _UserCardState extends State<UserCard> {
   //Instantiating UserService into an object
   UserService userService = UserService();
 
-  //Instantiating UserRepositoryClass into an object
+  //Instantiating UserRepository class into an object
   UserRepository userRepository = UserRepository();
 
   //Controllers
   late TextEditingController nameController;
+  late TextEditingController displayNameController;
   late TextEditingController emailController;
   late TextEditingController labelController;
   late TextEditingController weeksController;
@@ -46,12 +47,15 @@ class _UserCardState extends State<UserCard> {
   //Flag to represent whether a card is in editing mode
   bool isEditing = false;
 
-   @override
+  @override
   void initState() {
     super.initState();
 
     nameController =
       TextEditingController(text: widget.user.userName);
+
+    displayNameController = 
+      TextEditingController(text: widget.user.displayName);
 
     emailController =
       TextEditingController(text: widget.user.email);
@@ -89,6 +93,7 @@ class _UserCardState extends State<UserCard> {
   void saveChanges() async {
 
     widget.user.userName = nameController.text;
+    widget.user.displayName = displayNameController.text;
     widget.user.email = emailController.text;
     widget.user.label = labelController.text;
     widget.user.docRole = selectedRole;
@@ -105,7 +110,7 @@ class _UserCardState extends State<UserCard> {
     widget.user.prepicksPriorityNumber =
         int.tryParse(prepicksPriorityController.text);
 
-    final success = await userService.updateUser(id: widget.user.id, userName: widget.user.userName, email: widget.user.email, docRole: widget.user.docRole, weeksAllowed: widget.user.weeksAllowed, prepicksAllowed: widget.user.prepicksAllowed, priorityNumber: widget.user.priorityNumber, prepicksPriorityNumber: widget.user.prepicksPriorityNumber, label: widget.user.label ?? "");
+    final success = await userService.updateUser(id: widget.user.id, userName: widget.user.userName, email: widget.user.email, docRole: widget.user.docRole, weeksAllowed: widget.user.weeksAllowed, prepicksAllowed: widget.user.prepicksAllowed, priorityNumber: widget.user.priorityNumber, prepicksPriorityNumber: widget.user.prepicksPriorityNumber, label: widget.user.label ?? "", displayName: widget.user.displayName);
 
     print("UPDATE USER RESULT: $success");
 
@@ -128,6 +133,7 @@ class _UserCardState extends State<UserCard> {
   void cancelChanges() {
 
     nameController.text = widget.user.userName;
+    displayNameController.text = widget.user.displayName;
     emailController.text = widget.user.email;
     labelController.text = widget.user.label ?? "";
 
@@ -149,26 +155,6 @@ class _UserCardState extends State<UserCard> {
       isEditing = false;
     });
   }
-
-  //Method for deleting a record
-  /*void deleteRecord() async {
-    final success = await userService.deleteUserRecord(id: widget.user.id);
-
-    print("DELETE USER RESULT: $success");
-
-    if(success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("User Deleted")),
-      );
-      
-      await widget.onDelete();
-
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Deletion Failed")),
-      );
-    }
-  }*/
 
   //Method for deleting a record
   void deleteRecord() async {
@@ -228,7 +214,7 @@ class _UserCardState extends State<UserCard> {
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
 
     return Card(
@@ -239,7 +225,7 @@ class _UserCardState extends State<UserCard> {
         ),
         borderRadius: BorderRadius.circular(10.0),
       ),
-      color: Colors.black,
+      color: const Color.fromARGB(255, 19, 19, 19),
 
       margin: EdgeInsets.symmetric(
         horizontal: 12,
@@ -264,6 +250,33 @@ class _UserCardState extends State<UserCard> {
 
               decoration: InputDecoration(
                 labelText: "Name",
+
+                labelStyle: TextStyle(
+                  fontSize: 20,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+
+                border: InputBorder.none,
+
+                hintStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              readOnly: !isEditing,
+            ),
+
+              //Display name
+              TextField(
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                ),
+                controller: displayNameController,
+
+              decoration: InputDecoration(
+                labelText: "Display Name",
 
                 labelStyle: TextStyle(
                   fontSize: 20,
@@ -356,7 +369,7 @@ class _UserCardState extends State<UserCard> {
               controller: labelController,
 
               decoration: InputDecoration(
-                labelText: "Label",
+                labelText: "Site(s)",
 
                 labelStyle: TextStyle(
                   fontSize: 20,

@@ -24,6 +24,7 @@ class AddUsersScreen extends StatefulWidget {
 
     //Controller fields
     final TextEditingController nameController = TextEditingController();
+    final TextEditingController displayNameController = TextEditingController();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController roleController = TextEditingController();
     final TextEditingController labelController = TextEditingController();
@@ -95,6 +96,26 @@ class AddUsersScreen extends StatefulWidget {
                 //Spacing the text fields
                 SizedBox(height: 20),
 
+                //Display name text field
+                TextField(
+                  controller: displayNameController,
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: "Display Name",
+                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                    hintStyle: TextStyle(
+                      color: Color.fromARGB(255, 75, 75, 75),
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+
+
+                //Spacing the text fields
+                SizedBox(height: 20),
+
                 //Email text field
                 TextField(
                   controller: emailController,
@@ -147,7 +168,7 @@ class AddUsersScreen extends StatefulWidget {
                     color: Colors.grey,
                   ),
                   decoration: InputDecoration(
-                    labelText: "Label",
+                    labelText: "Site(s)",
                     labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
                     hintStyle: TextStyle(
                       color: Color.fromARGB(255, 75, 75, 75),
@@ -238,7 +259,7 @@ class AddUsersScreen extends StatefulWidget {
                 //Add Button
                 ElevatedButton(
                   onPressed: () async {
-                    final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: labelController.text);
+                    final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: labelController.text, displayName: displayNameController.text);
                     
                     print("CREATE USER RESULT: $success");
 

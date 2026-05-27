@@ -16,11 +16,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// routes
-//app.use("/users", userRoutes);
+//Routes
 app.use("/users", require("./routes/userRoutes"));
 app.use("/auth", authRoutes);
-app.use("/weeks", weekRoutes);
+app.use("/weeks", require("./routes/weekRoutes"));
+app.use("/sites", require("./routes/siteRoutes"));
+app.use("/selections", require("./routes/selectionRoutes"));
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");

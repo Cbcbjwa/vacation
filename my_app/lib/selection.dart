@@ -24,6 +24,15 @@ class Selection {
   //Full constructor
   Selection.full({required this.selectionId, required this.userId, required this.weekId, required this.roundNumber});
 
+  factory Selection.fromJson(Map<String, dynamic> json) {
+    return Selection.full(
+      selectionId: json["selectionId"],
+      userId: json["userId"],
+      weekId: json["weekId"],
+      roundNumber: json["roundNumber"]
+    );
+  }
+
   //**Getters and Setters**\\
    int getSelectionId() {
     return selectionId;

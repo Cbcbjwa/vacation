@@ -9,7 +9,7 @@ CREATE TABLE users (
     SELECT * FROM users;
     
     INSERT INTO users (id, userName, email, docRole, passwordHash)
-    VALUES (1, "Freddy Krueger", "freddykrueger@gmail.com", "physician", "#$%^&*(");
+    VALUES (1, "Freddy Krueg", "freddykrueger@gmail.com", "physician", "#$%^&*(");
     
     ALTER TABLE users
     ADD prepicksPriorityNumber int;
@@ -18,10 +18,14 @@ CREATE TABLE users (
     ADD priorityNumber int;
     
     UPDATE users
-    SET prepicksPriorityNumber = 2
-    WHERE id = 2;
+    SET displayName = "d"
+    WHERE id = 16;
 
 	DELETE FROM users WHERE userName = "Freddy Krueger";
     
     ALTER TABLE users
-    ADD label varchar(255);
+    ADD displayName varchar(255);
+    
+    ALTER TABLE users DROP COLUMN totalSlots;
+    
+    DELETE FROM users WHERE email='jasonvoorhees@gmail.com';

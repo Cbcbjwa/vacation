@@ -1,0 +1,262 @@
+/*
+*Ella Muro
+*25 May 2026
+*Round One Week Selection UI
+*/
+
+//Imports section
+import 'package:flutter/material.dart';
+import 'weekRepository.dart';
+import 'week.dart';
+import 'selection.dart';
+import 'selectionService.dart';
+import 'session.dart';
+
+class Round1Screen extends StatefulWidget {
+  const Round1Screen({super.key});
+
+  @override
+  State<Round1Screen> createState() => _Round1ScreenState();
+}
+
+class _Round1ScreenState extends State<Round1Screen> {
+
+  //Instantiating WeekRepository class into an object
+  WeekRepository weekRepository = WeekRepository();
+
+  //Instantiating SelectionService class into an object
+  SelectionService selectionService = SelectionService();
+
+  //Variable to hold the selected week ID
+  int? selectedWeekId;
+
+  //List of weeks
+  List<Week> weeks = [];
+
+  //Selection object
+  Selection? currentWeekSelection; 
+
+  //Week IDS of weeks already selected by the user
+  List<int> lockedWeekIds = [];
+
+  //Method to load weeks
+  Future<void> load() async {
+
+    print("ROUND 1 LOAD START");
+
+    final data = await weekRepository.loadWeekRecords();
+    final selection = await selectionService.getSelection(userId: Session.userId!, roundNumber: 1);
+    final weekSelections = await selectionService.getSelectionsByUser(Session.userId!);
+
+    setState(() {
+      weeks = data;
+      currentWeekSelection = selection;
+
+      lockedWeekIds = weekSelections.map((s) => s.weekId).toList();
+
+      if (selection != null) {
+        selectedWeekId = selection.weekId;
+      } else {
+        selectedWeekId = null;
+      }
+    });
+
+    print("STATE UPDATED: ${weeks.length}");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    load();
+  }
+
+  //Method for getting the intial week
+  Week? getInitialWeek() {
+    if(selectedWeekId == null) {
+      return null;
+    }
+
+    for (final w in weeks) {
+      if (w.weekId == selectedWeekId) {
+        return w;
+      }
+    }
+
+    return null;
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    print("WEEKS LENGTH ROUND 1 SEL SCN: ${weeks.length}");
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.grey),
+        backgroundColor: Colors.black,
+        centerTitle: true,
+        title: Text("Round 1 Week Selection",
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.bold,
+          ),
+        )
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.only(
+          top: 100,
+          right: 20,
+          left: 20,
+          bottom: 20
+        ),
+
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+
+          children: [
+
+            Center(
+              child: SizedBox(
+                width: 230,
+
+                //Dropdown menu for selecting a week
+                child: DropdownMenu<Week>(
+                width: 230,
+                initialSelection: getInitialWeek(),
+                hintText: "Select a week...",
+              
+
+                textStyle: TextStyle(
+                  color: const Color.fromARGB(255, 195, 194, 194),
+                  fontWeight: FontWeight.bold,
+                ),
+
+                //Dropdown menu item colors
+                menuStyle: MenuStyle(
+                  backgroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 59, 59, 59)),
+                  surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+                ),
+
+
+                dropdownMenuEntries: weeks.map((week) {
+
+                  final isLocked = lockedWeekIds.contains(week.weekId);
+
+                  return DropdownMenuEntry<Week>(
+                    value: week,
+                    label: "Week ${week.weekNumber}: ${week.weekDate}",
+                    labelWidget: Text(
+                      isLocked 
+                      ? "Week ${week.weekNumber}: (Already selected)"
+                      : "Week ${week.weekNumber}: ${week.weekDate}",
+                      style: TextStyle(
+                        color: isLocked ? Colors.grey : Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    enabled: !isLocked,
+
+                    style: MenuItemButton.styleFrom(
+                      backgroundColor: isLocked
+                          ? const Color.fromARGB(255, 35, 35, 35)
+                          : null,
+                    ),
+
+                  );
+                }).toList(),
+
+                onSelected: (Week? week) {
+                  setState(() {
+                    selectedWeekId = week?.weekId;
+                  });
+                },
+              ),
+              ),
+            ),
+    
+            //Spacing
+            SizedBox(height: 20),
+
+            //Confirm button
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                disabledBackgroundColor: Colors.grey.shade800,
+                disabledForegroundColor: Colors.white60,
+              ),
+              onPressed: currentWeekSelection != null
+              ? null
+              : () async {
+                if(selectedWeekId == null) {
+                  return;
+                }
+
+                try {
+
+                  final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: 1);
+                
+                  setState(() {
+                    currentWeekSelection = created; 
+                  });
+
+                  await load();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Selection Confirmed")),
+                  );
+
+                } catch (error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Confirmation Failed")),
+                  );
+                }
+              },
+              child: Text("Confirm"),
+            ),
+
+            //Spacing
+            SizedBox(height: 10),
+
+            //Update button
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                disabledBackgroundColor: Colors.grey.shade800,
+                disabledForegroundColor: Colors.white60,
+              ),
+              onPressed: (currentWeekSelection == null || selectedWeekId == null)
+              ? null
+              : () async {
+                if(selectedWeekId == null || currentWeekSelection == null) {
+                  return;
+                }
+
+                final success = await selectionService.updateSelection(selectionId: currentWeekSelection!.selectionId, weekId: selectedWeekId!);
+
+                if(success) {
+                  setState(() {
+                    currentWeekSelection!.weekId = selectedWeekId!;
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Selection Updated")),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Update Failed")),
+                  );
+                }
+              },
+              child: Text("Update"),
+            ),
+
+          ],
+        )
+      )
+
+    );
+  }
+}
+

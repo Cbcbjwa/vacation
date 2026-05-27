@@ -19,6 +19,7 @@ class User {
   int? priorityNumber;
   int? prepicksPriorityNumber;
   String? label;
+  String displayName;
 
   //**Constructor Section**\\
 
@@ -32,11 +33,12 @@ class User {
       prepicksAllowed = 2,
       priorityNumber = 1,
       prepicksPriorityNumber = 1,
-      label = "Emory Johns Creek";
+      label = "Emory Johns Creek",
+      displayName = "Lecter";
   
 
   //Full constructor
-  User.full({required this.id, required this.userName, required this.email, required this.docRole, required this.weeksAllowed, required this.prepicksAllowed, this.priorityNumber, this.prepicksPriorityNumber, this.label});
+  User.full({required this.id, required this.userName, required this.email, required this.docRole, required this.weeksAllowed, required this.prepicksAllowed, this.priorityNumber, this.prepicksPriorityNumber, this.label, required this.displayName});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User.full(
@@ -48,7 +50,8 @@ class User {
       prepicksAllowed: json["prepicksAllowed"],
       priorityNumber: json["priorityNumber"],
       prepicksPriorityNumber: json["prepicksPriorityNumber"],
-      label: json["label"]
+      label: json["label"],
+      displayName: json["displayName"],
     );
   }
 

@@ -1,53 +1,40 @@
 /*
 *Ella Muro
-*28 April 2026
-*Physician Records UI
+*25 May 2026
+*Site Records UI
 */
 
 //Imports section
 import 'package:flutter/material.dart';
-import 'package:my_app/userRepository.dart';
-import 'userService.dart';
-import 'addUsersScreen.dart';
-import 'userCard.dart';
-import 'user.dart';
-import 'package:collection/collection.dart';
+import 'site.dart';
+import 'siteRepository.dart';
+import 'siteService.dart';
+import 'siteCard.dart';
+import 'addSitesScreen.dart';
 
-class PhysiciansRecords extends StatefulWidget {
-  const PhysiciansRecords({super.key});
+class SitesRecords extends StatefulWidget {
+  const SitesRecords({super.key});
 
-   @override
-  State<PhysiciansRecords> createState() => _PhysiciansRecordsState();
+  @override
+  State<SitesRecords> createState() => _SitesRecordsState();
 }
 
-class _PhysiciansRecordsState extends State<PhysiciansRecords> {
+class _SitesRecordsState extends State<SitesRecords> {
 
-  //Instantiating the UserService class into an object
-  final UserService userService = UserService();
+  //Instantiating the SiteService class into an object
+  SiteService siteService = SiteService();
 
-  //Instantiating UserRepository class into an object
-  final UserRepository userRepository = UserRepository();
-
-  //Declaring a master list of all users
-  //List<User> users = [];
-
-  //List to hold the searched user(s)
-  List<User> searchedUsers = [];
-
-  //Boolean flag to represent whether the user is editing a record
-  bool isEditing = false;
-
-  //Boolean flag to represent whether the searched for physician has been found
-  bool searchedRecordFound = false;
+  //Instantiating the SiteRepository class into an object
+  SiteRepository siteRepository = SiteRepository();
 
   //Controller for the search query for the search dialog
   final searchController = TextEditingController();
 
-  //Variable to show a search error if a searched for physician wasn't found
-  String searchError = "";
+  //List to hold searched sites
+  List<Site> searchedSites = [];
 
-  //Boolean flag to represent whether the user is actively searching for a record
-  bool isSearching = false;
+  //Variable to show a search error if a searched for site wasn't found
+  String searchError = "";
 
   //Variable to hold the search query
   String searchQuery = "";
@@ -58,69 +45,63 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
     load();
   }
 
-  //Method to load users
-  /*void loadUsers() async {
-    users = await userService.getUsers();
-
-    print("FIRST USER: ${users.isNotEmpty ? users[0].userName : 'EMPTY'}");
-    print("USERS LENGTH: ${users.length}");
-    print("RAW USERS: $users");
-
-    setState(() {});
-  }*/
-
-  //Method to load users
+  //Method to load sites
   Future<void> load() async {
-    await userRepository.loadRecords();
+    await siteRepository.loadSiteRecords();
     setState(() {});
   }
 
-  //Method to search for users
+  //Method to search for sites
   bool search(void Function(void Function()) setDialogState) {
 
-    //Clearing searched users list
-    searchedUsers = [];
+    //Clearing searched sites list
+    searchedSites = [];
 
     //Getting the search query for the search dialog
     searchQuery = searchController.text;
 
     //Preventing the user from searching for nothing
     if(searchQuery.isEmpty) {
-      searchedUsers = [];
+      searchedSites = [];
       searchError = "";
       setState(() {});
       setDialogState(() {});
       return false;
     }
-      
-    final results = userRepository.users.where((user) {
-      return user.userName.toLowerCase().contains(searchQuery.toLowerCase());
-    }).toList();
 
-    final found = results.isNotEmpty;
-  
+    //Search results
+    List<Site> results = [];
+    
+    //Searching the master list of sites for a match
+    for(Site site in siteRepository.sites) {
+      if(site.siteName.toLowerCase().trim() == searchQuery.toLowerCase().trim()) {
+        results.add(site);
+      }
+    }
+
+    final found  = results.isNotEmpty;
+
     setDialogState(() {
 
     if(results.isEmpty) {
-      searchError = "Physician Not Found";
+      searchError = "Site Not Found";
     } else {
       searchError = "";
     }
     });
 
     if(found) {
-      searchedUsers = results;
+      searchedSites = results;
       searchError = "";
     } else {
-      searchedUsers = [];
+      searchedSites = [];
     }
 
     setState(() {});
     setDialogState(() {});
     return found;
-  
   }
-  
+
   //Method to show a dialog box for searching for records
   Future<void> showSearchDialog() async {
 
@@ -149,7 +130,7 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
                   TextField(
                     controller: searchController,
                     decoration: InputDecoration(
-                      hintText: "Enter Physician Name..",
+                      hintText: "Site Name..",
                     ),
                   ),
                 ],
@@ -198,11 +179,10 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
         iconTheme: IconThemeData(color: Colors.grey),
         backgroundColor: Colors.black,
         centerTitle: true,
-        title: Text("Physicians",
+        title: Text("Sites",
           style: TextStyle(
             color: Colors.grey,
             fontWeight: FontWeight.bold,
-            fontSize: 23,
           ),
         ),
 
@@ -220,49 +200,41 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddUsersScreen(
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddSitesScreen(
                 onAdd: () async {
-                  await userRepository.loadRecords();
+                  await siteRepository.loadSiteRecords();
                   setState(() {});
                 },
               )
               ));
-            },
-          ),
-        ],
+            }
+          )
+        ]
       ),
 
-      
-    body: Builder(
-      builder: (context) {
+      body: Builder(
+        builder: (context) {
+          var list = searchedSites.isNotEmpty ? searchedSites : siteRepository.sites;
 
-        var list = [];
-        if(searchedUsers.isEmpty) {
-          list = userRepository.users;
-        } else {
-          list = searchedUsers;
-        }
+          return ListView.builder(
+            itemCount: list.length,
 
-        return ListView.builder(
-          itemCount: list.length,
+            itemBuilder: (context, index) {
+              final site = list[index];
 
-          itemBuilder: (context, index) {
-            final user = list[index];
+              return SiteCard(
+                key: ValueKey(site.siteId),
+                site: site,
 
-            return UserCard(
-              key: ValueKey(user.id),
-              user: user,
-
-              onDelete: () async {
-                await userRepository.loadRecords();
+                onDelete: () async {
+                await siteRepository.loadSiteRecords();
                 setState(() {});
               },
             );
-          }
-        );
-      }
-    )
-
-  );
+            }
+          );
+        },
+      ),
+    );
   }
 }

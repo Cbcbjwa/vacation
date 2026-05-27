@@ -2,7 +2,10 @@ const bcrypt = require("bcrypt");
 const { getUsersByEmail } = require("../services/userService");
 
 async function login(req, res) {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+
+    password = password.trim();
+    email = email.trim().toLowerCase();
 
 
     try {
@@ -17,7 +20,12 @@ async function login(req, res) {
             return res.status(401).json({ success: false });
         }
 
+        console.log("PASSWORD INPUT:", JSON.stringify(password));
+        console.log("HASH FROM DB:", user.passwordHash);
+
         const match = await bcrypt.compare(password, user.passwordHash);
+
+        console.log("BCRYPT MATCH RESULT:", match);
 
         if (!match) {
             return res.status(401).json({
@@ -36,7 +44,9 @@ async function login(req, res) {
                 weeksAllowed: user.weeksAllowed,
                 prepicksAllowed: user.prepicksAllowed,
                 priorityNumber: user.priorityNumber,
-                prepicksPriorityNumber: user.prepicksPriorityNumber
+                prepicksPriorityNumber: user.prepicksPriorityNumber,
+                label: user.label,
+                displayName: user.displayName
             },
         });
     } catch (err) {

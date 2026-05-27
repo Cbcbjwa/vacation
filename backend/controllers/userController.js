@@ -9,16 +9,15 @@ const {
 
 //Method for adding new users
 async function register(req, res) {
-  const { email, password, userName, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label } = req.body;
+  const { email, password, userName, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName } = req.body;
 
-  if (!email || !password || !userName || !docRole || weeksAllowed == null || prepicksAllowed == null) {
+  if (!email || !password || !userName || !docRole || weeksAllowed == null || prepicksAllowed == null || !displayName) {
     return res.status(400).json({ success: false, message: "Missing fields" });
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
 
-    await createUser(userName, email, hashedPassword, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label);
+    await createUser(userName, email, password, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName);
 
     res.json({ success: true });
 
@@ -43,12 +42,12 @@ async function getUsers(req, res) {
 console.log("USER ROUTES LOADED");
 console.log("loadUsers import:", loadUsers);
 
-//Method for updating a users
+//Method for updating users
 async function update(req, res) {
-  const { id, email, userName, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label} = req.body;
+  const { id, email, userName, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName} = req.body;
 
   try {
-    await updateUser(id, userName, email, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label);
+    await updateUser(id, userName, email, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName);
 
     res.json({ success: true });
   } catch (error) {

@@ -1,39 +1,37 @@
 /*
 *Ella Muro
-*7 May 2026
-*Class to Represent Week Record Cards
+*25 May 2026
+*Class to Represent Site Record Cards
 */
 
 //Imports section
 import 'package:flutter/material.dart';
-import 'package:my_app/weekRepository.dart';
-import 'week.dart';
-import 'weekService.dart';
+import 'site.dart';
+import 'siteRepository.dart';
+import 'siteService.dart';
 
-class WeekCard extends StatefulWidget {
-  const WeekCard({super.key, required this.week, required this.onDelete});
+class SiteCard extends StatefulWidget {
+  const SiteCard({super.key, required this.site, required this.onDelete});
 
   @override
-  State<WeekCard> createState() => _WeekCardState();
+  State<SiteCard> createState() => _SiteCardState();
 
   //Fields of the class
-  final Week week;
+  final Site site;
   final Future<void> Function() onDelete;
 }
 
-class _WeekCardState extends State<WeekCard> {
+class _SiteCardState extends State<SiteCard> {
 
-  //Instantiating WeekService into an object
-  WeekService weekService = WeekService();
+  //Instantiating SiteService into an object
+  SiteService siteService = SiteService();
 
-  //Instantiating WeekRepository class into an object
-  WeekRepository weekRepository = WeekRepository();
+  //Instantiating SiteRepository into an object
+  SiteRepository siteRepository = SiteRepository();
 
   //Controllers
-  late TextEditingController weekNumberController;
-  late TextEditingController weekDateController;
-  late TextEditingController specialSpecController;
-  late TextEditingController totalSlotsController;
+  late TextEditingController siteNameController;
+  late TextEditingController maxDocsOffController;
 
   //Flag to represent whether a card is in editing mode
   bool isEditing = false;
@@ -42,17 +40,11 @@ class _WeekCardState extends State<WeekCard> {
   void initState() {
     super.initState();
 
-    weekNumberController =
-      TextEditingController(text: widget.week.weekNumber.toString());
+    siteNameController =
+      TextEditingController(text: widget.site.siteName);
 
-    weekDateController =
-      TextEditingController(text: widget.week.weekDate);
-
-    specialSpecController = 
-      TextEditingController(text: widget.week.specialSpecification ?? "");
-
-    totalSlotsController = 
-      TextEditingController(text: widget.week.totalSlots.toString());
+    maxDocsOffController =
+      TextEditingController(text: widget.site.maxDocsOffPerWeek.toString());
   }
 
   //Method to enable editing
@@ -62,22 +54,19 @@ class _WeekCardState extends State<WeekCard> {
     });
   }
 
-  //Method for saving changes to a record
+   //Method for saving changes to a record
   void saveChanges() async {
 
-    widget.week.weekNumber = int.parse(weekNumberController.text);
-    widget.week.weekDate = weekDateController.text;
-    widget.week.specialSpecification = specialSpecController.text;
-    widget.week.totalSlots = int.parse(totalSlotsController.text);
+    widget.site.siteName = siteNameController.text;
+    widget.site.maxDocsOffPerWeek = int.parse(maxDocsOffController.text);
 
     //Pushing changes to backend to be updated in the MySQL table
-    final success = await weekService.updateWeek(weekId: widget.week.weekId, weekNumber: widget.week.weekNumber, weekDate: widget.week.weekDate, specialSpecification: widget.week.specialSpecification, totalSlots: widget.week.totalSlots);
-
-    print("UPDATE WEEK RESULT: $success");
+    final success = await siteService.updateSite(siteId: widget.site.siteId, siteName: widget.site.siteName, maxDocsOffPerWeek: widget.site.maxDocsOffPerWeek);
+    print("UPDATE SITE RESULT: $success");
 
     if(success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Week Updated")),
+        SnackBar(content: Text("Site Updated")),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -92,10 +81,8 @@ class _WeekCardState extends State<WeekCard> {
 
   //Method for cancelling changes
   void cancelChanges() {
-    weekNumberController.text = widget.week.weekNumber.toString();
-    weekDateController.text = widget.week.weekDate;
-    specialSpecController.text = widget.week.specialSpecification ?? "";
-    totalSlotsController.text = widget.week.totalSlots.toString();
+    siteNameController.text = widget.site.siteName;
+    maxDocsOffController.text = widget.site.maxDocsOffPerWeek.toString();
 
     setState(() {
       isEditing = false;
@@ -110,7 +97,7 @@ class _WeekCardState extends State<WeekCard> {
         return AlertDialog(
           title: Text("Confirm Deletion"),
           contentTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-          content: Text("Are you sure you want to delete week ${widget.week.weekNumber}, ${widget.week.weekDate}?"),
+          content: Text("Are you sure you want to delete the ${widget.site.siteName} site?"),
           actions: [
 
             //Cancel deletion button
@@ -142,13 +129,13 @@ class _WeekCardState extends State<WeekCard> {
     }
 
     //Deleting the record
-    final success = await weekService.deleteWeekRecord(weekId: widget.week.weekId);
+    final success = await siteService.deleteSiteRecord(siteId: widget.site.siteId);
 
-    print("DELETE WEEK RESULT: $success");
+    print("DELETE SITE RESULT: $success");
 
     if(success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Week Deleted")),
+        SnackBar(content: Text("Site Deleted")),
       );
       
       await widget.onDelete();
@@ -159,7 +146,6 @@ class _WeekCardState extends State<WeekCard> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -187,16 +173,16 @@ class _WeekCardState extends State<WeekCard> {
           
           children: [
 
-              //Week number
+              //Site name
               TextField(
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 17,
                 ),
-                controller: weekNumberController,
+                controller: siteNameController,
 
               decoration: InputDecoration(
-                labelText: "Week Number",
+                labelText: "Site Name",
 
                 labelStyle: TextStyle(
                   fontSize: 20,
@@ -214,71 +200,16 @@ class _WeekCardState extends State<WeekCard> {
               readOnly: !isEditing,
             ),
 
-            //Week date
+            //Max docs off per week
             TextField(
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17,
               ),
-              controller: weekDateController,
+              controller: maxDocsOffController,
 
               decoration: InputDecoration(
-                labelText: "Date",
-
-                labelStyle: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.bold,
-                ),
-
-                border: InputBorder.none,
-
-                hintStyle: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              readOnly: !isEditing,
-            ),
-
-            //Special week specification
-            TextField(
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 17,
-              ),
-              controller: specialSpecController,
-
-              decoration: InputDecoration(
-                labelText: "Special Spec.",
-
-                labelStyle: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.bold,
-                ),
-                hintText: "N/A",
-
-                border: InputBorder.none,
-
-                hintStyle: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              readOnly: !isEditing,
-            ),
-
-            //Total slots
-            TextField(
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 17,
-              ),
-              controller: totalSlotsController,
-
-              decoration: InputDecoration(
-                labelText: "Total Slots",
+                labelText: "Max. Docs off per Week",
 
                 labelStyle: TextStyle(
                   fontSize: 20,

@@ -12,6 +12,7 @@ import 'logger.dart';
 import 'role.dart';
 import 'adminScreen.dart';
 import 'userScreen.dart';
+import 'session.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, required this.title});
@@ -141,6 +142,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                     return;
                   }
+
+                  Session.userId = user.id;
+                  Session.userName = user.userName;
+                  Session.displayName = user.displayName;
 
                   if(user.getDocRole() == Role.admin) {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AdminScreen()));
