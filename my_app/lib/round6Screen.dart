@@ -1,7 +1,7 @@
 /*
 *Ella Muro
-*27 May 2026
-*Round Two Week Selection UI
+*28 May 2026
+*Round Six Week Selection UI
 */
 
 //Imports section
@@ -12,14 +12,14 @@ import 'selection.dart';
 import 'selectionService.dart';
 import 'session.dart';
 
-class Round2Screen extends StatefulWidget {
-  const Round2Screen({super.key});
+class Round6Screen extends StatefulWidget {
+  const Round6Screen({super.key});
 
   @override
-  State<Round2Screen> createState() => _Round2ScreenState();
+  State<Round6Screen> createState() => _Round6ScreenState();
 }
 
-class _Round2ScreenState extends State<Round2Screen> {
+class _Round6ScreenState extends State<Round6Screen> {
 
   //Instantiating WeekRepository class into an object
   WeekRepository weekRepository = WeekRepository();
@@ -45,10 +45,10 @@ class _Round2ScreenState extends State<Round2Screen> {
   //Method to load weeks
   Future<void> load() async {
 
-    print("ROUND 2 LOAD START");
+    print("ROUND 6 LOAD START");
 
     final data = await weekRepository.loadWeekRecords();
-    final selection = await selectionService.getSelection(userId: Session.userId!, roundNumber: 2);
+    final selection = await selectionService.getSelection(userId: Session.userId!, roundNumber: 6);
     final weekSelections = await selectionService.getSelectionsByUser(Session.userId!);
 
     setState(() {
@@ -96,7 +96,7 @@ class _Round2ScreenState extends State<Round2Screen> {
             return week.availableSlots! > 0 || lockedWeekIds.contains(week.weekId);
           }).toList();
 
-    print("WEEKS LENGTH ROUND 2 SEL SCN: ${weeks.length}");
+    print("WEEKS LENGTH ROUND 6 SEL SCN: ${weeks.length}");
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -104,7 +104,7 @@ class _Round2ScreenState extends State<Round2Screen> {
         iconTheme: IconThemeData(color: Colors.grey),
         backgroundColor: Colors.black,
         centerTitle: true,
-        title: Text("Round 2 Week Selection",
+        title: Text("Round 6 Week Selection",
           style: TextStyle(
             color: Colors.grey,
             fontWeight: FontWeight.bold,
@@ -203,7 +203,7 @@ class _Round2ScreenState extends State<Round2Screen> {
 
                 try {
 
-                  final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: 2);
+                  final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: 6);
                 
                   setState(() {
                     currentWeekSelection = created; 

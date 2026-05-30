@@ -10,4 +10,4 @@ CREATE TABLE selections (
     INSERT INTO selections (selectionId, userId, weekId, roundNumber)
     VALUES (1, 1, 1, 1);
     
-    DELETE FROM selections WHERE selectionId = 1;
+    DELETE FROM selections WHERE selectionId = 13;

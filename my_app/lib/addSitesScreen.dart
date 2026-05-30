@@ -27,6 +27,9 @@ class _AddSitesScreenState extends State<AddSitesScreen> {
   //Instantiating the SiteService class into an object
   SiteService siteService = SiteService();
 
+  //Flag to represent add/insert state of a record
+  bool isAdding = false;
+
   @override
     Widget build(BuildContext context) {
       return Scaffold(
@@ -99,24 +102,38 @@ class _AddSitesScreenState extends State<AddSitesScreen> {
 
                 //Add button
                 ElevatedButton(
-                  onPressed: () async {
-                    final success = await siteService.createSite(siteName: siteNameController.text, maxDocsOffPerWeek: int.tryParse(maxDocsOffController.text) ?? 0);
-                    print("CREATE SITE RESULT: $success");
+                  onPressed: isAdding
+                  ? null
+                  : () async {
 
-                    if(success) {
+                    setState(() {
+                      isAdding = true;
+                    });
+
+                    try {
+
+                      final success = await siteService.createSite(siteName: siteNameController.text, maxDocsOffPerWeek: int.tryParse(maxDocsOffController.text) ?? 0);
+                      print("CREATE SITE RESULT: $success");
+
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Week Added")),
+                        SnackBar(content: Text("Site Added")),
                       );
 
-                      await widget.onAdd();
+                        await widget.onAdd();
 
-                    } else {
+                    } catch (error) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Add Failed")),
                       );
+                    } finally {
+                      setState(() {
+                        isAdding = false;
+                      });
                     }
                   },
-                  child: Text("Add"),
+                  child: isAdding
+                  ? CircularProgressIndicator(color: Colors.white)
+                  : Text("Add"),
                 )
                ],
             ),

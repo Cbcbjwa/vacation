@@ -6,6 +6,7 @@
 
 //Imports section
 import 'package:flutter/material.dart';
+import 'package:my_app/allSelectionsScreen.dart';
 import 'package:my_app/prepicksOneScreen.dart';
 import 'package:my_app/selectionsSummaryScreen.dart';
 import 'physiciansRecords.dart';
@@ -20,6 +21,13 @@ import 'round2Screen.dart';
 import 'selection.dart';
 import 'userRepository.dart';
 import 'selectionService.dart';
+import 'round3Screen.dart';
+import 'selectionStatsScreen.dart';
+import 'round4Screen.dart';
+import 'round5Screen.dart';
+import 'round6Screen.dart';
+import 'round7Screen.dart';
+import 'round8Screen.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -55,7 +63,7 @@ class _AdminScreenState extends State<AdminScreen> {
     load();
   }
 
-  //Method to load weeks
+  //Method to load weeks/users/selections
   Future<void> load() async {
     print("LOAD START");
 
@@ -84,7 +92,7 @@ class _AdminScreenState extends State<AdminScreen> {
 
       allSelections = selections;
     });
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +180,7 @@ class _AdminScreenState extends State<AdminScreen> {
               leading: const Icon(Icons.display_settings_outlined, fontWeight: FontWeight.bold, color: Colors.grey),
               title: const Text("Round Control",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () {
+              onTap: () async {
 
               }
             ),
@@ -202,7 +210,8 @@ class _AdminScreenState extends State<AdminScreen> {
               title: const Text("Selections Stats",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
-
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => SelectionStatsScreen()));
+                load();
               }
             ),
 
@@ -216,7 +225,8 @@ class _AdminScreenState extends State<AdminScreen> {
               title: const Text("Physician Selections",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
-
+                 await Navigator.push(context, MaterialPageRoute(builder: (context) => AllSelectionsScreen()));
+                load();
               }
             ),
 
@@ -290,7 +300,8 @@ class _AdminScreenState extends State<AdminScreen> {
               title: const Text("Round 3",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
-
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round3Screen()));
+                load();
               }
             ),
 
@@ -303,8 +314,9 @@ class _AdminScreenState extends State<AdminScreen> {
               leading: const Icon(Icons.local_airport, fontWeight: FontWeight.bold, color: Colors.grey),
               title: const Text("Round 4",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () {
-
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round4Screen()));
+                load();
               }
             ),
 
@@ -317,8 +329,9 @@ class _AdminScreenState extends State<AdminScreen> {
               leading: const Icon(Icons.icecream, fontWeight: FontWeight.bold, color: Colors.grey),
               title: const Text("Round 5",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () {
-
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round5Screen()));
+                load();
               }
             ),
 
@@ -331,8 +344,9 @@ class _AdminScreenState extends State<AdminScreen> {
               leading: const Icon(Icons.downhill_skiing_outlined, fontWeight: FontWeight.bold, color: Colors.grey),
               title: const Text("Round 6",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () {
-
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round6Screen()));
+                load();
               }
             ),
 
@@ -345,8 +359,9 @@ class _AdminScreenState extends State<AdminScreen> {
               leading: const Icon(Icons.airplane_ticket, fontWeight: FontWeight.bold, color: Colors.grey),
               title: const Text("Round 7",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () {
-
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round7Screen()));
+                load();
               }
             ),
 
@@ -359,13 +374,28 @@ class _AdminScreenState extends State<AdminScreen> {
               leading: const Icon(Icons.surfing, fontWeight: FontWeight.bold, color: Colors.grey),
               title: const Text("Round 8",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () {
-
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round8Screen()));
+                load();
               }
             ),
 
             //Spacing the menu items
             SizedBox(height: 2),
+
+            //Spacing the menu items
+            SizedBox(height: 2),
+
+            //Account section
+            ListTile(
+              tileColor: Colors.black,
+              leading: const Icon(Icons.info_outline_rounded, fontWeight: FontWeight.bold, color: Colors.grey),
+              title: const Text("Account",
+                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+              onTap: () async {
+                load();
+              }
+            ),
 
             //Logout Section
             ListTile(
@@ -383,7 +413,12 @@ class _AdminScreenState extends State<AdminScreen> {
       ),
 
       //**SCHEDULE GRID**\\
-      body: ListView.builder(
+      body: Padding(
+        padding: EdgeInsets.only(
+          top: 25,
+        ),
+        
+        child: ListView.builder(
 
         itemCount: listOfWeeks.length,
         itemBuilder: (context, index) {
@@ -395,7 +430,7 @@ class _AdminScreenState extends State<AdminScreen> {
           return Container(
             margin: const EdgeInsets.symmetric(
               horizontal: 8,
-              vertical: 5,
+              vertical: 5.5,
             ),
 
             padding: const EdgeInsets.all(12),
@@ -572,6 +607,7 @@ class _AdminScreenState extends State<AdminScreen> {
                   
               
         }
+      )
       )
     );
   }

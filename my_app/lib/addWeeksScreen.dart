@@ -29,6 +29,9 @@ class _AddWeeksScreenState extends State<AddWeeksScreen> {
   //Instantiating WeekService class into an object
   WeekService weekService = WeekService();
 
+  //Flag to represent add/insert state of a record
+  bool isAdding = false;
+
   @override
     Widget build(BuildContext context) {
       return Scaffold(
@@ -141,27 +144,38 @@ class _AddWeeksScreenState extends State<AddWeeksScreen> {
 
                 //Add button
                  ElevatedButton(
-                  onPressed: () async {
-                    final success = await weekService.createWeek(weekNumber: int.tryParse(weekNumberController.text) ?? 0, weekDate: weekDateController.text, specialSpecification: specialSpecController.text, totalSlots: int.tryParse(totalSlotsController.text) ?? 0);
-                    print("CREATE WEEK RESULT: $success");
+                  onPressed: isAdding
+                  ? null
+                  : () async {
 
-                    if(success) {
+                    setState(() {
+                      isAdding = true;
+                    });
+
+                    try {
+                      final success = await weekService.createWeek(weekNumber: int.tryParse(weekNumberController.text) ?? 0, weekDate: weekDateController.text, specialSpecification: specialSpecController.text, totalSlots: int.tryParse(totalSlotsController.text) ?? 0);
+                      print("CREATE WEEK RESULT: $success");
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Week Added")),
                       );
 
-                     await widget.onAdd();
+                      await widget.onAdd();
 
-                      //Closing add user screen
-                      //Navigator.pop(context, true);
 
-                    } else {
+                    } catch (error) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Add Failed")),
                       );
+                    } finally {
+                      setState(() {
+                        isAdding = false;
+                      });
                     }
                   },
-                  child: Text("Add"),
+                  child: isAdding
+                  ? CircularProgressIndicator(color: Colors.white)
+                  : Text("Add"),
                 )
               ],
             ),

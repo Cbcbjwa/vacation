@@ -225,7 +225,7 @@ class _UserCardState extends State<UserCard> {
         ),
         borderRadius: BorderRadius.circular(10.0),
       ),
-      color: const Color.fromARGB(255, 19, 19, 19),
+      color: const Color.fromARGB(255, 18, 18, 18),
 
       margin: EdgeInsets.symmetric(
         horizontal: 12,
@@ -321,6 +321,9 @@ class _UserCardState extends State<UserCard> {
               readOnly: !isEditing,
             ),
 
+            //Spacing
+            SizedBox(height: 10),
+
             //Role Dropdown
             DropdownMenu<Role>(
               initialSelection: selectedRole,
@@ -336,7 +339,7 @@ class _UserCardState extends State<UserCard> {
               ),
               textStyle: TextStyle(
                 fontSize: 15,
-                color: Colors.grey,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
 
@@ -359,6 +362,9 @@ class _UserCardState extends State<UserCard> {
 
               }).toList(),
             ),
+
+            //Spacing
+            SizedBox(height: 10),
 
             //Label
             TextField(

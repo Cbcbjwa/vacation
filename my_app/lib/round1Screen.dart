@@ -33,6 +33,9 @@ class _Round1ScreenState extends State<Round1Screen> {
   //List of weeks
   List<Week> weeks = [];
 
+  //List of filtered weeks
+  List<Week> filteredWeeks = [];
+
   //Selection object
   Selection? currentWeekSelection; 
 
@@ -89,6 +92,10 @@ class _Round1ScreenState extends State<Round1Screen> {
   @override
   Widget build(BuildContext context) {
 
+    final filteredWeeks = weeks.where((week) {
+            return week.availableSlots! > 0 || lockedWeekIds.contains(week.weekId);
+          }).toList();
+
     print("WEEKS LENGTH ROUND 1 SEL SCN: ${weeks.length}");
 
     return Scaffold(
@@ -141,7 +148,7 @@ class _Round1ScreenState extends State<Round1Screen> {
                 ),
 
 
-                dropdownMenuEntries: weeks.map((week) {
+                dropdownMenuEntries: filteredWeeks.map((week) {
 
                   final isLocked = lockedWeekIds.contains(week.weekId);
 
@@ -239,6 +246,8 @@ class _Round1ScreenState extends State<Round1Screen> {
                   setState(() {
                     currentWeekSelection!.weekId = selectedWeekId!;
                   });
+
+                  await load();
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Updated")),

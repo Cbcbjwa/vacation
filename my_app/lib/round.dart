@@ -11,7 +11,6 @@ class Round {
   int roundNumber;
   bool isOpen;
   int currentTurnPriority;
-  int slotsPerWeek;
 
   //**Constructor Section**\\
 
@@ -20,11 +19,10 @@ class Round {
     : roundId = 1,
       roundNumber = 1,
       isOpen = false,
-      currentTurnPriority = 1,
-      slotsPerWeek = 8;
+      currentTurnPriority = 1;
 
   //Full constructor
-  Round.full({required this.roundId, required this.roundNumber, required this.isOpen, required this.currentTurnPriority, required this.slotsPerWeek});
+  Round.full({required this.roundId, required this.roundNumber, required this.isOpen, required this.currentTurnPriority});
 
   //**Getters and Setters**\\
    int getRoundId() {

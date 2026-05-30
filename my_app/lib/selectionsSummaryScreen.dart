@@ -6,6 +6,11 @@
 
 //Imports section
 import 'package:flutter/material.dart';
+import 'selectionService.dart';
+import 'session.dart';
+import 'selection.dart';
+import 'week.dart';
+import 'weekRepository.dart';
 
 class SelectionsSummaryScreen extends StatefulWidget {
   const SelectionsSummaryScreen({super.key});
@@ -16,6 +21,49 @@ class SelectionsSummaryScreen extends StatefulWidget {
 }
 
 class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
+
+  //Instantiating SelectionService into an object
+  SelectionService selectionService = SelectionService();
+
+  //Instantiating WeekRepository into an object
+  WeekRepository weekRepository = WeekRepository();
+
+  //List of user's selections
+  List<Selection> weekSelections = [];
+
+  //List of weeks
+  List<Week> weeks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    load();
+  }
+
+  //Method to load users and weeks
+  Future<void> load() async {
+    weekSelections = await selectionService.getSelectionsByUser(Session.userId!);
+    weeks = await weekRepository.loadWeekRecords();
+    setState(() {});
+  }
+
+  //Method for building the selections summary
+  String buildSummary(){
+  return weekSelections.map((selection) {
+
+      final matchingWeeks = weeks.where((week) => week.weekId == selection.weekId).toList();
+
+      if(matchingWeeks.isEmpty) {
+        return "Round ${selection.roundNumber}: N/A";
+      }
+
+      final week = matchingWeeks.first;
+
+      return "Round ${selection.roundNumber}:    Week ${week.weekNumber}  (${week.weekDate})";
+
+    }).join("\n\n");
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +78,43 @@ class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
             color: Colors.grey,
             fontWeight: FontWeight.bold,
           ),
-        )
+        ),
       ),
+
+      body: Padding(
+        padding: EdgeInsets.only(
+          top: 50,
+          left: 50,
+        ),
+      
+        child: Container(
+        padding: EdgeInsets.only(
+          top: 20,
+          bottom: 20,
+          right: 20,
+          left: 20,
+        ),
+
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: const Color.fromARGB(255, 141, 99, 214),
+            width: 2
+          ),
+
+          borderRadius: BorderRadius.circular(12),
+        ),
+
+        child: weekSelections.isEmpty
+        ? Text("N/A",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+        )
+
+        : Text(
+          buildSummary(),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+        )
+      )
+    )
     );
   }
 }

@@ -45,6 +45,9 @@ class AddUsersScreen extends StatefulWidget {
     //Temporary password
     String temporaryPassword = "Temp123!";
 
+    //Flag to represent add/insert state of a record
+    bool isAdding = false;
+
     @override
     Widget build(BuildContext context) {
       return Scaffold(
@@ -258,35 +261,46 @@ class AddUsersScreen extends StatefulWidget {
 
                 //Add Button
                 ElevatedButton(
-                  onPressed: () async {
-                    final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: labelController.text, displayName: displayNameController.text);
-                    
-                    print("CREATE USER RESULT: $success");
+                  onPressed: isAdding
+                  ? null
+                  : () async {
 
-                    if(success) {
+                    setState(() {
+                      isAdding = true;
+                    });
+
+                    try {
+                      
+                      final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: labelController.text, displayName: displayNameController.text);
+                      
+                      print("CREATE USER RESULT: $success");
+
+                     
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("User Added")),
                       );
 
-                     await widget.onAdd();
+                      await widget.onAdd();
 
-                      //Closing add user screen
-                      //Navigator.pop(context, true);
+                      } catch (error) {
 
-                    } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Add Failed")),
                       );
+                      
+                    } finally {
+                      setState(() {
+                        isAdding = false;
+                      });
                     }
                   },
-                  child: Text("Add"),
+                  child: isAdding
+                  ? CircularProgressIndicator(color: Colors.white)
+                  : Text("Add"),
                 )
               ]
             )
-                 
           ),
-        
-              
         )
       );
     }

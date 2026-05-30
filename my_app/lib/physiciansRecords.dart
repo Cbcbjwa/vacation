@@ -59,17 +59,6 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
   }
 
   //Method to load users
-  /*void loadUsers() async {
-    users = await userService.getUsers();
-
-    print("FIRST USER: ${users.isNotEmpty ? users[0].userName : 'EMPTY'}");
-    print("USERS LENGTH: ${users.length}");
-    print("RAW USERS: $users");
-
-    setState(() {});
-  }*/
-
-  //Method to load users
   Future<void> load() async {
     await userRepository.loadRecords();
     setState(() {});
