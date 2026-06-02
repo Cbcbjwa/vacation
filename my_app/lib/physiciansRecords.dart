@@ -12,6 +12,8 @@ import 'addUsersScreen.dart';
 import 'userCard.dart';
 import 'user.dart';
 import 'package:collection/collection.dart';
+import 'siteService.dart';
+import 'site.dart';
 
 class PhysiciansRecords extends StatefulWidget {
   const PhysiciansRecords({super.key});
@@ -28,8 +30,8 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
   //Instantiating UserRepository class into an object
   final UserRepository userRepository = UserRepository();
 
-  //Declaring a master list of all users
-  //List<User> users = [];
+  //Instantiating SiteService into an object
+  SiteService siteService = SiteService();
 
   //List to hold the searched user(s)
   List<User> searchedUsers = [];
@@ -52,15 +54,19 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
   //Variable to hold the search query
   String searchQuery = "";
 
+  //List of sites
+  List<Site> sites = [];
+
   @override
   void initState() {
     super.initState();
     load();
   }
 
-  //Method to load users
+  //Method to load users and sites
   Future<void> load() async {
     await userRepository.loadRecords();
+    sites = await siteService.getSites();
     setState(() {});
   }
 
@@ -241,6 +247,7 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
             return UserCard(
               key: ValueKey(user.id),
               user: user,
+              sites: sites,
 
               onDelete: () async {
                 await userRepository.loadRecords();

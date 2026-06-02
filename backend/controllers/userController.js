@@ -5,6 +5,7 @@ const {
   loadUsers,
   updateUser,
   deleteUser,
+  changePassword
 } = require("../services/userService");
 
 //Method for adding new users
@@ -71,4 +72,21 @@ async function remove(req, res) {
   }
 }
 
-module.exports = { register, getUsers, update, remove };
+//Method for changing password
+async function updatePassword(req, res) {
+
+  const { userId, currentPassword, newPassword } = req.body;
+
+  try {
+    await changePassword(userId, currentPassword, newPassword);
+
+    res.json({
+      success: true,
+      message: "Password updated successfully"
+    });
+  } catch (error) {
+     res.status(400).json({ success: false, error: error.message });
+  }
+}
+ 
+module.exports = { register, getUsers, update, remove, updatePassword };

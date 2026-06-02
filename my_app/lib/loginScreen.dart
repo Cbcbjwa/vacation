@@ -146,6 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   Session.userId = user.id;
                   Session.userName = user.userName;
                   Session.displayName = user.displayName;
+                  Session.email = user.email;
+                  Session.prepicksAllowed = user.prepicksAllowed;
+                  Session.weeksAllowed = user.weeksAllowed;
 
                   if(user.getDocRole() == Role.admin) {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AdminScreen()));

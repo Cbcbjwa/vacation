@@ -10,9 +10,11 @@ import 'role.dart';
 import 'user.dart';
 import 'userService.dart';
 import 'userRepository.dart';
+import 'site.dart';
+import 'siteService.dart';
 
 class UserCard extends StatefulWidget {
-  const UserCard({super.key, required this.user, required this.onDelete});
+  const UserCard({super.key, required this.user, required this.onDelete, required this.sites});
 
   @override
   State<UserCard> createState() => _UserCardState();
@@ -20,6 +22,7 @@ class UserCard extends StatefulWidget {
   //Fields of the class
   final User user;
   final Future<void> Function() onDelete;
+  final List<Site> sites;
 
 }
 
@@ -30,6 +33,9 @@ class _UserCardState extends State<UserCard> {
 
   //Instantiating UserRepository class into an object
   UserRepository userRepository = UserRepository();
+
+  //Instantiating SiteService into an object
+  SiteService siteService = SiteService();
 
   //Controllers
   late TextEditingController nameController;
@@ -43,6 +49,9 @@ class _UserCardState extends State<UserCard> {
 
   //Role enum
   late Role selectedRole;
+
+  //Site
+  String? selectedSiteName;
 
   //Flag to represent whether a card is in editing mode
   bool isEditing = false;
@@ -59,9 +68,6 @@ class _UserCardState extends State<UserCard> {
 
     emailController =
       TextEditingController(text: widget.user.email);
-
-    labelController = 
-      TextEditingController(text: widget.user.label);
 
     weeksController =
         TextEditingController(
@@ -80,7 +86,10 @@ class _UserCardState extends State<UserCard> {
             text: widget.user.prepicksPriorityNumber?.toString() ?? "");
 
     selectedRole = widget.user.docRole;
+
+    selectedSiteName = widget.user.label;
   }
+
 
   //Method to enable editing
   void enableEditing() {
@@ -95,7 +104,7 @@ class _UserCardState extends State<UserCard> {
     widget.user.userName = nameController.text;
     widget.user.displayName = displayNameController.text;
     widget.user.email = emailController.text;
-    widget.user.label = labelController.text;
+    widget.user.label = selectedSiteName;
     widget.user.docRole = selectedRole;
 
     widget.user.weeksAllowed =
@@ -135,7 +144,6 @@ class _UserCardState extends State<UserCard> {
     nameController.text = widget.user.userName;
     displayNameController.text = widget.user.displayName;
     emailController.text = widget.user.email;
-    labelController.text = widget.user.label ?? "";
 
     weeksController.text =
         widget.user.weeksAllowed.toString();
@@ -150,6 +158,8 @@ class _UserCardState extends State<UserCard> {
         widget.user.prepicksPriorityNumber?.toString() ?? "";
 
     selectedRole = widget.user.docRole;
+
+     selectedSiteName = widget.user.label;
 
     setState(() {
       isEditing = false;
@@ -364,34 +374,49 @@ class _UserCardState extends State<UserCard> {
             ),
 
             //Spacing
-            SizedBox(height: 10),
+            SizedBox(height: 18),
 
-            //Label
-            TextField(
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 17,
-              ),
-              controller: labelController,
+            //Site
+            DropdownMenu<String>(
+              initialSelection: selectedSiteName,
 
-              decoration: InputDecoration(
-                labelText: "Site(s)",
+              label: Text(
+                "Site",
 
-                labelStyle: TextStyle(
-                  fontSize: 20,
+                style: TextStyle(
+                  fontSize: 15,
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
                 ),
-
-                border: InputBorder.none,
-
-                hintStyle: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+              ),
+              textStyle: TextStyle(
+                fontSize: 15,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
 
-              readOnly: !isEditing,
+              onSelected: (value) {
+
+                if (value != null) {
+                  setState(() {
+                    selectedSiteName = value;
+                  });
+                }
+              },
+
+              dropdownMenuEntries:
+                  widget.sites.map((site) {
+
+                return DropdownMenuEntry<String>(
+                  value: site.siteName,
+                  label: site.siteName,
+                );
+
+              }).toList(),
             ),
+
+            //Spacing
+            SizedBox(height: 15),
 
             //Weeks Allowed
             TextField(

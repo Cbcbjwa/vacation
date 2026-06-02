@@ -6,8 +6,10 @@
 
 //Imports section
 import 'package:flutter/material.dart';
+import 'package:my_app/accountScreen.dart';
 import 'package:my_app/allSelectionsScreen.dart';
 import 'package:my_app/prepicksOneScreen.dart';
+import 'package:my_app/roundEligibilityScreen.dart';
 import 'package:my_app/selectionsSummaryScreen.dart';
 import 'physiciansRecords.dart';
 import 'loginScreen.dart';
@@ -28,6 +30,7 @@ import 'round5Screen.dart';
 import 'round6Screen.dart';
 import 'round7Screen.dart';
 import 'round8Screen.dart';
+import 'prepicks2Screen.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -203,6 +206,21 @@ class _AdminScreenState extends State<AdminScreen> {
             //Spacing the menu items
             SizedBox(height: 2),
 
+            //Round eligibility
+            ListTile(
+              tileColor: Colors.black,
+              leading: const Icon(Icons.help_center, fontWeight: FontWeight.bold, color: Colors.grey),
+              title: const Text("Round Eligibility",
+                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => RoundEligibilityScreen()));
+                load();
+              }
+            ),
+
+            //Spacing the menu items
+            SizedBox(height: 2),
+
             //Selections Stats
             ListTile(
               tileColor: Colors.black,
@@ -240,7 +258,7 @@ class _AdminScreenState extends State<AdminScreen> {
               title: const Text("Prepicks 1",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => PrepicksRoundOneScreen()));
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => Prepicks1Screen()));
                 load();
               }
             ),
@@ -255,7 +273,8 @@ class _AdminScreenState extends State<AdminScreen> {
               title: const Text("Prepicks 2",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
-
+                 await Navigator.push(context, MaterialPageRoute(builder: (context) => Prepicks2Screen()));
+                load();
               }
             ),
 
@@ -393,6 +412,7 @@ class _AdminScreenState extends State<AdminScreen> {
               title: const Text("Account",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => AccountScreen()));
                 load();
               }
             ),

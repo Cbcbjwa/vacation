@@ -1,0 +1,99 @@
+/*
+*Ella Muro
+*1 June 2026
+*Round Eligibility UI
+*/
+
+//Imports section
+import 'package:flutter/material.dart';
+import 'selectionService.dart';
+import 'session.dart';
+import 'selection.dart';
+import 'week.dart';
+import 'weekRepository.dart';
+
+class RoundEligibilityScreen extends StatefulWidget {
+  const RoundEligibilityScreen({super.key});
+
+  @override
+  State<RoundEligibilityScreen> createState() => _RoundEligibilityScreenState();
+}
+
+class _RoundEligibilityScreenState extends State<RoundEligibilityScreen> {
+
+  //Number of rounds
+  int numberOfRounds = 8;
+
+  //Method for building the round eligibility summary
+  String buildSummary() {
+    final buffer = StringBuffer();
+
+    //Prepicks eligibility logic
+    for(int prepick = 1; prepick <= 2; prepick++) {
+      buffer.writeln("Prepicks $prepick:    ${Session.prepicksAllowed! >= prepick ? "Eligible" : "Ineligible"}");
+      buffer.writeln();
+    }
+
+    //Regular round logic
+    for(int round = 1; round <= numberOfRounds; round++) {
+      buffer.writeln(
+        "Round $round:    ${round <= Session.weeksAllowed! ? "Eligible" : "Ineligible"}",
+      );
+
+      if (round < 8) {
+        buffer.writeln();
+      }
+    }
+
+    return buffer.toString().trimRight();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.grey),
+        backgroundColor: Colors.black,
+        centerTitle: true,
+        title: Text("Round Eligibility",
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.bold,
+          ),
+        )
+      ),
+
+      body: Padding(
+        padding: EdgeInsets.only(
+          top: 50,
+          left: 100,
+        ),
+      
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 20,
+            bottom: 20,
+            right: 20,
+            left: 20,
+          ),
+
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.blueGrey,
+              width: 2
+            ),
+
+            borderRadius: BorderRadius.circular(12),
+          ),
+
+          child: Text(
+            buildSummary(),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+        ),
+      ),
+    );
+  }
+}

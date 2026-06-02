@@ -8,4 +8,7 @@ class Session {
   static int? userId;
   static String? userName;
   static String? displayName;
+  static String? email;
+  static int? prepicksAllowed;
+  static int? weeksAllowed;
 }

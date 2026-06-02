@@ -40,7 +40,7 @@ class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
     load();
   }
 
-  //Method to load users and weeks
+  //Method to load selections and weeks
   Future<void> load() async {
     weekSelections = await selectionService.getSelectionsByUser(Session.userId!);
     weeks = await weekRepository.loadWeekRecords();
@@ -59,7 +59,18 @@ class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
 
       final week = matchingWeeks.first;
 
-      return "Round ${selection.roundNumber}:    Week ${week.weekNumber}  (${week.weekDate})";
+      if(selection.roundNumber >= 1) {
+        return "Round ${selection.roundNumber}:    Week ${week.weekNumber}  (${week.weekDate})";
+      }
+
+      if(selection.roundNumber == -1) {
+        return "Prepicks 1:    Week ${week.weekNumber}  (${week.weekDate})";
+      }
+
+      if(selection.roundNumber == 0) {
+        return "Prepicks 2:    Week ${week.weekNumber}  (${week.weekDate})";
+      }
+      
 
     }).join("\n\n");
 
@@ -84,7 +95,7 @@ class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
       body: Padding(
         padding: EdgeInsets.only(
           top: 50,
-          left: 50,
+          left: 40,
         ),
       
         child: Container(
@@ -97,7 +108,7 @@ class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
 
         decoration: BoxDecoration(
           border: Border.all(
-            color: const Color.fromARGB(255, 141, 99, 214),
+            color: Colors.blueGrey,
             width: 2
           ),
 

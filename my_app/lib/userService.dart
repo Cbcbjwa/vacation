@@ -129,4 +129,39 @@ class UserService {
 
   return res.statusCode == 200;
   }
+
+  //Method for changing password
+  Future<String> changePassword ({
+    required int userId,
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    print("UPDATING PASSWORD..");
+
+    try {
+      final response = await http.put(
+        Uri.parse("$baseUrl/users/updatePassword"),
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: jsonEncode({
+          "userId": userId,
+          "currentPassword": currentPassword,
+          "newPassword": newPassword,
+        }),
+      );
+
+      if(response.statusCode == 200) {
+        return "Success";
+      }
+
+      final data = jsonDecode(response.body);
+      return data["error"] ?? "Failed to change password";
+
+    } catch (error) {
+      return "Failed to connect to server";
+    }
+  }
 }

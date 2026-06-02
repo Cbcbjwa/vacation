@@ -1,7 +1,7 @@
 /*
 *Ella Muro
 *31 May 2026
-*Prepicks Round 1/Round -1 Week Selection UI
+*Prepicks Round 2/Round 0 Week Selection UI
 */
 
 //Imports section
@@ -12,14 +12,14 @@ import 'selection.dart';
 import 'selectionService.dart';
 import 'session.dart';
 
-class Prepicks1Screen extends StatefulWidget {
-  const Prepicks1Screen({super.key});
+class Prepicks2Screen extends StatefulWidget {
+  const Prepicks2Screen({super.key});
 
   @override
-  State<Prepicks1Screen> createState() => _Prepicks1ScreenState();
+  State<Prepicks2Screen> createState() => _Prepicks2ScreenState();
 }
 
-class _Prepicks1ScreenState extends State<Prepicks1Screen> {
+class _Prepicks2ScreenState extends State<Prepicks2Screen> {
 
   //Instantiating WeekRepository class into an object
   WeekRepository weekRepository = WeekRepository();
@@ -45,10 +45,10 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
   //Method to load weeks
   Future<void> load() async {
 
-    print("ROUND -1 LOAD START");
+    print("ROUND 0 LOAD START");
 
     final data = await weekRepository.loadWeekRecords();
-    final selection = await selectionService.getSelection(userId: Session.userId!, roundNumber: -1);
+    final selection = await selectionService.getSelection(userId: Session.userId!, roundNumber: 0);
     final weekSelections = await selectionService.getSelectionsByUser(Session.userId!);
 
     setState(() {
@@ -104,7 +104,7 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
         iconTheme: IconThemeData(color: Colors.grey),
         backgroundColor: Colors.black,
         centerTitle: true,
-        title: Text("Prepicks Round 1",
+        title: Text("Prepicks Round 2",
           style: TextStyle(
             color: Colors.grey,
             fontWeight: FontWeight.bold,
@@ -203,7 +203,7 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
 
                 try {
 
-                  final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: -1);
+                  final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: 0);
                 
                   setState(() {
                     currentWeekSelection = created; 

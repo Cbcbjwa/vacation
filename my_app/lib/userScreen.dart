@@ -6,7 +6,9 @@
 
 //Imports section
 import 'package:flutter/material.dart';
+import 'package:my_app/accountScreen.dart';
 import 'package:my_app/allSelectionsScreen.dart';
+import 'package:my_app/prepicks2Screen.dart';
 import 'package:my_app/prepicksOneScreen.dart';
 import 'package:my_app/selectionsSummaryScreen.dart';
 import 'physiciansRecords.dart';
@@ -146,7 +148,8 @@ class _UserScreenState extends State<UserScreen> {
               title: const Text("Prepicks 1",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
-
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Prepicks1Screen()));
+                load();
               }
             ),
 
@@ -160,7 +163,8 @@ class _UserScreenState extends State<UserScreen> {
               title: const Text("Prepicks 2",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
-
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Prepicks2Screen()));
+                load();
               }
             ),
 
@@ -291,11 +295,11 @@ class _UserScreenState extends State<UserScreen> {
             //Account section
             ListTile(
               tileColor: Colors.black,
-              leading: const Icon(Icons.info, fontWeight: FontWeight.bold, color: Colors.grey),
+              leading: const Icon(Icons.info_outline_rounded, fontWeight: FontWeight.bold, color: Colors.grey),
               title: const Text("Account",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SelectionsSummaryScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AccountScreen()));
                 load();
               }
             ),

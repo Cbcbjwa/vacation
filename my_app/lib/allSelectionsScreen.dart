@@ -162,7 +162,7 @@ class _AllSelectionsScreenState extends State<AllSelectionsScreen> {
 
                 final week = matchingWeeks.first;
 
-                return "Week ${week.weekNumber}";
+                return "Wk ${week.weekNumber} \n ${week.weekDate}";
               }
 
               Widget buildRoundCell(int roundNumber) {

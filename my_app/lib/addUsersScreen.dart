@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:my_app/role.dart';
 import 'package:my_app/userRepository.dart';
 import 'userService.dart';
+import 'site.dart';
+import 'siteService.dart';
 
 class AddUsersScreen extends StatefulWidget {
   const AddUsersScreen({super.key, required this.onAdd});
@@ -27,17 +29,25 @@ class AddUsersScreen extends StatefulWidget {
     final TextEditingController displayNameController = TextEditingController();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController roleController = TextEditingController();
-    final TextEditingController labelController = TextEditingController();
+    final TextEditingController siteController = TextEditingController();
     final TextEditingController weeksController = TextEditingController();
     final TextEditingController prepicksController = TextEditingController();
     final TextEditingController numberController = TextEditingController();
     final TextEditingController prepicksNumberController = TextEditingController();
 
+    
+
     //Default drop down menu selection
     Role selectedRole = Role.physician;
 
+    //Default drop down menu selection
+    String selectedSiteName = "N/A";
+
     //Instantiating UserService class into an object
     UserService userService = UserService();
+
+    //Instantiating SiteService into an object
+    SiteService siteService = SiteService();
 
     //Instantiating the UserRepository class into an object
     UserRepository userRepository = UserRepository();
@@ -48,8 +58,30 @@ class AddUsersScreen extends StatefulWidget {
     //Flag to represent add/insert state of a record
     bool isAdding = false;
 
+    //List of sites
+    List<Site> sites = [];
+
+    @override
+    void initState() {
+      super.initState();
+      load();
+    }
+
+    //Method to load sites
+    Future<void> load() async {
+      sites = await siteService.getSites();
+      setState(() {
+        selectedSiteName = "N/A";
+        siteController.text = selectedSiteName;
+      });
+    }
+
     @override
     Widget build(BuildContext context) {
+
+      print("selectedSiteName = $selectedSiteName");
+      print("sites loaded = ${sites.length}");
+
       return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
@@ -138,11 +170,11 @@ class AddUsersScreen extends StatefulWidget {
                 //Spacing the text fields
                 SizedBox(height: 20),
 
-                //Role text field
+                //Role dropdown
                 DropdownMenu<Role> (
                   initialSelection: selectedRole,
 
-                  label: const Text("Role",
+                  label: Text("Role",
                   style: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),),
                   textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold),
 
@@ -164,20 +196,28 @@ class AddUsersScreen extends StatefulWidget {
                 //Spacing the text fields
                 SizedBox(height: 20),
 
-                //Label text field
-                TextField(
-                  controller: labelController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Site(s)",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
+                //Site dropdown
+                DropdownMenu<String> (
+                  controller: siteController,
+
+                  label: Text("Site",
+                  style: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),),
+                  textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold),
+
+                  dropdownMenuEntries: sites.map((site) {
+                    return DropdownMenuEntry<String>(
+                      value: site.siteName,
+                      label: site.siteName,
+                    );
+                  }).toList(),
+
+                  onSelected: (value) {
+                    if(value != null){
+                      setState(() {
+                        selectedSiteName = value;
+                      });
+                    }
+                  }
                 ),
 
                 //Spacing the text fields
@@ -271,7 +311,7 @@ class AddUsersScreen extends StatefulWidget {
 
                     try {
                       
-                      final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: labelController.text, displayName: displayNameController.text);
+                      final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: siteController.text, displayName: displayNameController.text);
                       
                       print("CREATE USER RESULT: $success");
 

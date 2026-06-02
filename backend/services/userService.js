@@ -72,4 +72,32 @@ async function deleteUser(id) {
     )
 }
 
-module.exports = {getUsersByEmail, createUser, loadUsers, updateUser, deleteUser};
+//Method for changing password
+async function changePassword(userId, currentPassword, newPassword) {
+
+    //Getting current password from the database
+    const [rows] = await pool.query(
+        "SELECT passwordHash FROM users WHERE id=?",
+        [userId]
+    );
+
+    if(rows.length === 0) {
+        throw new Error("User not found");
+    }
+
+    const matches = await bcrypt.compare(currentPassword, rows[0].passwordHash);
+
+    if(!matches) {
+        throw new Error("Current password is incorrect");
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+
+    //Updating password in the database
+    await pool.query(
+        "UPDATE users SET passwordHash=? WHERE id=?",
+        [newHash, userId]
+    );
+}
+
+module.exports = {getUsersByEmail, createUser, loadUsers, updateUser, deleteUser, changePassword};
