@@ -9,20 +9,20 @@ class Round {
   //**Fields of the Class**\\
   int roundId;
   int roundNumber;
-  bool isOpen;
-  int currentTurnPriority;
+  String roundName;
 
   //**Constructor Section**\\
 
-  //Default constructor
-  Round()
-    : roundId = 1,
-      roundNumber = 1,
-      isOpen = false,
-      currentTurnPriority = 1;
-
   //Full constructor
-  Round.full({required this.roundId, required this.roundNumber, required this.isOpen, required this.currentTurnPriority});
+  Round.full({required this.roundId, required this.roundNumber, required this.roundName});
+
+  factory Round.fromJson(Map<String, dynamic> json) {
+    return Round.full(
+      roundId: json["roundId"],
+      roundNumber: json["roundNumber"],
+      roundName: json["roundName"]
+    );
+  }
 
   //**Getters and Setters**\\
    int getRoundId() {

@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:my_app/accountScreen.dart';
 import 'package:my_app/allSelectionsScreen.dart';
 import 'package:my_app/prepicksOneScreen.dart';
+import 'package:my_app/round9Screen.dart';
+import 'package:my_app/roundControlScreen.dart';
 import 'package:my_app/roundEligibilityScreen.dart';
+import 'package:my_app/selectionControlScreen.dart';
 import 'package:my_app/selectionsSummaryScreen.dart';
 import 'physiciansRecords.dart';
 import 'loginScreen.dart';
@@ -31,6 +34,7 @@ import 'round6Screen.dart';
 import 'round7Screen.dart';
 import 'round8Screen.dart';
 import 'prepicks2Screen.dart';
+import 'package:data_table_2/data_table_2.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -58,6 +62,15 @@ class _AdminScreenState extends State<AdminScreen> {
   List<Selection> allSelections = [];
 
   Map<int, String> userNamesById = {};
+
+  //Flag to represent if a week is full
+  bool isFull = false;
+
+  //Flag to represent if a week is getting low (4 or less slots available)
+  bool isGettingLow = false;
+
+  //Flag to represent whether the list of weeks is in list view or grid view
+  bool isInGridView = false;
 
   @override
   void initState() {
@@ -97,12 +110,401 @@ class _AdminScreenState extends State<AdminScreen> {
     });
   }
 
+  //Method for building the list view version of the weeks display
+  Widget buildListView() {
+
+    return Padding(
+        padding: EdgeInsets.only(
+          top: 25,
+        ),
+        
+        child: ListView.builder(
+
+        itemCount: listOfWeeks.length,
+        itemBuilder: (context, index) {
+
+          final week = listOfWeeks[index];
+
+          final weekSelections = allSelections.where((selection) => selection.weekId == week.weekId).toList();
+
+          Color weekBackgroundColor = week.availableSlots == 0 ? const Color.fromARGB(255, 224, 17, 2) : Colors.blueGrey;
+
+          Color availableSlotsTextColor = (week.availableSlots! > 0 && week.availableSlots! <= 4) ? const Color.fromARGB(255, 175, 68, 1) : Colors.black;
+
+          return Container(
+            margin: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 5.5,
+            ),
+
+            padding: const EdgeInsets.all(12),
+
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(8),
+              color: weekBackgroundColor,
+            ),
+
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+
+              children: [
+
+                //Frozen Section -- Week Number, Info, and Date
+
+                SizedBox(
+                  width: 220,
+
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                    children: [
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+
+                        children: [
+                          Text("Week ${week.weekNumber}",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ) ,
+                          ),
+
+                          //Spacing
+                          SizedBox(height: 6),
+
+                          Text(week.weekDate,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ) ,
+                          ),
+
+                          //Spacing
+                          SizedBox(height: 6),
+
+                          Text(week.specialSpecification == null || week.specialSpecification!.toLowerCase() == "n/a" ? "" : week.specialSpecification!,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ]
+                      ),
+                    ),
+
+                    //Frozen column for available slots
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 12,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text("${week.availableSlots}/${week.totalSlots} slots \n available",
+                            style: TextStyle(
+                              color: availableSlotsTextColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                    ]
+                  )
+                ),
+
+
+                //Horizontal Slot Scrolling Section
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+
+                      child: Row(
+                        children: [
+                          ...List.generate(8, (slotIndex) {
+
+
+                            //**Slot Display Logic**\\
+
+                            //Variables
+                            SlotStatus slotStatus = SlotStatus.available;
+                            String slotText = "";
+
+                            if(slotIndex >= week.totalSlots) {
+                              slotStatus = SlotStatus.unavailable;
+                            } else {
+
+                              if(slotIndex < weekSelections.length) {
+                                slotStatus = SlotStatus.picked;
+                                
+                                final selection = weekSelections[slotIndex];
+                                slotText = userNamesById[selection.userId] ?? "";
+                              }
+                            }
+
+
+                            //Slot color handler
+                            Color slotColor;
+
+                            switch(slotStatus) {
+
+                              case SlotStatus.available: 
+                                slotColor = Colors.green;
+                                slotText = "";
+                                break;
+
+                              case SlotStatus.picked:
+                                slotColor = Colors.yellow;
+                                break;
+
+                              case SlotStatus.unavailable:
+                                slotColor = Colors.grey;
+                                slotText = "N/A";
+                                break;
+                                }
+
+                              return Container (
+                                width: 120,
+                                height: 70,
+
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
+
+                                decoration: BoxDecoration(
+                                  color: slotColor,
+                                  borderRadius: BorderRadius.circular(8),
+
+                                  border: Border.all(
+                                    color: Colors.white24,
+                                  ),
+                                  ),
+
+                                alignment: Alignment.center,
+
+                                  child: Text(
+                                    slotText,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15.5,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
+                        )
+                      )
+                    
+              ]
+            )
+          );
+                  
+              
+        }
+      )
+      );
+  }
+
+  //Method to build the grid view version of the weeks display
+  Widget buildGridView() {
+    return Padding(
+        padding: EdgeInsets.only(top: 25),
+        
+        child: Container(
+          color: Colors.black,
+
+          child: DataTable2(
+            minWidth: 1500,
+            fixedLeftColumns: 2,
+            headingRowColor: WidgetStatePropertyAll(Colors.blueGrey),
+            dataRowColor: WidgetStatePropertyAll(Colors.black),
+
+            columnSpacing: 10,
+            horizontalMargin: 6,
+
+            columns: [
+
+              const DataColumn2(
+                fixedWidth: 58,
+                label: Center( 
+                  child: Text(
+                    "Week",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+
+              const DataColumn2(
+                fixedWidth: 130,
+                label: Center(
+                  child: Text(
+                    "Date",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+
+              ...List.generate(8, (index) {
+
+                final slots = index + 1;
+
+                return DataColumn2(
+                  fixedWidth: 100,
+
+                  label: Center(
+                    child: Text(
+                      "Slot $slots",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                );
+              }),
+            ],
+
+            rows: listOfWeeks.map((week) {
+
+              final weekSelections = allSelections.where((selection) => selection.weekId == week.weekId).toList();
+
+              //Helper method for building slots
+              Widget buildSlotCell(int slotIndex) {
+
+                if(slotIndex >= week.totalSlots) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 4),
+                    
+                    alignment: Alignment.center,
+
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      "N/A",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+
+                if(slotIndex < weekSelections.length) {
+                  final selection = weekSelections[slotIndex];
+
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 4),
+                    
+                    alignment: Alignment.center,
+
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+
+                    decoration: BoxDecoration(
+                      color: Colors.yellow,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      userNamesById[selection.userId] ?? "",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+
+                 return Container(
+                  margin: EdgeInsets.symmetric(vertical: 4),
+                    
+                    alignment: Alignment.center,
+
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                );
+              }
+
+              return DataRow2(
+                cells: [
+                  DataCell(
+                    Center(
+                      child: Text(
+                        week.weekNumber.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  DataCell(
+                    Center( 
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        week.weekDate,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  
+                  ...List.generate(8, (slotIndex) {
+
+                    return DataCell(
+                      buildSlotCell(slotIndex),
+                    );
+                  }),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
 
     print("Weeks: ${weekRepository.weeks.length}");
     print("BUILD HASH: ${weekRepository.hashCode}");
     print("BUILD WEEKS: ${weekRepository.weeks.length}");
+
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -115,7 +517,21 @@ class _AdminScreenState extends State<AdminScreen> {
             color: Colors.grey,
             fontWeight: FontWeight.bold,
           ),
-        )
+        ),
+
+        actions: [
+          IconButton(
+            icon: Icon(
+              isInGridView ? Icons.view_list_sharp : Icons.grid_view,
+              color: Colors.grey,
+            ),
+            onPressed: () {
+              setState(() {
+                isInGridView = !isInGridView;
+              });
+            },
+          ),
+        ],
       ),
 
       drawer: Drawer(
@@ -177,14 +593,30 @@ class _AdminScreenState extends State<AdminScreen> {
             //Spacing the menu items
             SizedBox(height: 2),
 
-            //Round Controls
+            //Round Control
             ListTile(
               tileColor: Colors.black,
               leading: const Icon(Icons.display_settings_outlined, fontWeight: FontWeight.bold, color: Colors.grey),
               title: const Text("Round Control",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => RoundControlScreen()));
+                load();
+              }
+            ),
 
+            //Spacing the menu items
+            SizedBox(height: 2),
+
+            //Selection Control
+            ListTile(
+              tileColor: Colors.black,
+              leading: const Icon(Icons.sports_esports_outlined, fontWeight: FontWeight.bold, color: Colors.grey),
+              title: const Text("Selection Control",
+                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => SelectionControlScreen()));
+                load();
               }
             ),
 
@@ -402,6 +834,21 @@ class _AdminScreenState extends State<AdminScreen> {
             //Spacing the menu items
             SizedBox(height: 2),
 
+            //Round 9 Selection
+            ListTile(
+              tileColor: Colors.black,
+              leading: const Icon(Icons.rocket_launch, fontWeight: FontWeight.bold, color: Colors.grey),
+              title: const Text("Round 9",
+                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round9Screen()));
+                load();
+              }
+            ),
+
+            //Spacing the menu items
+            SizedBox(height: 2),
+
             //Spacing the menu items
             SizedBox(height: 2),
 
@@ -433,202 +880,9 @@ class _AdminScreenState extends State<AdminScreen> {
       ),
 
       //**SCHEDULE GRID**\\
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: 25,
-        ),
-        
-        child: ListView.builder(
-
-        itemCount: listOfWeeks.length,
-        itemBuilder: (context, index) {
-
-          final week = listOfWeeks[index];
-
-          final weekSelections = allSelections.where((selection) => selection.weekId == week.weekId).toList();
-
-          return Container(
-            margin: const EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 5.5,
-            ),
-
-            padding: const EdgeInsets.all(12),
-
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(8),
-              color: Colors.blueGrey,
-            ),
-
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-              children: [
-
-                //Frozen Section -- Week Number, Info, and Date
-
-                SizedBox(
-                  width: 220,
-
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
-                    children: [
-
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-
-                        children: [
-                          Text("Week ${week.weekNumber}",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ) ,
-                          ),
-
-                          //Spacing
-                          SizedBox(height: 6),
-
-                          Text(week.weekDate,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ) ,
-                          ),
-
-                          //Spacing
-                          SizedBox(height: 6),
-
-                          Text(week.specialSpecification == null || week.specialSpecification!.toLowerCase() == "n/a" ? "" : week.specialSpecification!,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ]
-                      ),
-                    ),
-
-                    //Frozen column for available slots
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        right: 12,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text("${week.availableSlots}/${week.totalSlots} slots \n available",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                    ]
-                  )
-                ),
-
-
-                //Horizontal Slot Scrolling Section
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-
-                      child: Row(
-                        children: [
-                          ...List.generate(8, (slotIndex) {
-
-
-                            //**Slot Display Logic**\\
-
-                            //Variables
-                            SlotStatus slotStatus = SlotStatus.available;
-                            String slotText = "";
-
-                            if(slotIndex >= week.totalSlots) {
-                              slotStatus = SlotStatus.unavailable;
-                            } else {
-
-                              if(slotIndex < weekSelections.length) {
-                                slotStatus = SlotStatus.picked;
-                                
-                                final selection = weekSelections[slotIndex];
-                                slotText = userNamesById[selection.userId] ?? "";
-                              }
-                            }
-
-
-                            //Slot color handler
-                            Color slotColor;
-
-                            switch(slotStatus) {
-
-                              case SlotStatus.available: 
-                                slotColor = Colors.green;
-                                slotText = "";
-                                break;
-
-                              case SlotStatus.picked:
-                                slotColor = Colors.yellow;
-                                break;
-
-                              case SlotStatus.unavailable:
-                                slotColor = Colors.grey;
-                                slotText = "N/A";
-                                break;
-                                }
-
-                              return Container (
-                                width: 120,
-                                height: 70,
-
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                ),
-
-                                decoration: BoxDecoration(
-                                  color: slotColor,
-                                  borderRadius: BorderRadius.circular(8),
-
-                                  border: Border.all(
-                                    color: Colors.white24,
-                                  ),
-                                  ),
-
-                                alignment: Alignment.center,
-
-                                  child: Text(
-                                    slotText,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 15.5,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ],
-                          ),
-                        )
-                      )
-                    
-              ]
-            )
-          );
-                  
-              
-        }
-      )
-      )
+      body: isInGridView
+        ? buildGridView()
+        : buildListView()
     );
   }
 }

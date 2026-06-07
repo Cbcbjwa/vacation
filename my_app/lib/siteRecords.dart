@@ -138,8 +138,12 @@ class _SitesRecordsState extends State<SitesRecords> {
 
               actions: [
 
-                // Search button
+                //Search button
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                  ),
                   onPressed: () {
 
                     final found = search(setDialogState);
@@ -155,6 +159,10 @@ class _SitesRecordsState extends State<SitesRecords> {
 
                 // Cancel button
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                  ),
                   onPressed: () {
 
                     Navigator.pop(context);

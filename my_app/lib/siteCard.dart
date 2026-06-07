@@ -102,6 +102,10 @@ class _SiteCardState extends State<SiteCard> {
 
             //Cancel deletion button
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -110,6 +114,10 @@ class _SiteCardState extends State<SiteCard> {
 
             //Confirm deletion button
             TextButton(
+              style: TextButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
@@ -175,6 +183,8 @@ class _SiteCardState extends State<SiteCard> {
 
               //Site name
               TextField(
+                enableInteractiveSelection: false,
+                cursorColor: Colors.blueGrey,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 17,
@@ -202,6 +212,8 @@ class _SiteCardState extends State<SiteCard> {
 
             //Max docs off per week
             TextField(
+              enableInteractiveSelection: false,
+              cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -241,11 +253,19 @@ class _SiteCardState extends State<SiteCard> {
                   children: [
 
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      ),
                       onPressed: saveChanges,
                       child: Text("Save"),
                     ),
 
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      ),
                       onPressed: cancelChanges,
                       child: Text("Cancel"),
                     ),
@@ -262,11 +282,19 @@ class _SiteCardState extends State<SiteCard> {
                   children: [
 
                     ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      ),
                       onPressed: enableEditing,
                       label: Icon(Icons.edit),
                     ),
 
                     ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      ),
                       onPressed: deleteRecord,
                       label: Icon(Icons.delete),
                     ),

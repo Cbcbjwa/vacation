@@ -11,6 +11,7 @@ import 'session.dart';
 import 'selection.dart';
 import 'week.dart';
 import 'weekRepository.dart';
+import 'userRepository.dart';
 
 class RoundEligibilityScreen extends StatefulWidget {
   const RoundEligibilityScreen({super.key});
@@ -21,8 +22,11 @@ class RoundEligibilityScreen extends StatefulWidget {
 
 class _RoundEligibilityScreenState extends State<RoundEligibilityScreen> {
 
+  //Instantiating UserRepository into an object
+  UserRepository userRepository = UserRepository();
+
   //Number of rounds
-  int numberOfRounds = 8;
+  int numberOfRounds = 9;
 
   //Method for building the round eligibility summary
   String buildSummary() {
@@ -40,12 +44,30 @@ class _RoundEligibilityScreenState extends State<RoundEligibilityScreen> {
         "Round $round:    ${round <= Session.weeksAllowed! ? "Eligible" : "Ineligible"}",
       );
 
-      if (round < 8) {
+      if (round < 9) {
         buffer.writeln();
       }
     }
 
     return buffer.toString().trimRight();
+  }
+
+  //Method to load weeks/prepicks allowed for the current user
+  Future<void> loadEligibility() async {
+    final users = await userRepository.loadRecords();
+
+    final currentUser = users.firstWhere((user) => user.id == Session.userId);
+
+    setState(() {
+      Session.weeksAllowed = currentUser.weeksAllowed;
+      Session.prepicksAllowed = currentUser.prepicksAllowed;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadEligibility();
   }
 
   @override

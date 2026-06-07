@@ -46,98 +46,118 @@ class _AddSitesScreenState extends State<AddSitesScreen> {
           )
         ),
 
-        body: Container(
-          color: Colors.black,
+        body: SingleChildScrollView(
+          child: Container(
+            color: Colors.black,
 
-          child: Padding(
-            padding: const EdgeInsets.only(
-              top: 30,
-              left: 20,
-              right: 20
-            ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 30,
+                left: 20,
+                right: 20
+              ),
 
-            child: Column(
-               mainAxisSize: MainAxisSize.min,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
 
-               children: [
+                children: [
 
-                //Site name text field
-                TextField(
-                  controller: siteNameController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Site Name",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
+                  //Site name text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: siteNameController,
+                    style: TextStyle(
+                      color: Colors.grey,
                     ),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-
-
-                //Spacing the text fields
-                SizedBox(height: 20),
-
-                //Max docs off per week text field
-                TextField(
-                  controller: maxDocsOffController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Max. Docs off per Week",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
+                    decoration: InputDecoration(
+                      labelText: "Site Name",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
                     ),
-                    border: OutlineInputBorder(),
                   ),
-                ),
 
-                //Spacing
-                SizedBox(height: 15),
 
-                //Add button
-                ElevatedButton(
-                  onPressed: isAdding
-                  ? null
-                  : () async {
+                  //Spacing the text fields
+                  SizedBox(height: 20),
 
-                    setState(() {
-                      isAdding = true;
-                    });
+                  //Max docs off per week text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: maxDocsOffController,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Max. Docs off per Week",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
 
-                    try {
+                  //Spacing
+                  SizedBox(height: 15),
 
-                      final success = await siteService.createSite(siteName: siteNameController.text, maxDocsOffPerWeek: int.tryParse(maxDocsOffController.text) ?? 0);
-                      print("CREATE SITE RESULT: $success");
+                  //Add button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                    ),
+                    onPressed: isAdding
+                    ? null
+                    : () async {
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Site Added")),
-                      );
-
-                        await widget.onAdd();
-
-                    } catch (error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Add Failed")),
-                      );
-                    } finally {
                       setState(() {
-                        isAdding = false;
+                        isAdding = true;
                       });
-                    }
-                  },
-                  child: isAdding
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text("Add"),
-                )
-               ],
+
+                      try {
+
+                        final success = await siteService.createSite(siteName: siteNameController.text, maxDocsOffPerWeek: int.tryParse(maxDocsOffController.text) ?? 0);
+                        print("CREATE SITE RESULT: $success");
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Site Added")),
+                        );
+
+                          await widget.onAdd();
+
+                      } catch (error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Add Failed")),
+                        );
+                      } finally {
+                        setState(() {
+                          isAdding = false;
+                        });
+                      }
+                    },
+                    child: isAdding
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text("Add"),
+                  )
+                ],
+              ),
             ),
-          ),
+          )
         )
       );
     }

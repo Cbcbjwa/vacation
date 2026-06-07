@@ -20,25 +20,12 @@ class User {
   int? prepicksPriorityNumber;
   String? label;
   String displayName;
+  String phoneNumber;
 
   //**Constructor Section**\\
-
-  //Default constructor
-  User() 
-    :  id = 1,
-      userName = "Hannibal Lecter",
-      email = "hanniballecter@gmail.com",
-      docRole = Role.admin,
-      weeksAllowed = 4,
-      prepicksAllowed = 2,
-      priorityNumber = 1,
-      prepicksPriorityNumber = 1,
-      label = "Emory Johns Creek",
-      displayName = "Lecter";
   
-
   //Full constructor
-  User.full({required this.id, required this.userName, required this.email, required this.docRole, required this.weeksAllowed, required this.prepicksAllowed, this.priorityNumber, this.prepicksPriorityNumber, this.label, required this.displayName});
+  User.full({required this.id, required this.userName, required this.email, required this.docRole, required this.weeksAllowed, required this.prepicksAllowed, this.priorityNumber, this.prepicksPriorityNumber, this.label, required this.displayName, required this.phoneNumber});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User.full(
@@ -52,6 +39,7 @@ class User {
       prepicksPriorityNumber: json["prepicksPriorityNumber"],
       label: json["label"],
       displayName: json["displayName"],
+      phoneNumber: json["phoneNumber"],
     );
   }
 

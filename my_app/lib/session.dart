@@ -11,4 +11,5 @@ class Session {
   static String? email;
   static int? prepicksAllowed;
   static int? weeksAllowed;
+  static String? siteName;
 }

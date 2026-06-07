@@ -122,7 +122,7 @@ class _AllSelectionsScreenState extends State<AllSelectionsScreen> {
                 ),
               ),
 
-              ...List.generate(8, (index) {
+              ...List.generate(9, (index) {
 
                 final roundNumber = index + 1;
 
@@ -226,7 +226,7 @@ class _AllSelectionsScreenState extends State<AllSelectionsScreen> {
                     ),
                   ),
                   
-                  ...List.generate(8, (index) {
+                  ...List.generate(9, (index) {
                     final roundNumber = index + 1;
 
                     return DataCell(

@@ -115,6 +115,10 @@ class _WeekCardState extends State<WeekCard> {
 
             //Cancel deletion button
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -123,6 +127,10 @@ class _WeekCardState extends State<WeekCard> {
 
             //Confirm deletion button
             TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
@@ -189,6 +197,8 @@ class _WeekCardState extends State<WeekCard> {
 
               //Week number
               TextField(
+                enableInteractiveSelection: false,
+                cursorColor: Colors.blueGrey,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 17,
@@ -216,6 +226,8 @@ class _WeekCardState extends State<WeekCard> {
 
             //Week date
             TextField(
+              enableInteractiveSelection: false,
+              cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -243,6 +255,8 @@ class _WeekCardState extends State<WeekCard> {
 
             //Special week specification
             TextField(
+              enableInteractiveSelection: false,
+              cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -271,6 +285,8 @@ class _WeekCardState extends State<WeekCard> {
 
             //Total slots
             TextField(
+              enableInteractiveSelection: false,
+              cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -310,11 +326,19 @@ class _WeekCardState extends State<WeekCard> {
                   children: [
 
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      ),
                       onPressed: saveChanges,
                       child: Text("Save"),
                     ),
 
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      ),
                       onPressed: cancelChanges,
                       child: Text("Cancel"),
                     ),
@@ -331,11 +355,19 @@ class _WeekCardState extends State<WeekCard> {
                   children: [
 
                     ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      ),
                       onPressed: enableEditing,
                       label: Icon(Icons.edit),
                     ),
 
                     ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      ),
                       onPressed: deleteRecord,
                       label: Icon(Icons.delete),
                     ),

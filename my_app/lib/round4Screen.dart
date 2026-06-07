@@ -11,6 +11,7 @@ import 'week.dart';
 import 'selection.dart';
 import 'selectionService.dart';
 import 'session.dart';
+import 'siteConstraintsChecker.dart';
 
 class Round4Screen extends StatefulWidget {
   const Round4Screen({super.key});
@@ -26,6 +27,9 @@ class _Round4ScreenState extends State<Round4Screen> {
 
   //Instantiating SelectionService class into an object
   SelectionService selectionService = SelectionService();
+
+  //Instantiating SiteConstraintsChecker into an object
+  SiteConstraintsChecker siteConstraintsChecker = SiteConstraintsChecker();
 
   //Variable to hold the selected week ID
   int? selectedWeekId;
@@ -191,13 +195,25 @@ class _Round4ScreenState extends State<Round4Screen> {
             //Confirm button
             ElevatedButton(
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
                 disabledBackgroundColor: Colors.grey.shade800,
                 disabledForegroundColor: Colors.white60,
               ),
               onPressed: currentWeekSelection != null
               ? null
               : () async {
+
                 if(selectedWeekId == null) {
+                  return;
+                }
+
+                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!);
+
+                if(reason != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(reason)),
+                  );
                   return;
                 }
 
@@ -231,13 +247,26 @@ class _Round4ScreenState extends State<Round4Screen> {
             //Update button
             ElevatedButton(
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
                 disabledBackgroundColor: Colors.grey.shade800,
                 disabledForegroundColor: Colors.white60,
               ),
               onPressed: (currentWeekSelection == null || selectedWeekId == null)
               ? null
               : () async {
+
                 if(selectedWeekId == null || currentWeekSelection == null) {
+                  return;
+                }
+
+                //Checking if the user can select the week
+                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, selectionIdToIgnore: currentWeekSelection!.selectionId);
+
+                if(reason != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(reason)),
+                  );
                   return;
                 }
 

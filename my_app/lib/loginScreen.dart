@@ -41,6 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
   //Instantiating the login controller class into an object
   final LoginController loginController = LoginController(AuthService());
 
+  AuthService authService = AuthService();
+
   //Instantiating the logger class into an object
   final AppLogger appLogger = AppLogger();
   
@@ -83,19 +85,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
               //Email text field
               TextField(
+                cursorColor: Colors.blueGrey,
                 controller: emailController,
                 style: TextStyle(
                   color: Colors.grey,
                 ),
                 decoration: InputDecoration(
                   labelText: "Email",
-                  labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                  labelStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
                   hintText: "Enter Email...",
                   hintStyle: TextStyle(
                     color: Color.fromARGB(255, 75, 75, 75),
                     fontWeight: FontWeight.bold,
                   ),
                   border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.blueGrey,
+                      width: 2,
+                    ),
+                  ),
                 ),
               ),
 
@@ -104,6 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               //Password text field
               TextField(
+                cursorColor: Colors.blueGrey,
                 controller: passwordController,
                 obscureText: true,
                 style: TextStyle(
@@ -111,13 +121,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 decoration: InputDecoration(
                   labelText: "Password",
-                  labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                  labelStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
                   hintText: "Enter Password...",
                   hintStyle: TextStyle(
                     color: Color.fromARGB(255, 75, 75, 75),
                     fontWeight: FontWeight.bold,
                   ),
                   border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.blueGrey,
+                      width: 2,
+                    ),
+                  ),
                 ),
               ),
 
@@ -126,6 +142,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
               //Login button
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                ),
                 onPressed: () async {
 
                   print("BUTTON PRESSED");
@@ -134,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   final email = emailController.text;
                   final password = passwordController.text;
 
-                  final user = await loginController.login(email, password);
+                  final user = await authService.login(email, password);
 
                   if(user == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -143,12 +163,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     return;
                   }
 
+                  print("${user.label}");
+
                   Session.userId = user.id;
                   Session.userName = user.userName;
                   Session.displayName = user.displayName;
                   Session.email = user.email;
                   Session.prepicksAllowed = user.prepicksAllowed;
                   Session.weeksAllowed = user.weeksAllowed;
+                  Session.siteName = user.label;
+
+                  print("LOGIN SET SESSION LABEL = ${Session.siteName}");
 
                   if(user.getDocRole() == Role.admin) {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AdminScreen()));

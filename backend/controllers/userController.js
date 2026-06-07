@@ -10,15 +10,15 @@ const {
 
 //Method for adding new users
 async function register(req, res) {
-  const { email, password, userName, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName } = req.body;
+  const { email, password, userName, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber } = req.body;
 
-  if (!email || !password || !userName || !docRole || weeksAllowed == null || prepicksAllowed == null || !displayName) {
+  if (!email || !password || !userName || !docRole || weeksAllowed == null || prepicksAllowed == null || !displayName || !phoneNumber) {
     return res.status(400).json({ success: false, message: "Missing fields" });
   }
 
   try {
 
-    await createUser(userName, email, password, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName);
+    await createUser(userName, email, password, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber);
 
     res.json({ success: true });
 
@@ -45,10 +45,10 @@ console.log("loadUsers import:", loadUsers);
 
 //Method for updating users
 async function update(req, res) {
-  const { id, email, userName, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName} = req.body;
+  const { id, email, userName, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber } = req.body;
 
   try {
-    await updateUser(id, userName, email, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName);
+    await updateUser(id, userName, email, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber);
 
     res.json({ success: true });
   } catch (error) {

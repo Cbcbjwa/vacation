@@ -191,6 +191,8 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
             //Confirm button
             ElevatedButton(
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
                 disabledBackgroundColor: Colors.grey.shade800,
                 disabledForegroundColor: Colors.white60,
               ),
@@ -231,6 +233,8 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
             //Update button
             ElevatedButton(
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
                 disabledBackgroundColor: Colors.grey.shade800,
                 disabledForegroundColor: Colors.white60,
               ),

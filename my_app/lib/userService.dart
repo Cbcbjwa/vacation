@@ -41,7 +41,8 @@ class UserService {
     int? priorityNumber,
     int? prepicksPriorityNumber,
     String? label,
-    required String displayName
+    required String displayName,
+    required String phoneNumber
   }) async {
 
     print("SENDING CREATE USER REQUEST...");
@@ -64,6 +65,7 @@ class UserService {
         "prepicksPriorityNumber": prepicksPriorityNumber,
         "label": label,
         "displayName": displayName,
+        "phoneNumber": phoneNumber,
       }),
     );
 
@@ -85,6 +87,7 @@ class UserService {
     int? prepicksPriorityNumber,
     String? label,
     required String displayName,
+    required String phoneNumber
   }) async {
     print ("UPDATING USER...");
 
@@ -106,6 +109,7 @@ class UserService {
         "prepicksPriorityNumber": prepicksPriorityNumber,
         "label": label,
         "displayName": displayName,
+        "phoneNumber": phoneNumber,
       }),
     );
   print("STATUS: ${res.statusCode}");

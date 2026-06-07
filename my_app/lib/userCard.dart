@@ -46,6 +46,7 @@ class _UserCardState extends State<UserCard> {
   late TextEditingController prepicksController;
   late TextEditingController priorityNumberController;
   late TextEditingController prepicksPriorityController;
+  late TextEditingController phoneNumberController;
 
   //Role enum
   late Role selectedRole;
@@ -85,6 +86,9 @@ class _UserCardState extends State<UserCard> {
         TextEditingController(
             text: widget.user.prepicksPriorityNumber?.toString() ?? "");
 
+    phoneNumberController = 
+      TextEditingController(text: widget.user.phoneNumber);
+
     selectedRole = widget.user.docRole;
 
     selectedSiteName = widget.user.label;
@@ -104,6 +108,7 @@ class _UserCardState extends State<UserCard> {
     widget.user.userName = nameController.text;
     widget.user.displayName = displayNameController.text;
     widget.user.email = emailController.text;
+    widget.user.phoneNumber = phoneNumberController.text;
     widget.user.label = selectedSiteName;
     widget.user.docRole = selectedRole;
 
@@ -119,7 +124,7 @@ class _UserCardState extends State<UserCard> {
     widget.user.prepicksPriorityNumber =
         int.tryParse(prepicksPriorityController.text);
 
-    final success = await userService.updateUser(id: widget.user.id, userName: widget.user.userName, email: widget.user.email, docRole: widget.user.docRole, weeksAllowed: widget.user.weeksAllowed, prepicksAllowed: widget.user.prepicksAllowed, priorityNumber: widget.user.priorityNumber, prepicksPriorityNumber: widget.user.prepicksPriorityNumber, label: widget.user.label ?? "", displayName: widget.user.displayName);
+    final success = await userService.updateUser(id: widget.user.id, userName: widget.user.userName, email: widget.user.email, docRole: widget.user.docRole, weeksAllowed: widget.user.weeksAllowed, prepicksAllowed: widget.user.prepicksAllowed, priorityNumber: widget.user.priorityNumber, prepicksPriorityNumber: widget.user.prepicksPriorityNumber, label: widget.user.label ?? "", displayName: widget.user.displayName, phoneNumber: widget.user.phoneNumber);
 
     print("UPDATE USER RESULT: $success");
 
@@ -144,6 +149,7 @@ class _UserCardState extends State<UserCard> {
     nameController.text = widget.user.userName;
     displayNameController.text = widget.user.displayName;
     emailController.text = widget.user.email;
+    phoneNumberController.text = widget.user.phoneNumber;
 
     weeksController.text =
         widget.user.weeksAllowed.toString();
@@ -179,6 +185,10 @@ class _UserCardState extends State<UserCard> {
 
             //Cancel deletion button
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -187,6 +197,10 @@ class _UserCardState extends State<UserCard> {
 
             //Confirm deletion button
             TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
@@ -252,6 +266,8 @@ class _UserCardState extends State<UserCard> {
 
               //Name
               TextField(
+                enableInteractiveSelection: false,
+                cursorColor: Colors.blueGrey,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 17,
@@ -279,6 +295,8 @@ class _UserCardState extends State<UserCard> {
 
               //Display name
               TextField(
+                enableInteractiveSelection: false,
+                cursorColor: Colors.blueGrey,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 17,
@@ -306,6 +324,8 @@ class _UserCardState extends State<UserCard> {
 
             //Email
             TextField(
+              enableInteractiveSelection: false,
+              cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -333,6 +353,39 @@ class _UserCardState extends State<UserCard> {
 
             //Spacing
             SizedBox(height: 10),
+
+            //Phone number
+            TextField(
+              enableInteractiveSelection: false,
+              cursorColor: Colors.blueGrey,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+              ),
+              controller: phoneNumberController,
+
+              decoration: InputDecoration(
+                labelText: "Phone Number",
+
+                labelStyle: TextStyle(
+                  fontSize: 20,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+
+                border: InputBorder.none,
+
+                hintStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              readOnly: !isEditing,
+            ),
+
+            //Spacing
+            SizedBox(height: 10),
+
 
             //Role Dropdown
             DropdownMenu<Role>(
@@ -420,6 +473,8 @@ class _UserCardState extends State<UserCard> {
 
             //Weeks Allowed
             TextField(
+              enableInteractiveSelection: false,
+              cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -447,6 +502,8 @@ class _UserCardState extends State<UserCard> {
 
             //Prepicks Allowed
             TextField(
+              enableInteractiveSelection: false,
+              cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -474,6 +531,8 @@ class _UserCardState extends State<UserCard> {
 
             //Priority Number
             TextField(
+              enableInteractiveSelection: false,
+              cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -502,6 +561,8 @@ class _UserCardState extends State<UserCard> {
 
             //Prepicks Priority Number
             TextField(
+              enableInteractiveSelection: false,
+              cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -541,11 +602,19 @@ class _UserCardState extends State<UserCard> {
                     children: [
 
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        ),
                         onPressed: saveChanges,
                         child: Text("Save"),
                       ),
 
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        ),
                         onPressed: cancelChanges,
                         child: Text("Cancel"),
                       ),
@@ -561,11 +630,19 @@ class _UserCardState extends State<UserCard> {
                     children: [
 
                       ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        ),
                         onPressed: enableEditing,
                         label: Icon(Icons.edit),
                       ),
 
                       ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        ),
                         onPressed: deleteRecord,
                         label: Icon(Icons.delete),
                       ),

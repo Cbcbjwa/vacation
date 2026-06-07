@@ -28,6 +28,7 @@ class AddUsersScreen extends StatefulWidget {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController displayNameController = TextEditingController();
     final TextEditingController emailController = TextEditingController();
+    final TextEditingController phoneNumberController = TextEditingController();
     final TextEditingController roleController = TextEditingController();
     final TextEditingController siteController = TextEditingController();
     final TextEditingController weeksController = TextEditingController();
@@ -96,251 +97,332 @@ class AddUsersScreen extends StatefulWidget {
           )
         ),
 
-        body: Container(
-          color: Colors.black,
-          
-          child: Padding (
-            padding: const EdgeInsets.only(
-              top: 30,
-              left: 20,
-              right: 20,
-            ),
+        body: SingleChildScrollView(
+          child: Container(
+            color: Colors.black,
             
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Padding (
+              padding: const EdgeInsets.only(
+                top: 30,
+                left: 20,
+                right: 20,
+              ),
               
-              children: [
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                
+                children: [
 
-                //Name text field
-                TextField(
-                  controller: nameController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Name",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
+                  //Name text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: nameController,
+                    style: TextStyle(
+                      color: Colors.grey,
                     ),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-
-
-                //Spacing the text fields
-                SizedBox(height: 20),
-
-                //Display name text field
-                TextField(
-                  controller: displayNameController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Display Name",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
+                    decoration: InputDecoration(
+                      labelText: "Name",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
                     ),
-                    border: OutlineInputBorder(),
                   ),
-                ),
 
 
-                //Spacing the text fields
-                SizedBox(height: 20),
+                  //Spacing the text fields
+                  SizedBox(height: 20),
 
-                //Email text field
-                TextField(
-                  controller: emailController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Email",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
+                  //Display name text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: displayNameController,
+                    style: TextStyle(
+                      color: Colors.grey,
                     ),
-                    border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: "Display Name",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
 
-                //Spacing the text fields
-                SizedBox(height: 20),
 
-                //Role dropdown
-                DropdownMenu<Role> (
-                  initialSelection: selectedRole,
+                  //Spacing the text fields
+                  SizedBox(height: 20),
 
-                  label: Text("Role",
-                  style: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),),
-                  textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold),
+                  //Email text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: emailController,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Email",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
 
-                  dropdownMenuEntries: Role.values.map((role) {
-                    return DropdownMenuEntry<Role>(
-                      value: role,
-                      label: role.label,
-                    );
-                  }).toList(),
+                  //Spacing the text fields
+                  SizedBox(height: 20),
 
-                  onSelected: (Role? value) {
-                    if(value == null) return;
-                    setState(() {
-                      selectedRole = value;
-                    });
-                  }
-                ),
+                  //Phone number text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: phoneNumberController,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Phone Number",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
 
-                //Spacing the text fields
-                SizedBox(height: 20),
+                  //Spacing the text fields
+                  SizedBox(height: 20),
 
-                //Site dropdown
-                DropdownMenu<String> (
-                  controller: siteController,
+                  //Role dropdown
+                  DropdownMenu<Role> (
+                    initialSelection: selectedRole,
 
-                  label: Text("Site",
-                  style: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),),
-                  textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold),
+                    label: Text("Role",
+                    style: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),),
+                    textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold),
 
-                  dropdownMenuEntries: sites.map((site) {
-                    return DropdownMenuEntry<String>(
-                      value: site.siteName,
-                      label: site.siteName,
-                    );
-                  }).toList(),
+                    dropdownMenuEntries: Role.values.map((role) {
+                      return DropdownMenuEntry<Role>(
+                        value: role,
+                        label: role.label,
+                      );
+                    }).toList(),
 
-                  onSelected: (value) {
-                    if(value != null){
+                    onSelected: (Role? value) {
+                      if(value == null) return;
                       setState(() {
-                        selectedSiteName = value;
+                        selectedRole = value;
                       });
                     }
-                  }
-                ),
-
-                //Spacing the text fields
-                SizedBox(height: 20),
-
-                //Weeks allowed text field
-                TextField(
-                  controller: weeksController,
-                  style: TextStyle(
-                    color: Colors.grey,
                   ),
-                  decoration: InputDecoration(
-                    labelText: "Weeks Allowed",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
 
-                //Spacing the text fields
-                SizedBox(height: 20),
+                  //Spacing the text fields
+                  SizedBox(height: 20),
 
-                //Prepicks allowed text field
-                TextField(
-                  controller: prepicksController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Prepicks Allowed",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                  //Site dropdown
+                  DropdownMenu<String> (
+                    controller: siteController,
 
-                //Spacing the text fields
-                SizedBox(height: 20),
+                    label: Text("Site",
+                    style: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),),
+                    textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold),
 
-                //Priority number text field
-                TextField(
-                  controller: numberController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Priority Number",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-
-                //Spacing the text fields
-                SizedBox(height: 20),
-
-                //Prepicks priority number text field
-                TextField(
-                  controller: prepicksNumberController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Prepicks Priority Number",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-
-                //Spacing
-                SizedBox(height: 15),
-
-                //Add Button
-                ElevatedButton(
-                  onPressed: isAdding
-                  ? null
-                  : () async {
-
-                    setState(() {
-                      isAdding = true;
-                    });
-
-                    try {
-                      
-                      final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: siteController.text, displayName: displayNameController.text);
-                      
-                      print("CREATE USER RESULT: $success");
-
-                     
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("User Added")),
+                    dropdownMenuEntries: sites.map((site) {
+                      return DropdownMenuEntry<String>(
+                        value: site.siteName,
+                        label: site.siteName,
                       );
+                    }).toList(),
 
-                      await widget.onAdd();
-
-                      } catch (error) {
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Add Failed")),
-                      );
-                      
-                    } finally {
-                      setState(() {
-                        isAdding = false;
-                      });
+                    onSelected: (value) {
+                      if(value != null){
+                        setState(() {
+                          selectedSiteName = value;
+                        });
+                      }
                     }
-                  },
-                  child: isAdding
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text("Add"),
-                )
-              ]
-            )
-          ),
+                  ),
+
+                  //Spacing the text fields
+                  SizedBox(height: 20),
+
+                  //Weeks allowed text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: weeksController,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Weeks Allowed",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  //Spacing the text fields
+                  SizedBox(height: 20),
+
+                  //Prepicks allowed text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: prepicksController,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Prepicks Allowed",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  //Spacing the text fields
+                  SizedBox(height: 20),
+
+                  //Priority number text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: numberController,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Priority Number",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  //Spacing the text fields
+                  SizedBox(height: 20),
+
+                  //Prepicks priority number text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: prepicksNumberController,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Prepicks Priority Number",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  //Spacing
+                  SizedBox(height: 15),
+
+                  //Add Button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                    ),
+                    onPressed: isAdding
+                    ? null
+                    : () async {
+
+                      setState(() {
+                        isAdding = true;
+                      });
+
+                      try {
+                        
+                        final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: siteController.text, displayName: displayNameController.text, phoneNumber: phoneNumberController.text);
+                        
+                        print("CREATE USER RESULT: $success");
+
+                      
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("User Added")),
+                        );
+
+                        await widget.onAdd();
+
+                        } catch (error) {
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Add Failed")),
+                        );
+                        
+                      } finally {
+                        setState(() {
+                          isAdding = false;
+                        });
+                      }
+                    },
+                    child: isAdding
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text("Add"),
+                  )
+                ]
+              )
+            ),
+          )
         )
       );
     }

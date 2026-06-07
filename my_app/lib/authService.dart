@@ -39,6 +39,7 @@ class AuthService {
       print("prepicksAllowed: ${data["user"]["prepicksAllowed"]}");
       print("priorityNumber: ${data["user"]["priorityNumber"]}");
       print("prepicksPriorityNumber: ${data["user"]["prepicksPriorityNumber"]}");
+      print("label: ${data["user"]["label"]}");
 
     if(data["success"]) {
       return User.fromJson(data["user"]);

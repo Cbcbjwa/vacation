@@ -48,137 +48,171 @@ class _AddWeeksScreenState extends State<AddWeeksScreen> {
           )
         ),
 
-        body: Container(
-          color: Colors.black,
+        body: SingleChildScrollView(
+          child: Container(
+            color: Colors.black,
 
-          child: Padding(
-            padding: const EdgeInsets.only(
-              top: 30,
-              left: 20,
-              right: 20
-            ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 30,
+                left: 20,
+                right: 20
+              ),
 
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
 
-              children: [
+                children: [
 
-                //Week number text field
-                TextField(
-                  controller: weekNumberController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Week Number",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
+                  //Week number text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: weekNumberController,
+                    style: TextStyle(
+                      color: Colors.grey,
                     ),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-
-
-                //Spacing the text fields
-                SizedBox(height: 20),
-
-                //Week date text field
-                TextField(
-                  controller: weekDateController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Week Date",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
+                    decoration: InputDecoration(
+                      labelText: "Week Number",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
                     ),
-                    border: OutlineInputBorder(),
                   ),
-                ),
 
 
-                //Spacing the text fields
-                SizedBox(height: 20),
+                  //Spacing the text fields
+                  SizedBox(height: 20),
 
-                //Special specification text field
-                TextField(
-                  controller: specialSpecController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Special spec.",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
+                  //Week date text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: weekDateController,
+                    style: TextStyle(
+                      color: Colors.grey,
                     ),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-
-
-                //Spacing the text fields
-                SizedBox(height: 20),
-
-                //Total slots text field
-                TextField(
-                  controller: totalSlotsController,
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: "Total Slots",
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
-                    hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 75, 75, 75),
+                    decoration: InputDecoration(
+                      labelText: "Week Date",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
                     ),
-                    border: OutlineInputBorder(),
                   ),
-                ),
-
-                //Spacing
-                SizedBox(height: 15),
-
-                //Add button
-                 ElevatedButton(
-                  onPressed: isAdding
-                  ? null
-                  : () async {
-
-                    setState(() {
-                      isAdding = true;
-                    });
-
-                    try {
-                      final success = await weekService.createWeek(weekNumber: int.tryParse(weekNumberController.text) ?? 0, weekDate: weekDateController.text, specialSpecification: specialSpecController.text, totalSlots: int.tryParse(totalSlotsController.text) ?? 0);
-                      print("CREATE WEEK RESULT: $success");
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Week Added")),
-                      );
-
-                      await widget.onAdd();
 
 
-                    } catch (error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Add Failed")),
-                      );
-                    } finally {
+                  //Spacing the text fields
+                  SizedBox(height: 20),
+
+                  //Special specification text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: specialSpecController,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Special spec.",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+
+
+                  //Spacing the text fields
+                  SizedBox(height: 20),
+
+                  //Total slots text field
+                  TextField(
+                    cursorColor: Colors.blueGrey,
+                    controller: totalSlotsController,
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "Total Slots",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
+                      hintStyle: TextStyle(
+                        color: Color.fromARGB(255, 75, 75, 75),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueGrey,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  //Spacing
+                  SizedBox(height: 15),
+
+                  //Add button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                    ),
+                    onPressed: isAdding
+                    ? null
+                    : () async {
+
                       setState(() {
-                        isAdding = false;
+                        isAdding = true;
                       });
-                    }
-                  },
-                  child: isAdding
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text("Add"),
-                )
-              ],
-            ),
+
+                      try {
+                        final success = await weekService.createWeek(weekNumber: int.tryParse(weekNumberController.text) ?? 0, weekDate: weekDateController.text, specialSpecification: specialSpecController.text, totalSlots: int.tryParse(totalSlotsController.text) ?? 0);
+                        print("CREATE WEEK RESULT: $success");
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Week Added")),
+                        );
+
+                        await widget.onAdd();
+
+
+                      } catch (error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Add Failed")),
+                        );
+                      } finally {
+                        setState(() {
+                          isAdding = false;
+                        });
+                      }
+                    },
+                    child: isAdding
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text("Add"),
+                  )
+                ],
+              ),
+            )
           )
         )
       );  

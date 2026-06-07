@@ -8,18 +8,15 @@ CREATE TABLE users (
     
     SELECT * FROM users;
     
-    INSERT INTO users (id, userName, email, docRole, passwordHash)
-    VALUES (1, "Freddy Krueg", "freddykrueger@gmail.com", "physician", "#$%^&*(");
-    
     ALTER TABLE users
-    ADD prepicksPriorityNumber int;
+    ADD phoneNumber varchar(255);
     
     ALTER TABLE users
     ADD priorityNumber int;
     
     UPDATE users
-    SET displayName = "d"
-    WHERE id = 16;
+    SET phoneNumber = "d"
+    WHERE id = 21;
 
 	DELETE FROM users WHERE userName = "Freddy Krueger";
     
