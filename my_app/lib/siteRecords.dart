@@ -39,6 +39,8 @@ class _SitesRecordsState extends State<SitesRecords> {
   //Variable to hold the search query
   String searchQuery = "";
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +50,9 @@ class _SitesRecordsState extends State<SitesRecords> {
   //Method to load sites
   Future<void> load() async {
     await siteRepository.loadSiteRecords();
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
   //Method to search for sites
@@ -181,6 +185,19 @@ class _SitesRecordsState extends State<SitesRecords> {
 
   @override
   Widget build(BuildContext context) {
+
+    if(isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+  
+        body: Center(
+        child: CircularProgressIndicator(
+          color: const Color.fromARGB(255, 40, 89, 113),
+        ),
+        )
+      );
+    }
+    
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(

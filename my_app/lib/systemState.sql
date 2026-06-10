@@ -1,12 +1,12 @@
 CREATE TABLE systemState (
+	sysStateId int PRIMARY KEY auto_increment,
 	currentRoundNumber int,
     currentTurnPriority int
     );
     
     SELECT * FROM systemState;
     
-    ALTER TABLE systemState
-    ADD sysStateId int;
-    
     INSERT INTO systemState (currentRoundNumber, currentTurnPriority, sysStateId)
-    VALUES (null, 1, 1);
+    VALUES (100, 1, 1);
+    
+    

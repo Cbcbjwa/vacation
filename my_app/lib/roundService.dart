@@ -28,4 +28,54 @@ class RoundService {
     }
     return [];
   }
+
+  //Method for updating a round
+  Future<bool> updateRound({
+    required int roundNumber,
+    required bool isActive,
+  }) async {
+    print ("UPDATING ROUND");
+
+    final res = await http.put(
+      Uri.parse("$baseUrl/rounds/update"),
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: jsonEncode({
+        "roundNumber": roundNumber,
+        "isActive": isActive
+      }),
+    );
+  print("STATUS: ${res.statusCode}");
+  print("BODY: ${res.body}");
+
+  return res.statusCode == 200;
+  }
+
+  //Method for updating a round's activity state
+  Future<bool> updateRoundActivity({
+    required int roundNumber,
+    required bool isComplete,
+  }) async {
+    print ("UPDATING ROUND");
+
+    final res = await http.put(
+      Uri.parse("$baseUrl/rounds/updateActivity"),
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: jsonEncode({
+        "roundNumber": roundNumber,
+        "isComplete": isComplete
+      }),
+    );
+  print("STATUS: ${res.statusCode}");
+  print("BODY: ${res.body}");
+
+  return res.statusCode == 200;
+  }
 }

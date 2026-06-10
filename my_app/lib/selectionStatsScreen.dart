@@ -34,6 +34,8 @@ class _SelectionStatsScreenState extends State<SelectionStatsScreen> {
   //Number of selected slots
   int selectedSlots = 0;
 
+  bool isLoading = true;
+
   //Load method
   Future<void> load() async {
 
@@ -49,7 +51,9 @@ class _SelectionStatsScreenState extends State<SelectionStatsScreen> {
     availableSlots = calculateAvailableSlots();
     print("Available slots: $availableSlots");
 
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -94,6 +98,18 @@ class _SelectionStatsScreenState extends State<SelectionStatsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    if(isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+  
+        body: Center(
+        child: CircularProgressIndicator(
+          color: const Color.fromARGB(255, 40, 89, 113),
+        ),
+        )
+      );
+    }
 
     //Number of selected slots
     selectedSlots = totalSlots - availableSlots;

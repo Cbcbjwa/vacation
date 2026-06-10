@@ -66,6 +66,8 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
   //Round object
   Round? selectedRound;
 
+  bool isLoading = true;
+
   //Method to load weeks/users
   Future<void> load() async {
 
@@ -77,6 +79,30 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
 
     //Loading rounds
     final loadedRounds = await roundService.getRounds();
+    
+
+    setState(() {
+      weeks = loadedWeeks;
+      users = loadedUsers;
+      rounds = loadedRounds;
+
+      isLoading = false;
+
+      //Flag to represent whether a user has made a selection for a round
+      //bool hasMadeSelection = currentWeekSelection != null;
+
+      //lockedWeekIds = loadedSelections.map((s) => s.weekId).toList();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    load();
+  }
+
+  //Method for loading a user's week selections
+  Future<void> loadAllUserSelections() async {
 
     List<Selection> loadedSelections = [];
 
@@ -85,39 +111,33 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
       loadedSelections = await selectionService.getSelectionsByUser(selectedUser!.id);
     }
 
+    setState(() {
+      //Disabling weeks already selected by the user in the dropdown
+      lockedWeekIds = loadedSelections.map((selection) => selection.weekId).toList();
+    });
+  }
+
+  //Method for loading the user's selection for a specific round
+  Future<void> loadRoundSelection() async {
+
     Selection? selection;
 
     //Loading week selection
     if(selectedUser != null && selectedRound != null) {
       selection = await selectionService.getSelection(userId: selectedUser!.id, roundNumber: selectedRound!.roundNumber);
     }
-    
 
     setState(() {
-      weeks = loadedWeeks;
-      users = loadedUsers;
-      rounds = loadedRounds;
 
       currentWeekSelection = selection;
-
-      //Flag to represent whether a user has made a selection for a round
-      bool hasMadeSelection = currentWeekSelection != null;
-
-      lockedWeekIds = loadedSelections.map((s) => s.weekId).toList();
 
       if(selection != null) {
         selectedWeekId = selection.weekId;
       } else {
         selectedWeekId = null;
       }
-
     });
-  }
 
-  @override
-  void initState() {
-    super.initState();
-    load();
   }
 
   //Method for getting the intial week
@@ -138,9 +158,23 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
   @override
   Widget build(BuildContext context) {
 
+    if(isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+  
+        body: Center(
+        child: CircularProgressIndicator(
+          color: const Color.fromARGB(255, 40, 89, 113),
+        ),
+        )
+      );
+    }
+
     final filteredWeeks = weeks.where((week) {
             return week.availableSlots! > 0 || lockedWeekIds.contains(week.weekId);
           }).toList();
+
+    final bool canSelectWeekDropdown = selectedUser != null && selectedRound != null;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -208,10 +242,17 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                     onSelected: (User? user) async {
                       setState(() {
                         selectedUser = user;
+
+                        //Clearing week selection
+                        selectedWeekId = null;
+                        currentWeekSelection = null;
+
+                        //Clearing round selection
+                        selectedRound = null;
                       });
                       
                       //Refreshing
-                      await load();
+                      await loadAllUserSelections();
                     },
                   ),
                 )
@@ -228,6 +269,7 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
 
                   //Dropdown menu for selecting a round
                   child: DropdownMenu<Round>(
+                    key: ValueKey(selectedUser?.id),
                     width: 230,
                     initialSelection: null,
                     hintText: "Select a round...",
@@ -261,10 +303,14 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                     onSelected: (Round? round) async {
                       setState(() {
                         selectedRound = round;
+
+                        //Clearing week selection
+                        selectedWeekId = null;
+                        currentWeekSelection = null;
                       });
 
                       //Refreshing
-                      await load();
+                      await loadRoundSelection();
                     },
                   ),
                 )
@@ -281,6 +327,8 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
 
                   //Dropdown menu for selecting a week
                   child: DropdownMenu<Week>(
+                    key: ValueKey("${selectedUser?.id}-${selectedRound?.roundNumber}"),
+                    enabled: canSelectWeekDropdown,
                     width: 230,
                     initialSelection: getInitialWeek(),
                     hintText: "Select a week...",
@@ -330,9 +378,6 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                       setState(() {
                         selectedWeekId = week?.weekId;
                       });
-
-                      //Refreshing
-                      await load();
                     },
                   ),
                 ),
@@ -357,9 +402,16 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                   ? null
                   : () async {
 
+                    print("CONFIRM BUTTON PRESSED");
+
                     if(selectedWeekId == null) {
+                      print("selectedWeekId == null");
                       return;
                     }
+
+                    print("selectedUser = $selectedUser");
+                    print("selectedRound = $selectedRound");
+                    print("selectedWeekId = $selectedWeekId");
 
                     final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, selectedUser!.label!);
 
@@ -377,8 +429,6 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                       setState(() {
                         currentWeekSelection = created; 
                       });
-
-                      await load();
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Selection Confirmed")),
@@ -432,7 +482,7 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                         currentWeekSelection!.weekId = selectedWeekId!;
                       });
 
-                      await load();
+                      //await loadRoundSelection();
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Selection Updated")),

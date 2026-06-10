@@ -57,6 +57,8 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
   //List of sites
   List<Site> sites = [];
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -67,7 +69,9 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
   Future<void> load() async {
     await userRepository.loadRecords();
     sites = await siteService.getSites();
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
   //Method to search for users
@@ -195,6 +199,19 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
 
   @override
   Widget build(BuildContext context) {
+
+    if(isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+  
+        body: Center(
+        child: CircularProgressIndicator(
+          color: const Color.fromARGB(255, 40, 89, 113),
+        ),
+        )
+      );
+    }
+    
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(

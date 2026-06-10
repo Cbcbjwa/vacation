@@ -28,6 +28,8 @@ class _RoundEligibilityScreenState extends State<RoundEligibilityScreen> {
   //Number of rounds
   int numberOfRounds = 9;
 
+  bool isLoading = true;
+
   //Method for building the round eligibility summary
   String buildSummary() {
     final buffer = StringBuffer();
@@ -61,6 +63,7 @@ class _RoundEligibilityScreenState extends State<RoundEligibilityScreen> {
     setState(() {
       Session.weeksAllowed = currentUser.weeksAllowed;
       Session.prepicksAllowed = currentUser.prepicksAllowed;
+      isLoading = false;
     });
   }
 
@@ -72,6 +75,18 @@ class _RoundEligibilityScreenState extends State<RoundEligibilityScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    if(isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+  
+        body: Center(
+        child: CircularProgressIndicator(
+          color: const Color.fromARGB(255, 40, 89, 113),
+        ),
+        )
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,

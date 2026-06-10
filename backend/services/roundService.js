@@ -15,4 +15,21 @@ async function loadRounds() {
     return rows;
 }
 
-module.exports = { loadRounds };
+//Method for updating the round
+async function updateRound(roundNumber, isActive) {
+    await pool.query(
+        "UPDATE round SET isActive=? WHERE roundNumber=?;",
+        [isActive, roundNumber]
+    )
+}
+
+//Method for updating the round completion 
+async function updateRoundActivity(roundNumber, isComplete) {
+    await pool.query(
+        "UPDATE round SET isComplete=? WHERE roundNumber=?;",
+        [isComplete, roundNumber]
+    )
+
+}
+
+module.exports = { loadRounds, updateRound, updateRoundActivity };

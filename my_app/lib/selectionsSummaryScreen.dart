@@ -34,6 +34,8 @@ class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
   //List of weeks
   List<Week> weeks = [];
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +46,9 @@ class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
   Future<void> load() async {
     weekSelections = await selectionService.getSelectionsByUser(Session.userId!);
     weeks = await weekRepository.loadWeekRecords();
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
   //Method for building the selections summary
@@ -78,6 +82,19 @@ class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    if(isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+  
+        body: Center(
+        child: CircularProgressIndicator(
+          color: const Color.fromARGB(255, 40, 89, 113),
+        ),
+        )
+      );
+    }
+    
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(

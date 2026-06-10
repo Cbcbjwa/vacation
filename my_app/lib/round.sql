@@ -9,8 +9,8 @@ CREATE TABLE round (
     VALUES (0, 0);
     
     ALTER TABLE round
-    ADD COLUMN roundName varchar(255);
+    ADD COLUMN isComplete boolean;
     
     UPDATE round
-    SET roundName = "Round 9"
-    WHERE roundNumber = 9;
+    SET isComplete = false
+    WHERE roundNumber = -1;

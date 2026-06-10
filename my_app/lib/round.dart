@@ -10,17 +10,21 @@ class Round {
   int roundId;
   int roundNumber;
   String roundName;
+  bool isActive;
+  bool isComplete;
 
   //**Constructor Section**\\
 
   //Full constructor
-  Round.full({required this.roundId, required this.roundNumber, required this.roundName});
+  Round.full({required this.roundId, required this.roundNumber, required this.roundName, required this.isActive, required this.isComplete});
 
   factory Round.fromJson(Map<String, dynamic> json) {
     return Round.full(
       roundId: json["roundId"],
       roundNumber: json["roundNumber"],
-      roundName: json["roundName"]
+      roundName: json["roundName"],
+      isActive: json["isActive"] == 1,
+      isComplete: json["isComplete"] == 1
     );
   }
 

@@ -41,6 +41,8 @@ class _AllSelectionsScreenState extends State<AllSelectionsScreen> {
   //List of physicians
   List<User> physicians = [];
 
+  bool isLoading = true;
+
   //Method to load physicians, weeks, and selections
   Future<void> load() async {
 
@@ -57,6 +59,7 @@ class _AllSelectionsScreenState extends State<AllSelectionsScreen> {
       weeks = loadedWeeks;
       physicians = loadedPhysicians;
       selections = loadedSelections;
+      isLoading = false;
     });
   }
 
@@ -71,6 +74,18 @@ class _AllSelectionsScreenState extends State<AllSelectionsScreen> {
 
     //Sorting physicians by priority number
     physicians.sort((a, b) => a.priorityNumber!.compareTo(b.priorityNumber!));
+
+    if(isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+  
+        body: Center(
+        child: CircularProgressIndicator(
+          color: const Color.fromARGB(255, 40, 89, 113),
+        ),
+        )
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,

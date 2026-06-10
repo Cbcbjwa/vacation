@@ -7,9 +7,18 @@
 class SystemState {
 
   //Fields of the class
+  int sysStateId;
   int currentRoundNumber;
   int currentTurnPriority;
 
   //Constructor
-  SystemState({required this.currentRoundNumber, required this.currentTurnPriority});
+  SystemState.full({required this.sysStateId, required this.currentRoundNumber, required this.currentTurnPriority});
+
+  factory SystemState.fromJson(Map<String, dynamic> json) {
+    return SystemState.full(
+      sysStateId: json["sysStateId"],
+      currentRoundNumber: json["currentRoundNumber"],
+      currentTurnPriority: json["currentTurnPriority"]
+    );
+  }
 }

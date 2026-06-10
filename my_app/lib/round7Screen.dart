@@ -46,6 +46,8 @@ class _Round7ScreenState extends State<Round7Screen> {
   //List of filtered weeks
   List<Week> filteredWeeks = [];
 
+  bool isLoading = true;
+
   //Method to load weeks
   Future<void> load() async {
 
@@ -66,6 +68,8 @@ class _Round7ScreenState extends State<Round7Screen> {
       } else {
         selectedWeekId = null;
       }
+
+      isLoading = false;
     });
 
     print("STATE UPDATED: ${weeks.length}");
@@ -95,6 +99,18 @@ class _Round7ScreenState extends State<Round7Screen> {
 
   @override
   Widget build(BuildContext context) {
+
+    if(isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+  
+        body: Center(
+        child: CircularProgressIndicator(
+          color: const Color.fromARGB(255, 40, 89, 113),
+        ),
+        )
+      );
+    }
 
     final filteredWeeks = weeks.where((week) {
             return week.availableSlots! > 0 || lockedWeekIds.contains(week.weekId);

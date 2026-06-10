@@ -35,6 +35,8 @@ import 'round7Screen.dart';
 import 'round8Screen.dart';
 import 'prepicks2Screen.dart';
 import 'package:data_table_2/data_table_2.dart';
+import 'roundEligibilityService.dart';
+import 'session.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -55,6 +57,9 @@ class _AdminScreenState extends State<AdminScreen> {
   //Instantiating SelectionService class into an object
   SelectionService selectionService = SelectionService();
 
+  //Instantiating RoundEligibilityService into an object
+  RoundEligibilityService roundEligibilityService = RoundEligibilityService();
+
   //List to hold the weeks
   List<Week> listOfWeeks = [];
 
@@ -72,42 +77,57 @@ class _AdminScreenState extends State<AdminScreen> {
   //Flag to represent whether the list of weeks is in list view or grid view
   bool isInGridView = false;
 
-  @override
-  void initState() {
-    super.initState();
-    print("INITSTATE RAN");
-    load();
-  }
+  List<bool> roundEligibility = List.filled(9, false);
+  List<bool> prepickEligibility = List.filled(2, false);
+
+  //Flag to represent screen loading state
+  bool isLoading = true;
 
   //Method to load weeks/users/selections
   Future<void> load() async {
+
     print("LOAD START");
 
     //Loading weeks
     final data = await weekRepository.loadWeekRecords();
+    print("Weeks loaded");
 
     //Loading users
     final users = await userRepository.loadRecords();
+    print("Users loaded");
 
     //Loading selections
     final selections = await selectionService.getSelections();
+    print("Selections loaded");
 
-
-    print("DATA RECEIVED: ${data.length}");
-    print("DATA: $data");
-
-    print("HASH: ${weekRepository.hashCode}");
-    print("AFTER LOAD: ${weekRepository.weeks.length}");
+    final currentUser = users.firstWhere((u) => u.id == Session.userId, orElse: () => users.first);
 
     setState(() {
       listOfWeeks = data;
+      allSelections = selections;
 
       for (final user in users) {
         userNamesById[user.id] = user.displayName;
       }
 
-      allSelections = selections;
+      roundEligibility = roundEligibilityService.computeRoundEligibility(currentUser.weeksAllowed);
+
+      prepickEligibility = roundEligibilityService.computePrepickEligibility(currentUser.prepicksAllowed);
     });
+
+    print("weeksAllowed: ${currentUser.weeksAllowed}");
+    print("prepicksAllowed: ${currentUser.prepicksAllowed}");
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print("INITSTATE RAN");
+    load();
   }
 
   //Method for building the list view version of the weeks display
@@ -501,6 +521,18 @@ class _AdminScreenState extends State<AdminScreen> {
   @override
   Widget build(BuildContext context) {
 
+    if(isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+  
+        body: Center(
+        child: CircularProgressIndicator(
+          color: const Color.fromARGB(255, 40, 89, 113),
+        ),
+        )
+      );
+    }
+
     print("Weeks: ${weekRepository.weeks.length}");
     print("BUILD HASH: ${weekRepository.hashCode}");
     print("BUILD WEEKS: ${weekRepository.weeks.length}");
@@ -684,167 +716,177 @@ class _AdminScreenState extends State<AdminScreen> {
             SizedBox(height: 2),
 
             //Prepicks Round 1 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.looks_one, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Prepicks 1",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => Prepicks1Screen()));
-                load();
-              }
-            ),
-
+            if(prepickEligibility[0]) 
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.looks_one, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Prepicks 1",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Prepicks1Screen()));
+                  load();
+                }
+              ),
+            
             //Spacing the menu items
             SizedBox(height: 2),
 
             //Prepicks Round 2 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.looks_two, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Prepicks 2",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                 await Navigator.push(context, MaterialPageRoute(builder: (context) => Prepicks2Screen()));
-                load();
-              }
-            ),
+            if(prepickEligibility[1])
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.looks_two, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Prepicks 2",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Prepicks2Screen()));
+                  load();
+                }
+              ),
 
             //Spacing the menu items
             SizedBox(height: 2),
 
             //Round 1 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.beach_access, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round 1",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round1Screen()));
-                load();
-              }
-            ),
-
+            if(roundEligibility[0])
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.beach_access, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Round 1",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Round1Screen()));
+                  load();
+                }
+              ),
 
             //Spacing the menu items
             SizedBox(height: 2),
 
             //Round 2 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.sunny, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round 2",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round2Screen()));
-                load();
-              }
-            ),
+            if(roundEligibility[1])
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.sunny, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Round 2",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Round2Screen()));
+                  load();
+                }
+              ),
 
             //Spacing the menu items
             SizedBox(height: 2),
 
             //Round 3 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.card_travel, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round 3",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round3Screen()));
-                load();
-              }
-            ),
+            if(roundEligibility[2])
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.card_travel, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Round 3",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Round3Screen()));
+                  load();
+                }
+              ),
 
             //Spacing the menu items
             SizedBox(height: 2),
 
             //Round 4 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.local_airport, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round 4",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round4Screen()));
-                load();
-              }
-            ),
+            if(roundEligibility[3])
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.local_airport, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Round 4",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Round4Screen()));
+                  load();
+                }
+              ),
 
             //Spacing the menu items
             SizedBox(height: 2),
 
             //Round 5 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.icecream, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round 5",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round5Screen()));
-                load();
-              }
-            ),
+            if(roundEligibility[4])
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.icecream, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Round 5",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Round5Screen()));
+                  load();
+                }
+              ),
 
             //Spacing the menu items
             SizedBox(height: 2),
 
             //Round 6 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.downhill_skiing_outlined, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round 6",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round6Screen()));
-                load();
-              }
-            ),
+            if(roundEligibility[5])
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.downhill_skiing_outlined, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Round 6",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Round6Screen()));
+                  load();
+                }
+              ),
 
             //Spacing the menu items
             SizedBox(height: 2),
 
             //Round 7 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.airplane_ticket, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round 7",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round7Screen()));
-                load();
-              }
-            ),
+            if(roundEligibility[6])
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.airplane_ticket, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Round 7",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Round7Screen()));
+                  load();
+                }
+              ),
 
             //Spacing the menu items
             SizedBox(height: 2),
 
             //Round 8 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.surfing, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round 8",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round8Screen()));
-                load();
-              }
-            ),
+            if(roundEligibility[7])
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.surfing, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Round 8",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Round8Screen()));
+                  load();
+                }
+              ),
 
             //Spacing the menu items
             SizedBox(height: 2),
 
             //Round 9 Selection
-            ListTile(
-              tileColor: Colors.black,
-              leading: const Icon(Icons.rocket_launch, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round 9",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => Round9Screen()));
-                load();
-              }
-            ),
+            if(roundEligibility[8])
+              ListTile(
+                tileColor: Colors.black,
+                leading: const Icon(Icons.rocket_launch, fontWeight: FontWeight.bold, color: Colors.grey),
+                title: const Text("Round 9",
+                  style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+                onTap: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => Round9Screen()));
+                  load();
+                }
+              ),
 
             //Spacing the menu items
             SizedBox(height: 2),
