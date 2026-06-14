@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'roundControlService.dart';
 import 'systemState.dart';
 import 'systemStateService.dart';
+import 'roundService.dart';
+import 'round.dart';
 
 class RoundControlScreen extends StatefulWidget {
   const RoundControlScreen({super.key});
@@ -25,6 +27,12 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   //Instantiating SystemStateService into an object
   SystemStateService systemStateService = SystemStateService();
 
+  //Instantiating RoundService into an object
+  RoundService roundService = RoundService();
+
+  //List of rounds
+  List<Round> rounds = [];
+
   //System state
   SystemState? systemState;
 
@@ -34,19 +42,217 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   //Flag to represent if there is an active round
   bool isActiveRound = false;
 
+  //Current round
+  Round? currentRound;
+
+  //Current round name
+  String? roundName;
+
   Future<void> load() async {
     final loadedSystemState = await systemStateService.getSystemState();
 
+    final loadedRounds = await roundService.getRounds();
+
+    if(!mounted) {
+      return;
+    }
+
     setState(() {
-      isLoading = false;
       systemState = loadedSystemState;
+      rounds = loadedRounds;
+      isLoading = false;
     });
+
   }
 
   @override
   void initState() {
     super.initState();
     load();
+  }
+
+  //Method to show a dialog box to confirm if the user wants to continue with reseting the lottery
+  void confirmLotteryReset() async {
+    final bool? confirmation = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context){
+        return AlertDialog(
+          title: Text("End Lottery?"),
+          contentTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          content: Text("Are you sure you want to end the lottery?"),
+          actions: [
+
+            //Cancel deletion button
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text("Cancel"),
+            ),
+
+            //Confirm deletion button
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text("Confirm"),
+            ),
+          ],
+        );
+      }
+    );
+
+    //Cancelling record deletion
+    if(confirmation != true){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Lottery Termination Cancelled")),
+      );
+      return;
+    }
+
+    resetLottery();
+  }
+
+  //Method to show a dialog box to confirm whether the admin wants to reset the lottery
+  void resetLottery() async {
+    final bool? confirmation = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context){
+        return AlertDialog(
+          title: Text("END Lottery?"),
+          contentTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+          content: Text("Are you POSITIVE you want to end the lottery?"),
+          actions: [
+
+            //Cancel deletion button
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text("Cancel"),
+            ),
+
+            //Confirm deletion button
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text("Confirm"),
+            ),
+          ],
+        );
+      }
+    );
+
+    //Cancelling record deletion
+    if(confirmation != true){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Lottery Termination Cancelled")),
+      );
+      return;
+    }
+
+    //Setting round state to inactive
+    final success = await roundService.updateRound(roundNumber: systemState!.currentRoundNumber, isActive: false);
+
+    //Setting round number to something invalid
+    final success2 = await systemStateService.updateCurrentRoundNum(sysStateId: 1, currentRoundNumber: 100);
+
+    //Resetting current turn priority to 1
+    final success3 = await systemStateService.updateCurrentTurnPriorityNumber(sysStateId: 1, currentTurnPriority: 1);
+
+    //Refreshing
+    await load();
+
+    if(!mounted) {
+      return;
+    }
+
+    if(success && success2 && success3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Lottery Reset Successfully")),
+      );
+
+    } else {
+
+      if(!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Lottery Termination Failed")),
+      );
+    }
+  }
+
+  //Method to show a dialog box to confirm that the user wants to start a round
+  void startARound(int roundNumber, roundIndex) async {
+    final bool? confirmation = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context){
+        return AlertDialog(
+          title: Text("Start Round?"),
+          contentTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          content: Text("Are you sure you want to start ${rounds[roundIndex].roundName}?"),
+          actions: [
+
+            //Cancel deletion button
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text("Cancel"),
+            ),
+
+            //Confirm deletion button
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text("Confirm"),
+            ),
+          ],
+        );
+      }
+    );
+
+    //Cancelling record deletion
+    if(confirmation != true){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Round Commencement Cancelled")),
+      );
+      return;
+    }
+
+    //Starting round
+    await roundControlService.startRound(roundNumber);
+
+    //Refreshing
+    await load();
   }
 
   @override
@@ -63,6 +269,17 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
         )
       );
     }
+
+    for(Round round in rounds) {
+      if(round.roundNumber == systemState!.currentRoundNumber) {
+        currentRound = round;
+        break;
+      }
+    }
+    roundName = currentRound?.roundName ?? "";
+
+    print("isActive: ${rounds[0].isActive}");
+    print("isComplete: ${rounds[0].isComplete}");
 
     if(systemState!.currentRoundNumber < 100) {
       isActiveRound = true;
@@ -84,7 +301,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
         )
       ),
 
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsetsGeometry.only(
           top: 45,
           right: 20,
@@ -99,7 +316,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   isActiveRound
-                  ? Text("Active Round: Round ${systemState!.currentRoundNumber}",
+                  ? Text("Active Round: $roundName\n\nCurrent Turn Priority: ${systemState!.currentTurnPriority}",
                       style: TextStyle(
                         color: const Color.fromARGB(255, 40, 89, 113),
                         fontWeight: FontWeight.bold,
@@ -120,18 +337,24 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
             //Spacing
             SizedBox(height: 55),
 
+
               Row(
                 children: [
+    
                   ElevatedButton.icon(
+                    
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        disabledBackgroundColor: Colors.grey.shade800,
+                        disabledForegroundColor: Colors.white60,
                     ),
-                    onPressed: () async {
-                      await roundControlService.startRound(-1);
-                      
-                      //Refreshing
-                      await load();
+                    onPressed: rounds[0].isActive || rounds[0].isComplete
+                    ? null
+                    : () async {
+
+                      //Starting round
+                      startARound(-1, 0);
                     },
                     icon: Icon(Icons.play_arrow),
                     label: Text("Prepicks 1",
@@ -146,9 +369,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        disabledBackgroundColor: Colors.grey.shade800,
+                        disabledForegroundColor: Colors.white60,
                     ),
-                    onPressed: () {
-                      
+                    onPressed: rounds[1].isActive || rounds[1].isComplete
+                    ? null
+                    : () {
+
+                      //Starting round
+                      startARound(0, 1);
                     },
                     icon: Icon(Icons.play_arrow),
                     label: Text("Prepicks 2",
@@ -167,9 +396,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      disabledBackgroundColor: Colors.grey.shade800,
+                      disabledForegroundColor: Colors.white60,
                   ),
-                  onPressed: () {
+                  onPressed: rounds[2].isActive || rounds[2].isComplete
+                  ? null
+                  : () {
                     
+                    //Starting round
+                    startARound(1, 2);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 1",
@@ -184,9 +419,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      disabledBackgroundColor: Colors.grey.shade800,
+                      disabledForegroundColor: Colors.white60,
                   ),
-                  onPressed: () {
+                  onPressed: rounds[3].isActive || rounds[3].isComplete
+                  ? null 
+                  : () {
                     
+                    //Starting round
+                    startARound(2, 3);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 2",
@@ -205,9 +446,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      disabledBackgroundColor: Colors.grey.shade800,
+                      disabledForegroundColor: Colors.white60,
                   ),
-                  onPressed: () {
+                  onPressed: rounds[4].isActive || rounds[4].isComplete
+                  ? null
+                  : () {
                     
+                    //Starting round
+                    startARound(3, 4);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 3",
@@ -222,9 +469,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      disabledBackgroundColor: Colors.grey.shade800,
+                      disabledForegroundColor: Colors.white60,
                   ),
-                  onPressed: () {
+                  onPressed: rounds[5].isActive || rounds[5].isComplete
+                  ? null
+                  : () {
                     
+                    //Starting round
+                    startARound(4, 5);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 4",
@@ -243,9 +496,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      disabledBackgroundColor: Colors.grey.shade800,
+                      disabledForegroundColor: Colors.white60,
                   ),
-                  onPressed: () {
+                  onPressed: rounds[6].isActive || rounds[6].isComplete
+                  ? null
+                  : () {
                     
+                    //Starting round
+                    startARound(5, 6);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 5",
@@ -260,9 +519,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      disabledBackgroundColor: Colors.grey.shade800,
+                      disabledForegroundColor: Colors.white60,
                   ),
-                  onPressed: () {
+                  onPressed: rounds[7].isActive || rounds[7].isComplete
+                  ? null
+                  : () {
                     
+                    //Starting round
+                    startARound(6, 7);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 6",
@@ -281,9 +546,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      disabledBackgroundColor: Colors.grey.shade800,
+                      disabledForegroundColor: Colors.white60,
                   ),
-                  onPressed: () {
+                  onPressed: rounds[8].isActive || rounds[8].isComplete
+                  ? null
+                  : () {
                     
+                    //Starting round
+                    startARound(7, 8);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 7",
@@ -298,9 +569,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      disabledBackgroundColor: Colors.grey.shade800,
+                      disabledForegroundColor: Colors.white60,
                   ),
-                  onPressed: () {
+                  onPressed: rounds[9].isActive || rounds[9].isComplete
+                  ? null
+                  : () {
                     
+                    //Starting round
+                    startARound(8, 9);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 8",
@@ -323,9 +600,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                      disabledBackgroundColor: Colors.grey.shade800,
+                      disabledForegroundColor: Colors.white60,
                     ),
-                    onPressed: () {
+                    onPressed: rounds[10].isActive || rounds[10].isComplete
+                    ? null
+                    : () {
                       
+                      //Starting round
+                      startARound(9, 10);
                     },
                     icon: Icon(Icons.play_arrow),
                     label: Text("Round 9",
@@ -340,6 +623,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
               padding: EdgeInsetsGeometry.only(
                 top: 80,
                 right: 40,
+                bottom: 40,
               ),
               child: 
               Row(
@@ -352,9 +636,8 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                       backgroundColor: const Color.fromARGB(255, 123, 9, 1),
                       foregroundColor: Colors.white,
                     ),
-                    onPressed: () async {
-                      await systemStateService.updateCurrentRoundNum(sysStateId: 1, currentRoundNumber: 100);
-                      await load();
+                    onPressed: () {
+                      confirmLotteryReset();
                     },
                     child: Text("Reset Lottery"),
                   ),

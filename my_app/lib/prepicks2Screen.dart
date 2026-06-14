@@ -11,6 +11,9 @@ import 'week.dart';
 import 'selection.dart';
 import 'selectionService.dart';
 import 'session.dart';
+import 'systemState.dart';
+import 'roundControlService.dart';
+import 'systemStateService.dart';
 
 class Prepicks2Screen extends StatefulWidget {
   const Prepicks2Screen({super.key});
@@ -26,6 +29,15 @@ class _Prepicks2ScreenState extends State<Prepicks2Screen> {
 
   //Instantiating SelectionService class into an object
   SelectionService selectionService = SelectionService();
+
+  //Instantiating RoundControlService into an object
+  RoundControlService roundControlService = RoundControlService();
+
+  //Instantiating SystemStateService into an object
+  SystemStateService systemStateService = SystemStateService();
+
+  //System state
+  SystemState? systemState;
 
   //Variable to hold the selected week ID
   int? selectedWeekId;
@@ -52,6 +64,10 @@ class _Prepicks2ScreenState extends State<Prepicks2Screen> {
     final data = await weekRepository.loadWeekRecords();
     final selection = await selectionService.getSelection(userId: Session.userId!, roundNumber: 0);
     final weekSelections = await selectionService.getSelectionsByUser(Session.userId!);
+
+    systemState = await systemStateService.getSystemState();
+
+    if (!mounted) return;
 
     setState(() {
       weeks = data;
@@ -227,13 +243,24 @@ class _Prepicks2ScreenState extends State<Prepicks2Screen> {
                     currentWeekSelection = created; 
                   });
 
-                  await load();
+                  if (!mounted) return;
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Confirmed")),
                   );
 
+                  await roundControlService.turnProgressionHandler();
+
+                  if (!mounted) return;
+
+                  SystemState updatedState = await systemStateService.getSystemState();
+                  print("UPDATED TURN PRIORITY ${systemState!.currentTurnPriority}");
+
+                  await load();
+
                 } catch (error) {
+                  if (!mounted) return;
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Confirmation Failed")),
                   );
@@ -268,12 +295,16 @@ class _Prepicks2ScreenState extends State<Prepicks2Screen> {
                     currentWeekSelection!.weekId = selectedWeekId!;
                   });
 
+                  if (!mounted) return;
+
                   await load();
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Updated")),
                   );
                 } else {
+                  if (!mounted) return;
+                  
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Update Failed")),
                   );

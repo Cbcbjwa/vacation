@@ -37,6 +37,9 @@ import 'prepicks2Screen.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'roundEligibilityService.dart';
 import 'session.dart';
+import 'systemState.dart';
+import 'systemStateService.dart';
+import 'user.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -60,6 +63,9 @@ class _AdminScreenState extends State<AdminScreen> {
   //Instantiating RoundEligibilityService into an object
   RoundEligibilityService roundEligibilityService = RoundEligibilityService();
 
+  //Instantiating SystemStateService into an object
+  SystemStateService systemStateService = SystemStateService();
+
   //List to hold the weeks
   List<Week> listOfWeeks = [];
 
@@ -80,8 +86,20 @@ class _AdminScreenState extends State<AdminScreen> {
   List<bool> roundEligibility = List.filled(9, false);
   List<bool> prepickEligibility = List.filled(2, false);
 
+  //System state
+  SystemState? systemState;
+
   //Flag to represent screen loading state
   bool isLoading = true;
+
+  //Flag to represent whether it is the user's turn to select a week
+  bool isUsersTurn = false;
+
+  //Flag to represent whether a round is active or complete
+  bool isActiveOrComplete = false;
+
+  //Current user
+  User? currentUser;
 
   //Method to load weeks/users/selections
   Future<void> load() async {
@@ -100,7 +118,9 @@ class _AdminScreenState extends State<AdminScreen> {
     final selections = await selectionService.getSelections();
     print("Selections loaded");
 
-    final currentUser = users.firstWhere((u) => u.id == Session.userId, orElse: () => users.first);
+    currentUser = users.firstWhere((u) => u.id == Session.userId, orElse: () => users.first);
+
+    systemState = await systemStateService.getSystemState();
 
     setState(() {
       listOfWeeks = data;
@@ -110,13 +130,13 @@ class _AdminScreenState extends State<AdminScreen> {
         userNamesById[user.id] = user.displayName;
       }
 
-      roundEligibility = roundEligibilityService.computeRoundEligibility(currentUser.weeksAllowed);
+      roundEligibility = roundEligibilityService.computeRoundEligibility(currentUser!.weeksAllowed);
 
-      prepickEligibility = roundEligibilityService.computePrepickEligibility(currentUser.prepicksAllowed);
+      prepickEligibility = roundEligibilityService.computePrepickEligibility(currentUser!.prepicksAllowed);
     });
 
-    print("weeksAllowed: ${currentUser.weeksAllowed}");
-    print("prepicksAllowed: ${currentUser.prepicksAllowed}");
+    print("weeksAllowed: ${currentUser!.weeksAllowed}");
+    print("prepicksAllowed: ${currentUser!.prepicksAllowed}");
 
     setState(() {
       isLoading = false;
@@ -518,6 +538,11 @@ class _AdminScreenState extends State<AdminScreen> {
       );
   }
 
+  //Method to determine if a round list tile can be accessed
+  bool isRoundAccessible(int requiredRound) {
+    return systemState!.currentRoundNumber >= requiredRound && systemState!.currentRoundNumber !=100;
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -537,6 +562,9 @@ class _AdminScreenState extends State<AdminScreen> {
     print("BUILD HASH: ${weekRepository.hashCode}");
     print("BUILD WEEKS: ${weekRepository.weeks.length}");
 
+    if(systemState!.currentTurnPriority == currentUser!.priorityNumber || systemState!.currentTurnPriority == currentUser!.prepicksPriorityNumber) {
+      isUsersTurn = true;
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -718,6 +746,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Prepicks Round 1 Selection
             if(prepickEligibility[0]) 
               ListTile(
+                enabled: isRoundAccessible(-1) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.looks_one, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Prepicks 1",
@@ -734,6 +763,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Prepicks Round 2 Selection
             if(prepickEligibility[1])
               ListTile(
+                enabled: isRoundAccessible(0) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.looks_two, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Prepicks 2",
@@ -750,6 +780,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Round 1 Selection
             if(roundEligibility[0])
               ListTile(
+                enabled: isRoundAccessible(1) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.beach_access, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Round 1",
@@ -766,6 +797,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Round 2 Selection
             if(roundEligibility[1])
               ListTile(
+                enabled: isRoundAccessible(2) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.sunny, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Round 2",
@@ -782,6 +814,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Round 3 Selection
             if(roundEligibility[2])
               ListTile(
+                enabled: isRoundAccessible(3) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.card_travel, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Round 3",
@@ -798,6 +831,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Round 4 Selection
             if(roundEligibility[3])
               ListTile(
+                enabled: isRoundAccessible(4) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.local_airport, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Round 4",
@@ -814,6 +848,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Round 5 Selection
             if(roundEligibility[4])
               ListTile(
+                enabled: isRoundAccessible(5) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.icecream, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Round 5",
@@ -830,6 +865,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Round 6 Selection
             if(roundEligibility[5])
               ListTile(
+                enabled: isRoundAccessible(6) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.downhill_skiing_outlined, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Round 6",
@@ -846,6 +882,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Round 7 Selection
             if(roundEligibility[6])
               ListTile(
+                enabled: isRoundAccessible(7) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.airplane_ticket, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Round 7",
@@ -862,6 +899,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Round 8 Selection
             if(roundEligibility[7])
               ListTile(
+                enabled: isRoundAccessible(8) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.surfing, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Round 8",
@@ -878,6 +916,7 @@ class _AdminScreenState extends State<AdminScreen> {
             //Round 9 Selection
             if(roundEligibility[8])
               ListTile(
+                enabled: isRoundAccessible(9) && isUsersTurn,
                 tileColor: Colors.black,
                 leading: const Icon(Icons.rocket_launch, fontWeight: FontWeight.bold, color: Colors.grey),
                 title: const Text("Round 9",
@@ -887,9 +926,6 @@ class _AdminScreenState extends State<AdminScreen> {
                   load();
                 }
               ),
-
-            //Spacing the menu items
-            SizedBox(height: 2),
 
             //Spacing the menu items
             SizedBox(height: 2),
@@ -905,6 +941,9 @@ class _AdminScreenState extends State<AdminScreen> {
                 load();
               }
             ),
+
+            //Spacing the menu items
+            SizedBox(height: 2),
 
             //Logout Section
             ListTile(

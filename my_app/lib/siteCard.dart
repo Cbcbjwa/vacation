@@ -64,11 +64,20 @@ class _SiteCardState extends State<SiteCard> {
     final success = await siteService.updateSite(siteId: widget.site.siteId, siteName: widget.site.siteName, maxDocsOffPerWeek: widget.site.maxDocsOffPerWeek);
     print("UPDATE SITE RESULT: $success");
 
+    if(!mounted) {
+      return;
+    }
+
     if(success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Site Updated")),
       );
     } else {
+
+      if(!mounted) {
+        return;
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Update Failed")),
       );
@@ -141,14 +150,24 @@ class _SiteCardState extends State<SiteCard> {
 
     print("DELETE SITE RESULT: $success");
 
+    await widget.onDelete();
+
+    if(!mounted) {
+      return;
+    }
+
     if(success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Site Deleted")),
       );
       
-      await widget.onDelete();
-
+      
     } else {
+
+      if(!mounted) {
+        return;
+      }
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Deletion Failed")),
       );

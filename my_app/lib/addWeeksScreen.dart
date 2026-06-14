@@ -189,16 +189,32 @@ class _AddWeeksScreenState extends State<AddWeeksScreen> {
                         final success = await weekService.createWeek(weekNumber: int.tryParse(weekNumberController.text) ?? 0, weekDate: weekDateController.text, specialSpecification: specialSpecController.text, totalSlots: int.tryParse(totalSlotsController.text) ?? 0);
                         print("CREATE WEEK RESULT: $success");
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Week Added")),
-                        );
-
                         await widget.onAdd();
 
+                        if(!mounted) {
+                          return;
+                        }
+
+                        if(success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Week Added")),
+                          );
+
+                          
+                        } else {
+
+                          if(!mounted) {
+                            return;
+                          }
+                          
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Add Failed")),
+                          );
+                        }
 
                       } catch (error) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Add Failed")),
+                          SnackBar(content: Text("Add Failed: $error")),
                         );
                       } finally {
                         setState(() {

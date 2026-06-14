@@ -12,6 +12,9 @@ import 'selection.dart';
 import 'selectionService.dart';
 import 'session.dart';
 import 'siteConstraintsChecker.dart';
+import 'systemState.dart';
+import 'roundControlService.dart';
+import 'systemStateService.dart';
 
 class Round6Screen extends StatefulWidget {
   const Round6Screen({super.key});
@@ -30,6 +33,15 @@ class _Round6ScreenState extends State<Round6Screen> {
 
   //Instantiating SiteConstraintsChecker into an object
   SiteConstraintsChecker siteConstraintsChecker = SiteConstraintsChecker();
+
+  //Instantiating RoundControlService into an object
+  RoundControlService roundControlService = RoundControlService();
+
+  //Instantiating SystemStateService into an object
+  SystemStateService systemStateService = SystemStateService();
+
+  //System state
+  SystemState? systemState;
 
   //Variable to hold the selected week ID
   int? selectedWeekId;
@@ -56,6 +68,10 @@ class _Round6ScreenState extends State<Round6Screen> {
     final data = await weekRepository.loadWeekRecords();
     final selection = await selectionService.getSelection(userId: Session.userId!, roundNumber: 6);
     final weekSelections = await selectionService.getSelectionsByUser(Session.userId!);
+
+    systemState = await systemStateService.getSystemState();
+
+    if (!mounted) return;
 
     setState(() {
       weeks = data;
@@ -242,13 +258,23 @@ class _Round6ScreenState extends State<Round6Screen> {
                     currentWeekSelection = created; 
                   });
 
-                  await load();
+                  if (!mounted) return;
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Confirmed")),
                   );
 
+                  await roundControlService.turnProgressionHandler();
+
+                  if (!mounted) return;
+
+                  SystemState updatedState = await systemStateService.getSystemState();
+                  print("UPDATED TURN PRIORITY ${updatedState.currentTurnPriority}");
+
+                  await load();
+
                 } catch (error) {
+                  if(!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Confirmation Failed")),
                   );
@@ -294,12 +320,15 @@ class _Round6ScreenState extends State<Round6Screen> {
                     currentWeekSelection!.weekId = selectedWeekId!;
                   });
 
+                  if(!mounted) return;
+
                   await load();
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Updated")),
                   );
                 } else {
+                  if(!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Update Failed")),
                   );

@@ -12,4 +12,6 @@ class Session {
   static int? prepicksAllowed;
   static int? weeksAllowed;
   static String? siteName;
+  static int? priorityNumber;
+  static int? prepicksPriorityNumber;
 }

@@ -6,11 +6,15 @@
 
 //Imports section
 import 'package:flutter/material.dart';
+import 'package:my_app/roundControlService.dart';
 import 'weekRepository.dart';
 import 'week.dart';
 import 'selection.dart';
 import 'selectionService.dart';
 import 'session.dart';
+import 'roundControlScreen.dart';
+import 'systemState.dart';
+import 'systemStateService.dart';
 
 class Prepicks1Screen extends StatefulWidget {
   const Prepicks1Screen({super.key});
@@ -26,6 +30,9 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
 
   //Instantiating SelectionService class into an object
   SelectionService selectionService = SelectionService();
+
+  //Instantiating RoundControlService into an object
+  RoundControlService roundControlService = RoundControlService();
 
   //Variable to hold the selected week ID
   int? selectedWeekId;
@@ -44,7 +51,13 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
 
   bool isLoading = true;
 
-  //Method to load weeks
+  //Instantiating SystemStateService into an object
+  SystemStateService systemStateService = SystemStateService();
+
+  //System state
+  SystemState? systemState;
+
+  //Method to load data
   Future<void> load() async {
 
     print("ROUND -1 LOAD START");
@@ -52,6 +65,10 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
     final data = await weekRepository.loadWeekRecords();
     final selection = await selectionService.getSelection(userId: Session.userId!, roundNumber: -1);
     final weekSelections = await selectionService.getSelectionsByUser(Session.userId!);
+
+    systemState = await systemStateService.getSystemState();
+
+    if (!mounted) return;
 
     setState(() {
       weeks = data;
@@ -220,20 +237,33 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
                 }
 
                 try {
-
+                  print("CURRENT TURN PRIORITY SELECTING ${systemState!.currentTurnPriority}");
+                  
                   final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: -1);
-                
+                  
                   setState(() {
                     currentWeekSelection = created; 
                   });
 
-                  await load();
+                  if (!mounted) return;
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Confirmed")),
                   );
+                  
+                  await roundControlService.turnProgressionHandler();
+
+                  if (!mounted) return;
+
+                  SystemState updatedState = await systemStateService.getSystemState();
+                  print("UPDATED TURN PRIORITY ${systemState!.currentTurnPriority}");
+
+
+                  await load();
 
                 } catch (error) {
+                  if (!mounted) return;
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Confirmation Failed")),
                   );
@@ -268,12 +298,17 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
                     currentWeekSelection!.weekId = selectedWeekId!;
                   });
 
+                  if (!mounted) return;
+
                   await load();
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Updated")),
                   );
                 } else {
+
+                  if (!mounted) return;
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Update Failed")),
                   );

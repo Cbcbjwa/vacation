@@ -172,6 +172,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   Session.prepicksAllowed = user.prepicksAllowed;
                   Session.weeksAllowed = user.weeksAllowed;
                   Session.siteName = user.label;
+                  Session.priorityNumber = user.priorityNumber;
+                  Session.prepicksPriorityNumber = user.prepicksPriorityNumber;
 
                   print("LOGIN SET SESSION LABEL = ${Session.siteName}");
 

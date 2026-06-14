@@ -75,11 +75,20 @@ class _WeekCardState extends State<WeekCard> {
 
     print("UPDATE WEEK RESULT: $success");
 
+    if(!mounted) {
+      return;
+    }
+
     if(success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Week Updated")),
       );
     } else {
+
+      if(!mounted) {
+        return;
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Update Failed")),
       );
@@ -154,14 +163,23 @@ class _WeekCardState extends State<WeekCard> {
 
     print("DELETE WEEK RESULT: $success");
 
+    await widget.onDelete();
+
+    if(!mounted) {
+      return;
+    }
+
     if(success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Week Deleted")),
       );
-      
-      await widget.onDelete();
 
     } else {
+
+      if(!mounted) {
+        return;
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Deletion Failed")),
       );

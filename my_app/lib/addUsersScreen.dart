@@ -62,11 +62,8 @@ class AddUsersScreen extends StatefulWidget {
     //List of sites
     List<Site> sites = [];
 
-    @override
-    void initState() {
-      super.initState();
-      load();
-    }
+    //Flag to represent screen loading state
+    bool isLoading = true;
 
     //Method to load sites
     Future<void> load() async {
@@ -74,11 +71,30 @@ class AddUsersScreen extends StatefulWidget {
       setState(() {
         selectedSiteName = "N/A";
         siteController.text = selectedSiteName;
+        isLoading = false;
       });
     }
 
     @override
+    void initState() {
+      super.initState();
+      load();
+    }
+
+    @override
     Widget build(BuildContext context) {
+
+      if(isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+  
+        body: Center(
+        child: CircularProgressIndicator(
+          color: const Color.fromARGB(255, 40, 89, 113),
+        ),
+        )
+      );
+    }
 
       print("selectedSiteName = $selectedSiteName");
       print("sites loaded = ${sites.length}");
@@ -391,24 +407,43 @@ class AddUsersScreen extends StatefulWidget {
                       });
 
                       try {
-                        
                         final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: siteController.text, displayName: displayNameController.text, phoneNumber: phoneNumberController.text);
-                        
+                          
                         print("CREATE USER RESULT: $success");
 
-                      
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("User Added")),
-                        );
+                         await widget.onAdd();
 
-                        await widget.onAdd();
+                        if(!mounted) {
+                          return;
+                        }
 
-                        } catch (error) {
+                        if(success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("User Added")),
+                          );
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Add Failed")),
-                        );
+                         
+                        }  else {
+
+                          if(!mounted) {
+                            return;
+                          }
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Add Failed")),
+                          );
+                          
+                        } 
+
+                      } catch (error) {
+                        if(!mounted) {
+                          return;
+                        }
                         
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Add Failed $error")),
+                        );
+
                       } finally {
                         setState(() {
                           isAdding = false;

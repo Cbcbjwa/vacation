@@ -27,6 +27,9 @@ class RoundControlService {
   //Instantiating RoundService into an object
   RoundService roundService = RoundService();
 
+  //List of users
+  List<User> users = [];
+
   //Instantiating RoundEligibilityService into an object
   RoundEligibilityService roundEligibilityService = RoundEligibilityService();
 
@@ -39,8 +42,10 @@ class RoundControlService {
   //Method to handle turn progression
   Future<void> turnProgressionHandler() async {
 
+    print("=== TURN PROGRESSION START ===");
+
     //List of users
-    List<User> users = userRepository.users;
+    users = await userRepository.loadRecords();
     
     users.sort((a, b) => a.priorityNumber!.compareTo(b.priorityNumber!));
 
@@ -68,9 +73,21 @@ class RoundControlService {
     //Next turn priority
     int nextPriority = systemState.currentTurnPriority + 1;
 
+    print("Users: ${users.length}");
+
+    print("Current round: ${systemState.currentRoundNumber}");
+    print("Current priority: ${systemState.currentTurnPriority}");
+
+    print("Next priority: $nextPriority");
+    print("Max priority: $maxTurnPriority");
+
     while(nextPriority <= maxTurnPriority) {
 
+      print("Checking priority $nextPriority");
+
       User user = users[nextPriority - 1];
+
+      print("User ${user.id} priority=${user.priorityNumber}");
 
       bool canPick;
 
@@ -86,12 +103,21 @@ class RoundControlService {
       }
 
       if(canPick) {
+
+        print("UPDATING TO PRIORITY $nextPriority");
+
         await systemStateService.updateCurrentTurnPriorityNumber(sysStateId: 1, currentTurnPriority: nextPriority);
+
+        SystemState updatedState = await systemStateService.getSystemState();
+
+        print("DB PRIORITY AFTER UPDATE: ${updatedState.currentTurnPriority}");
+
         return;
       }
       nextPriority++;
     }
     await roundService.updateRound(roundNumber: currentRound, isActive: false);
     await roundService.updateRoundActivity(roundNumber: currentRound, isComplete: true);
+    await systemStateService.updateCurrentTurnPriorityNumber(sysStateId: 1, currentTurnPriority: 1);
   }
 }

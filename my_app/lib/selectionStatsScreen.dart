@@ -131,9 +131,9 @@ class _SelectionStatsScreenState extends State<SelectionStatsScreen> {
       body: Padding(
         padding: EdgeInsets.only(
           top: 100,
-          left: 100,
+          left: 80,
           bottom: 100,
-          right: 100,
+          right: 80,
         ),
 
           child: Column(
@@ -143,7 +143,7 @@ class _SelectionStatsScreenState extends State<SelectionStatsScreen> {
                 width: 600,
                 padding: const EdgeInsets.only(
                   right: 8,
-                  left: 8,
+                  left: 25,
                   top: 10,
                   bottom: 10,
                 ),

@@ -9,4 +9,8 @@ CREATE TABLE systemState (
     INSERT INTO systemState (currentRoundNumber, currentTurnPriority, sysStateId)
     VALUES (100, 1, 1);
     
+    UPDATE systemState
+    SET currentRoundNumber = 100
+    WHERE sysStateId = 1;
+    
     

@@ -128,11 +128,20 @@ class _UserCardState extends State<UserCard> {
 
     print("UPDATE USER RESULT: $success");
 
+    if(!mounted) {
+      return;
+    }
+
     if(success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("User Updated")),
       );
     } else {
+      
+      if(!mounted) {
+        return;
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Update Failed")),
       );
@@ -224,14 +233,24 @@ class _UserCardState extends State<UserCard> {
 
     print("DELETE USER RESULT: $success");
 
+    await widget.onDelete();
+
+    if(!mounted) {
+      return;
+    }
+
     if(success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("User Deleted")),
       );
       
-      await widget.onDelete();
+      
 
     } else {
+      if(!mounted) {
+        return;
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Deletion Failed")),
       );

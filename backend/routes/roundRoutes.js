@@ -7,6 +7,6 @@ const { getRounds, update, updateActivity } = require("../controllers/roundContr
 
 router.get("/", getRounds);
 router.put("/update", update);
-router.put("updateActivity", updateActivity);
+router.put("/updateActivity", updateActivity);
 
 module.exports = router;

@@ -134,15 +134,32 @@ class _AddSitesScreenState extends State<AddSitesScreen> {
                         final success = await siteService.createSite(siteName: siteNameController.text, maxDocsOffPerWeek: int.tryParse(maxDocsOffController.text) ?? 0);
                         print("CREATE SITE RESULT: $success");
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Site Added")),
-                        );
+                        await widget.onAdd();
 
-                          await widget.onAdd();
+                        if(!mounted) {
+                          return;
+                        }
+
+                        if(success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Site Added")),
+                          );
+
+                          
+                        } else {
+                          if(!mounted) {
+                            return;
+                          }
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Add Failed")),
+                          );
+                        }
+                        
 
                       } catch (error) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Add Failed")),
+                          SnackBar(content: Text("Add Failed: $error")),
                         );
                       } finally {
                         setState(() {

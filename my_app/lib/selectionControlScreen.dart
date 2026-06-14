@@ -66,6 +66,7 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
   //Round object
   Round? selectedRound;
 
+  //Flag to represent screen loading state
   bool isLoading = true;
 
   //Method to load weeks/users
@@ -155,6 +156,31 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
     return null;
   }
 
+  //Method to determine the rounds the selected user is eligible for
+  List<Round> getEligibleRounds(User? user) {
+    if(user == null) {
+      return [];
+    }
+
+    //List of rounds the selected user is eligible for
+    List<Round> eligibleRounds = [];
+
+    //Prepicks 1
+    if(user.prepicksAllowed >= 1) {
+      eligibleRounds.addAll(rounds.where((round) => round.roundNumber == -1));
+    }
+
+    //Prepicks 1
+    if(user.prepicksAllowed >= 2) {
+      eligibleRounds.addAll(rounds.where((round) => round.roundNumber == 0));
+    }
+
+    //Normal rounds
+    eligibleRounds.addAll(rounds.where((round) => round.roundNumber >= 1 && round.roundNumber <= user.weeksAllowed));
+
+    return eligibleRounds;
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -169,6 +195,8 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
         )
       );
     }
+
+    final eligibleRounds = getEligibleRounds(selectedUser);
 
     final filteredWeeks = weeks.where((week) {
             return week.availableSlots! > 0 || lockedWeekIds.contains(week.weekId);
@@ -285,7 +313,7 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                       surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
                     ),
 
-                    dropdownMenuEntries: rounds.map((round) {
+                    dropdownMenuEntries: eligibleRounds.map((round) {
 
                       return DropdownMenuEntry<Round>(
                         value: round,
@@ -430,11 +458,16 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                         currentWeekSelection = created; 
                       });
 
+                      if (!mounted) return;
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Selection Confirmed")),
                       );
 
                     } catch (error) {
+
+                      if (!mounted) return;
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Confirmation Failed")),
                       );
@@ -482,12 +515,15 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                         currentWeekSelection!.weekId = selectedWeekId!;
                       });
 
+                      if (!mounted) return;
+
                       //await loadRoundSelection();
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Selection Updated")),
                       );
                     } else {
+                      if (!mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Update Failed")),
                       );

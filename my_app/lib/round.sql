@@ -12,5 +12,5 @@ CREATE TABLE round (
     ADD COLUMN isComplete boolean;
     
     UPDATE round
-    SET isComplete = false
+    SET isActive = false
     WHERE roundNumber = -1;
