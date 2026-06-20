@@ -11,6 +11,7 @@ import 'package:my_app/userRepository.dart';
 import 'userService.dart';
 import 'site.dart';
 import 'siteService.dart';
+import 'emailService.dart';
 
 class AddUsersScreen extends StatefulWidget {
   const AddUsersScreen({super.key, required this.onAdd});
@@ -36,7 +37,6 @@ class AddUsersScreen extends StatefulWidget {
     final TextEditingController numberController = TextEditingController();
     final TextEditingController prepicksNumberController = TextEditingController();
 
-    
 
     //Default drop down menu selection
     Role selectedRole = Role.physician;
@@ -52,6 +52,9 @@ class AddUsersScreen extends StatefulWidget {
 
     //Instantiating the UserRepository class into an object
     UserRepository userRepository = UserRepository();
+
+    //Instantiating EmailService into an object
+    EmailService emailService = EmailService();
 
     //Temporary password
     String temporaryPassword = "Temp123!";
@@ -407,11 +410,14 @@ class AddUsersScreen extends StatefulWidget {
                       });
 
                       try {
+
                         final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: siteController.text, displayName: displayNameController.text, phoneNumber: phoneNumberController.text);
                           
                         print("CREATE USER RESULT: $success");
 
-                         await widget.onAdd();
+                        await widget.onAdd();
+
+                        await emailService.sendEmail(to: emailController.text, subject: "Welcome to Vacation Lottery", text: "Hello, ${nameController.text}\n\nYour account for Vacation Lottery has been registered.\n\nUsername: ${emailController.text}\nTemporary Password: Temp123!\n\nYou can change your password under the account section of the menu upon logging in.");
 
                         if(!mounted) {
                           return;

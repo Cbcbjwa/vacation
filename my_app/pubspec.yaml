@@ -38,9 +38,29 @@ dependencies:
   cupertino_icons: ^1.0.8
   logger: ^2.7.0
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "vacationlotteryicon.png"
+  remove_alpha_ios: true
+  adaptive_icon_background: "#e8ffee"
+  adaptive_icon_foreground: "vacationlotteryicon.png"
+  adaptive_icon_foreground_inset: 20
+
+flutter_native_splash:
+  color: "#e8ffee"
+  image: vacationlotteryicon.png
+  android: true
+  ios: true
+  android_12:
+    color: "#e8ffee"
+    icon_background_color: "#e8ffee"
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^2.4.6
+  flutter_launcher_icons: ^0.14.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

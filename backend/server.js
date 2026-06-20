@@ -24,6 +24,7 @@ app.use("/sites", require("./routes/siteRoutes"));
 app.use("/selections", require("./routes/selectionRoutes"));
 app.use("/rounds", require("./routes/roundRoutes"))
 app.use("/sysState", require("./routes/sysStateRoutes"));
+app.use("/email", require("./routes/emailRoutes"));
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");

@@ -12,6 +12,7 @@ import 'package:my_app/prepicksOneScreen.dart';
 import 'package:my_app/round9Screen.dart';
 import 'package:my_app/roundControlScreen.dart';
 import 'package:my_app/roundEligibilityScreen.dart';
+import 'package:my_app/roundInfoScreen.dart';
 import 'package:my_app/selectionControlScreen.dart';
 import 'package:my_app/selectionsSummaryScreen.dart';
 import 'physiciansRecords.dart';
@@ -691,6 +692,21 @@ class _AdminScreenState extends State<AdminScreen> {
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
                 await Navigator.push(context, MaterialPageRoute(builder: (context) => SelectionsSummaryScreen()));
+                load();
+              }
+            ),
+
+            //Spacing the menu items
+            SizedBox(height: 2),
+
+            //Round Info
+            ListTile(
+              tileColor: Colors.black,
+              leading: const Icon(Icons.info_outline_sharp, fontWeight: FontWeight.bold, color: Colors.grey),
+              title: const Text("Round Info",
+                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => RoundInfoScreen()));
                 load();
               }
             ),
