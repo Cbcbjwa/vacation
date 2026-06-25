@@ -264,7 +264,7 @@ class _Round6ScreenState extends State<Round6Screen> {
                     SnackBar(content: Text("Selection Confirmed")),
                   );
 
-                  await roundControlService.turnProgressionHandler();
+                  await roundControlService.startTurn();
 
                   if (!mounted) return;
 

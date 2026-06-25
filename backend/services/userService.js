@@ -21,28 +21,28 @@ async function getUsersByEmail(email) {
 
 
 //Method to create a new user
-async function createUser(userName, email, password, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber) {
+async function createUser(userName, email, password, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber, label2) {
   
     const saltRounds = 10;
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     await pool.query(
-        "INSERT INTO users (userName, email, docRole, passwordHash, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [userName, email, docRole, hashedPassword, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber]
+        "INSERT INTO users (userName, email, docRole, passwordHash, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber, label2) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [userName, email, docRole, hashedPassword, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber, label2]
     );
 }
 
 //Method for loading users from the database
 async function loadUsers() {
     const [rows] = await pool.query(
-        "SELECT id, userName, email, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber FROM users"
+        "SELECT id, userName, email, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber, label2 FROM users"
     )
     return rows;
 }
 
 //Method for updating a user record in the database
-async function updateUser(id, userName, email, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber) {
+async function updateUser(id, userName, email, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber, label2) {
     
     console.log("ID:", id);
 
@@ -57,9 +57,10 @@ async function updateUser(id, userName, email, docRole, weeksAllowed, prepicksAl
                 + "prepicksPriorityNumber=?, "
                 + "label=?, "
                 + "displayName=?, "
-                + "phoneNumber=? "
+                + "phoneNumber=?, "
+                + "label2=? "
                 + "WHERE id=?;",
-        [userName, email, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber, id]       
+        [userName, email, docRole, weeksAllowed, prepicksAllowed, priorityNumber, prepicksPriorityNumber, label, displayName, phoneNumber, label2, id]       
     )
 }
 

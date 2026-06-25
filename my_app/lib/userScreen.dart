@@ -611,7 +611,7 @@ class _UserScreenState extends State<UserScreen> {
             ListTile(
               tileColor: Colors.black,
               leading: const Icon(Icons.info_outline_sharp, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round Info",
+              title: const Text("Lottery Info",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => RoundInfoScreen()));

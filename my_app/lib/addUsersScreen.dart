@@ -36,6 +36,7 @@ class AddUsersScreen extends StatefulWidget {
     final TextEditingController prepicksController = TextEditingController();
     final TextEditingController numberController = TextEditingController();
     final TextEditingController prepicksNumberController = TextEditingController();
+    final TextEditingController site2Controller = TextEditingController();
 
 
     //Default drop down menu selection
@@ -43,6 +44,7 @@ class AddUsersScreen extends StatefulWidget {
 
     //Default drop down menu selection
     String selectedSiteName = "N/A";
+    String selectedSiteName2 = "N/A";
 
     //Instantiating UserService class into an object
     UserService userService = UserService();
@@ -73,7 +75,9 @@ class AddUsersScreen extends StatefulWidget {
       sites = await siteService.getSites();
       setState(() {
         selectedSiteName = "N/A";
+        selectedSiteName2 = "N/A";
         siteController.text = selectedSiteName;
+        site2Controller.text = selectedSiteName2;
         isLoading = false;
       });
     }
@@ -100,6 +104,7 @@ class AddUsersScreen extends StatefulWidget {
     }
 
       print("selectedSiteName = $selectedSiteName");
+      print("selectedSiteName2 = $selectedSiteName2");
       print("sites loaded = ${sites.length}");
 
       return Scaffold(
@@ -291,6 +296,33 @@ class AddUsersScreen extends StatefulWidget {
                   //Spacing the text fields
                   SizedBox(height: 20),
 
+                  //Site 2 dropdown
+                  DropdownMenu<String> (
+                    controller: site2Controller,
+
+                    label: Text("Site 2",
+                    style: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),),
+                    textStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold),
+
+                    dropdownMenuEntries: sites.map((site) {
+                      return DropdownMenuEntry<String>(
+                        value: site.siteName,
+                        label: site.siteName,
+                      );
+                    }).toList(),
+
+                    onSelected: (value) {
+                      if(value != null){
+                        setState(() {
+                          selectedSiteName2 = value;
+                        });
+                      }
+                    }
+                  ),
+
+                  //Spacing the text fields
+                  SizedBox(height: 20),
+
                   //Weeks allowed text field
                   TextField(
                     cursorColor: Colors.blueGrey,
@@ -411,13 +443,13 @@ class AddUsersScreen extends StatefulWidget {
 
                       try {
 
-                        final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: siteController.text, displayName: displayNameController.text, phoneNumber: phoneNumberController.text);
+                        final success = await userService.createUser(userName: nameController.text, email: emailController.text, password: temporaryPassword, docRole: selectedRole.name, weeksAllowed: int.tryParse(weeksController.text) ?? 0, prepicksAllowed: int.tryParse(prepicksController.text) ?? 0, priorityNumber: int.tryParse(numberController.text) ?? 0, prepicksPriorityNumber: int.tryParse(prepicksNumberController.text) ?? 0, label: siteController.text, displayName: displayNameController.text, phoneNumber: phoneNumberController.text, label2: site2Controller.text);
                           
                         print("CREATE USER RESULT: $success");
 
                         await widget.onAdd();
 
-                        await emailService.sendEmail(to: emailController.text, subject: "Welcome to Vacation Lottery", text: "Hello, ${nameController.text}\n\nYour account for Vacation Lottery has been registered.\n\nUsername: ${emailController.text}\nTemporary Password: Temp123!\n\nYou can change your password under the account section of the menu upon logging in.");
+                        await emailService.sendEmail(to: emailController.text, subject: "ESA Vacation Lottery", text: "You have been registered for the 2027 ESA Vacation Lottery.\n\nUsername: ${emailController.text}\nTemporary Password: Temp123!\n\nIf you have not done so already, please download the ESA Vacation Lottery App, sign in, and change your password under the account menu. The app can be found in the App Store or the Google Play Store. Please review your account information, including your name, email address, mobile phone number, allocated vacation weeks, round participation, and pick priority number. If you feel there are any errors, please contact Mike Muro or Joy Patel promptly.");
 
                         if(!mounted) {
                           return;

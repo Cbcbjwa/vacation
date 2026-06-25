@@ -47,12 +47,14 @@ class _UserCardState extends State<UserCard> {
   late TextEditingController priorityNumberController;
   late TextEditingController prepicksPriorityController;
   late TextEditingController phoneNumberController;
+  late TextEditingController label2Controller;
 
   //Role enum
   late Role selectedRole;
 
-  //Site
+  //Sites
   String? selectedSiteName;
+  String? selectedSiteName2;
 
   //Flag to represent whether a card is in editing mode
   bool isEditing = false;
@@ -92,6 +94,7 @@ class _UserCardState extends State<UserCard> {
     selectedRole = widget.user.docRole;
 
     selectedSiteName = widget.user.label;
+    selectedSiteName2 = widget.user.label2;
   }
 
 
@@ -111,6 +114,7 @@ class _UserCardState extends State<UserCard> {
     widget.user.phoneNumber = phoneNumberController.text;
     widget.user.label = selectedSiteName;
     widget.user.docRole = selectedRole;
+    widget.user.label2 = selectedSiteName2;
 
     widget.user.weeksAllowed =
         int.parse(weeksController.text);
@@ -124,7 +128,7 @@ class _UserCardState extends State<UserCard> {
     widget.user.prepicksPriorityNumber =
         int.tryParse(prepicksPriorityController.text);
 
-    final success = await userService.updateUser(id: widget.user.id, userName: widget.user.userName, email: widget.user.email, docRole: widget.user.docRole, weeksAllowed: widget.user.weeksAllowed, prepicksAllowed: widget.user.prepicksAllowed, priorityNumber: widget.user.priorityNumber, prepicksPriorityNumber: widget.user.prepicksPriorityNumber, label: widget.user.label ?? "", displayName: widget.user.displayName, phoneNumber: widget.user.phoneNumber);
+    final success = await userService.updateUser(id: widget.user.id, userName: widget.user.userName, email: widget.user.email, docRole: widget.user.docRole, weeksAllowed: widget.user.weeksAllowed, prepicksAllowed: widget.user.prepicksAllowed, priorityNumber: widget.user.priorityNumber, prepicksPriorityNumber: widget.user.prepicksPriorityNumber, label: widget.user.label ?? "", displayName: widget.user.displayName, phoneNumber: widget.user.phoneNumber, label2: widget.user.label2 ?? "");
 
     print("UPDATE USER RESULT: $success");
 
@@ -175,6 +179,7 @@ class _UserCardState extends State<UserCard> {
     selectedRole = widget.user.docRole;
 
      selectedSiteName = widget.user.label;
+     selectedSiteName2 = widget.user.label2;
 
     setState(() {
       isEditing = false;
@@ -448,7 +453,7 @@ class _UserCardState extends State<UserCard> {
             //Spacing
             SizedBox(height: 18),
 
-            //Site
+            //Site 1
             DropdownMenu<String>(
               initialSelection: selectedSiteName,
 
@@ -472,6 +477,48 @@ class _UserCardState extends State<UserCard> {
                 if (value != null) {
                   setState(() {
                     selectedSiteName = value;
+                  });
+                }
+              },
+
+              dropdownMenuEntries:
+                  widget.sites.map((site) {
+
+                return DropdownMenuEntry<String>(
+                  value: site.siteName,
+                  label: site.siteName,
+                );
+
+              }).toList(),
+            ),
+
+            //Spacing
+            SizedBox(height: 18),
+
+            //Site 2
+            DropdownMenu<String>(
+              initialSelection: selectedSiteName2,
+
+              label: Text(
+                "Site 2",
+
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              textStyle: TextStyle(
+                fontSize: 15,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+
+              onSelected: (value) {
+
+                if (value != null) {
+                  setState(() {
+                    selectedSiteName2 = value;
                   });
                 }
               },

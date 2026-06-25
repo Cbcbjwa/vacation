@@ -15,13 +15,13 @@ CREATE TABLE users (
     ADD priorityNumber int;
     
     UPDATE users
-    SET phoneNumber = "d"
-    WHERE id = 21;
+    SET label2 = "N/A"
+    WHERE id = 34;
 
 	DELETE FROM users WHERE userName = "Freddy Krueger";
     
     ALTER TABLE users
-    ADD displayName varchar(255);
+    ADD label2 varchar(255);
     
     ALTER TABLE users DROP COLUMN totalSlots;
     

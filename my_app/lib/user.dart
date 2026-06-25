@@ -21,11 +21,12 @@ class User {
   String? label;
   String displayName;
   String phoneNumber;
+  String? label2;
 
   //**Constructor Section**\\
   
   //Full constructor
-  User.full({required this.id, required this.userName, required this.email, required this.docRole, required this.weeksAllowed, required this.prepicksAllowed, this.priorityNumber, this.prepicksPriorityNumber, this.label, required this.displayName, required this.phoneNumber});
+  User.full({required this.id, required this.userName, required this.email, required this.docRole, required this.weeksAllowed, required this.prepicksAllowed, this.priorityNumber, this.prepicksPriorityNumber, this.label, required this.displayName, required this.phoneNumber, this.label2});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User.full(
@@ -40,33 +41,7 @@ class User {
       label: json["label"],
       displayName: json["displayName"],
       phoneNumber: json["phoneNumber"],
+      label2: json["label2"]
     );
   }
-
-  //**Getters and Setters**\\
-  String getUserName() {
-    return userName;
-  }
-
-  void setUserName(String userName) {
-    this.userName = userName;
-  }
-
-  String getEmail() {
-    return email;
-  }
-
-  void setEmail(String email) {
-    this.email = email;
-  }
-
-  Role getDocRole() {
-    return docRole;
-  }
-
-  void setRole(Role docRole) {
-    this.docRole = docRole;
-  }
-
-
 }

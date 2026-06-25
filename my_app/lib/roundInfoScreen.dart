@@ -50,6 +50,9 @@ class _RoundInfoScreenState extends State<RoundInfoScreen> {
   //Current round name
   String? roundName;
 
+  //Total # of weeks allowed
+  int totalNumOfWeeks = 0;
+
   //Load method
   Future<void> load() async {
   
@@ -92,6 +95,7 @@ class _RoundInfoScreenState extends State<RoundInfoScreen> {
       );
     }
 
+    //Determining the name of the current round
     for(Round round in rounds) {
       if(round.roundNumber == systemState!.currentRoundNumber) {
         currentRound = round;
@@ -100,13 +104,16 @@ class _RoundInfoScreenState extends State<RoundInfoScreen> {
     }
     roundName = currentRound?.roundName ?? "";
 
+    //Determing the total number of weeks the user gets
+    totalNumOfWeeks = currentUser!.prepicksAllowed + currentUser!.weeksAllowed;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.grey),
         backgroundColor: Colors.black,
         centerTitle: true,
-        title: Text("Round Info",
+        title: Text("Lottery Info",
           style: TextStyle(
             color: Colors.grey,
             fontWeight: FontWeight.bold,
@@ -121,7 +128,7 @@ class _RoundInfoScreenState extends State<RoundInfoScreen> {
         ),
         child: Container(
         alignment: Alignment.center,
-        height: 250,
+        height: 300,
         width: 360,
         padding: EdgeInsets.only(
           top: 20,
@@ -177,9 +184,13 @@ class _RoundInfoScreenState extends State<RoundInfoScreen> {
             //User's prepicks turn priority
             Row(
               children: [
-                Text("Your Prepicks Turn Priority: ${currentUser!.prepicksPriorityNumber}",
+                currentUser!.prepicksPriorityNumber! > 0
+                ? Text("Your Prepick Priority #: ${currentUser!.prepicksPriorityNumber}",
                   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 19),
-                ),
+                )
+                : Text("Your Prepick Priority #: N/A",
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 19),
+                )
               ],
             ),
 
@@ -188,7 +199,18 @@ class _RoundInfoScreenState extends State<RoundInfoScreen> {
             //User's normal round turn priority
             Row(
               children: [
-                Text("Your Rounds 1-9 Turn Priority: ${currentUser!.priorityNumber}",
+                Text("Your Main Lottery Priority #: ${currentUser!.priorityNumber}",
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 19),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 30),
+
+            //User's number of weeks allowed
+            Row(
+              children: [
+                Text("Total # of Weeks Allowed: $totalNumOfWeeks",
                   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 19),
                 ),
               ],

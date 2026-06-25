@@ -11,6 +11,7 @@ import 'systemState.dart';
 import 'systemStateService.dart';
 import 'roundService.dart';
 import 'round.dart';
+import 'dart:async';
 
 class RoundControlScreen extends StatefulWidget {
   const RoundControlScreen({super.key});
@@ -48,8 +49,20 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   //Current round name
   String? roundName;
 
+  //Timer
+  Timer? refreshTimer;
+
   Future<void> load() async {
-    final loadedSystemState = await systemStateService.getSystemState();
+
+    print("LOAD CALLED");
+    print("LOAD CALLED FROM:");
+    print(StackTrace.current);
+
+    final newState = await systemStateService.getSystemState();
+
+    if(newState.currentRoundNumber == systemState?.currentRoundNumber && newState.currentTurnPriority == systemState?.currentTurnPriority) {
+    return; 
+    }
 
     final loadedRounds = await roundService.getRounds();
 
@@ -58,7 +71,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
     }
 
     setState(() {
-      systemState = loadedSystemState;
+      systemState = newState;
       rounds = loadedRounds;
       isLoading = false;
     });
@@ -68,7 +81,19 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   @override
   void initState() {
     super.initState();
+
+    print("INIT STATE: $hashCode");
+
     load();
+
+    refreshTimer = Timer.periodic(Duration(seconds: 10), (_) => load());
+  }
+
+  @override
+  void dispose() {
+    print("DISPOSE: $hashCode");
+    refreshTimer?.cancel();
+    super.dispose();
   }
 
   //Method to show a dialog box to confirm if the user wants to continue with reseting the lottery
@@ -176,6 +201,9 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
 
     //Resetting current turn priority to 1
     final success3 = await systemStateService.updateCurrentTurnPriorityNumber(sysStateId: 1, currentTurnPriority: 1);
+
+    //Ending timer
+    roundControlService.endTimer();
 
     //Refreshing
     await load();
@@ -636,7 +664,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                       backgroundColor: const Color.fromARGB(255, 123, 9, 1),
                       foregroundColor: Colors.white,
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       confirmLotteryReset();
                     },
                     child: Text("Reset Lottery"),

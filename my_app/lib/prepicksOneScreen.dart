@@ -251,7 +251,7 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
                     SnackBar(content: Text("Selection Confirmed")),
                   );
                   
-                  await roundControlService.turnProgressionHandler();
+                  await roundControlService.startTurn();
 
                   if (!mounted) return;
 

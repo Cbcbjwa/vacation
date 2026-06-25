@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   print("LOGIN SET SESSION LABEL = ${Session.siteName}");
 
-                  if(user.getDocRole() == Role.admin) {
+                  if(user.docRole == Role.admin) {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AdminScreen()));
                   } else {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => UserScreen()));

@@ -563,8 +563,10 @@ class _AdminScreenState extends State<AdminScreen> {
     print("BUILD HASH: ${weekRepository.hashCode}");
     print("BUILD WEEKS: ${weekRepository.weeks.length}");
 
-    if(systemState!.currentTurnPriority == currentUser!.priorityNumber || systemState!.currentTurnPriority == currentUser!.prepicksPriorityNumber) {
+    if((systemState!.currentRoundNumber > 0 && systemState!.currentTurnPriority == currentUser!.priorityNumber) || (systemState!.currentRoundNumber < 1 && systemState!.currentTurnPriority == currentUser!.prepicksPriorityNumber)) {
       isUsersTurn = true;
+    } else {
+      isUsersTurn = false;
     }
 
     return Scaffold(
@@ -703,7 +705,7 @@ class _AdminScreenState extends State<AdminScreen> {
             ListTile(
               tileColor: Colors.black,
               leading: const Icon(Icons.info_outline_sharp, fontWeight: FontWeight.bold, color: Colors.grey),
-              title: const Text("Round Info",
+              title: const Text("Lottery Info",
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
                 await Navigator.push(context, MaterialPageRoute(builder: (context) => RoundInfoScreen()));
