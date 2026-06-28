@@ -16,6 +16,7 @@ import 'dart:async';
 import 'emailService.dart';
 import 'emailSendingControl.dart';
 import 'roundFlow.dart';
+import 'timerStateService.dart';
 
 class RoundControlService {
 
@@ -36,6 +37,9 @@ class RoundControlService {
 
   //Instantiating EmailSendingControl into an object
   EmailSendingControl emailSendingControl = EmailSendingControl();
+
+  //Instantiating TimerStateService into an object
+  TimerStateService timerStateService = TimerStateService();
 
   //List of users
   List<User> users = [];

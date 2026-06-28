@@ -1,6 +1,7 @@
 console.log("SERVER FILE LOADED");
 
 const express = require("express");
+const cors = require("cors");
 
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -9,6 +10,9 @@ const weekRoutes = require("./routes/weekRoutes");
 const app = express();
 
 app.use(express.json());
+
+//Flutter thing
+app.use(cors());
 
 // logger middleware
 app.use((req, res, next) => {
@@ -25,7 +29,16 @@ app.use("/selections", require("./routes/selectionRoutes"));
 app.use("/rounds", require("./routes/roundRoutes"))
 app.use("/sysState", require("./routes/sysStateRoutes"));
 app.use("/email", require("./routes/emailRoutes"));
+app.use("/timerState", require("./routes/timerStateRoutes"));
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.get("/", (req, res) => {
+  res.send("Vacation API is running!");
+});
+
+
+//Server port
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

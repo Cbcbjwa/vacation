@@ -9,10 +9,10 @@ class TimerState {
   //Fields of the class
   int timerId;
   bool timerIsActive;
-  DateTime turnEndTime;
+  DateTime? turnEndTime;
 
   //Constructor
-  TimerState.full({required this.timerId, required this.timerIsActive, required this.turnEndTime});
+  TimerState.full({required this.timerId, required this.timerIsActive, this.turnEndTime});
 
   factory TimerState.fromJson(Map<String, dynamic> json) {
     return TimerState.full(
