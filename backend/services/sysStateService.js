@@ -10,7 +10,7 @@ const pool = require('../db');
 //Method for loading the system state from the databsae
 async function loadSysState() {
     const [rows] = await pool.query(
-        "SELECT * FROM systemState"
+        "SELECT * FROM systemstate"
     );
     return rows;
 }

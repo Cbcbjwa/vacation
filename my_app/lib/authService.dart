@@ -13,7 +13,7 @@ import 'user.dart';
 class AuthService {
 
   //Fields of the class
-  final String baseUrl = "http://10.0.2.2:3000";
+  final String baseUrl = "https://vacation-xhxd.onrender.com";
 
   Future<User?> login(String email, String password) async {
     final response = await http.post(

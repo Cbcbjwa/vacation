@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 import 'role.dart';
 
 class UserService {
-  final String baseUrl = "http://10.0.2.2:3000";
+  final String baseUrl = "https://vacation-xhxd.onrender.com";
 
   //Method for loading users
   Future<List<User>> getUsers() async {

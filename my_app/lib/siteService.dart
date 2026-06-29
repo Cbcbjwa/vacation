@@ -10,7 +10,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class SiteService {
-  final String baseUrl = "http://10.0.2.2:3000";
+  final String baseUrl = "https://vacation-xhxd.onrender.com";
 
   //Method for loading sites
   Future<List<Site>> getSites() async {
