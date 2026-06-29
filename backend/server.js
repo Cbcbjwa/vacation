@@ -1,3 +1,6 @@
+require("dotenv").config();
+
+
 console.log("SERVER FILE LOADED");
 
 const express = require("express");
