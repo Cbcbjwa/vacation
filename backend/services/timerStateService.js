@@ -10,7 +10,7 @@ const pool = require('../db');
 //Method for loading the timer state from the databsae
 async function loadTimerState() {
     const [rows] = await pool.query(
-        "SELECT * FROM timerState"
+        "SELECT * FROM timerstate"
     );
     return rows;
 }
