@@ -16,9 +16,9 @@ async function loadTimerState() {
 }
 
 //Method for updating the timer state
-async function updateTimerState(timerStateId, timerIsActive, turnEndTime) {
+async function updateTimerState(timerId, timerIsActive, turnEndTime) {
 
-    console.log("timerStateId =", timerStateId);
+    console.log("timerStateId =", timerId);
     console.log("timerIsActive: ", timerIsActive);
     console.log("turnEndTime: ", turnEndTime)
 
@@ -26,8 +26,8 @@ async function updateTimerState(timerStateId, timerIsActive, turnEndTime) {
         "UPDATE timerstate SET "
             + "timerIsActive=?, "
             + "turnEndTime=? "
-            + "WHERE timerStateId=?;",
-        [timerIsActive, turnEndTime, timerStateId]
+            + "WHERE timerId=?;",
+        [timerIsActive, turnEndTime, timerId]
     )
 }
 

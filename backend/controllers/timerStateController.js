@@ -20,10 +20,10 @@ async function update(req, res) {
 
   console.log(req.body);
 
-  const { timerStateId, timerIsActive, turnEndTime } = req.body;
+  const { timerId, timerIsActive, turnEndTime } = req.body;
 
   try {
-    await updateTimerState(timerStateId, timerIsActive, turnEndTime);
+    await updateTimerState(timerId, timerIsActive, turnEndTime);
 
     res.json({ success: true });
   } catch (error) {
