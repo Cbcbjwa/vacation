@@ -12,7 +12,7 @@ async function loadTimerState() {
     const [rows] = await pool.query(
         "SELECT * FROM timerstate"
     );
-    return rows;
+    return rows[0];
 }
 
 //Method for updating the timer state
