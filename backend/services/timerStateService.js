@@ -23,7 +23,7 @@ async function updateTimerState(timerStateId, timerIsActive, turnEndTime) {
     console.log("turnEndTime: ", turnEndTime)
 
     await pool.query(
-        "UPDATE timerState SET "
+        "UPDATE timerstate SET "
             + "timerIsActive=?, "
             + "turnEndTime=? "
             + "WHERE timerStateId=?;",

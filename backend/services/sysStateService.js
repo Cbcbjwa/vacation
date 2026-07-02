@@ -22,7 +22,7 @@ async function updateCurrentRoundNumber(sysStateId, currentRoundNumber) {
     console.log("currentRoundNumber =", currentRoundNumber);
 
     await pool.query(
-        "UPDATE systemState SET currentRoundNumber=? WHERE sysStateId=?;",
+        "UPDATE systemstate SET currentRoundNumber=? WHERE sysStateId=?;",
         [currentRoundNumber, sysStateId]
     )
 }
@@ -30,7 +30,7 @@ async function updateCurrentRoundNumber(sysStateId, currentRoundNumber) {
 //Method for updating the current turn priority in the database
 async function updateCurrentTurnPriority(sysStateId, currentTurnPriority) {
     await pool.query(
-        "UPDATE systemState SET currentTurnPriority=? WHERE sysStateId=?;",
+        "UPDATE systemstate SET currentTurnPriority=? WHERE sysStateId=?;",
         [currentTurnPriority, sysStateId]
     )
 }
