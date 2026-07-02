@@ -1,4 +1,4 @@
-const SystemStateService = require("./systemStateService");
+const SystemStateService = require("./sysStateService");
 const UserService = require("./userService");
 const RoundService = require("./roundService");
 const TimerStateService = require("./timerStateService");
