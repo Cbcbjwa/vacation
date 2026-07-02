@@ -16,7 +16,7 @@ class LotteryService {
         this.oneMinuteNotificationSent = false;
 
         //Instantiating the database service classes into objects
-        this.systemStateService = new SystemStateService();
+        this.systemStateService = new SysStateService();
         this.userService = new UserService();
         this.roundService = new RoundService();
         this.timerStateService = new TimerStateService();
