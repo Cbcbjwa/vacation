@@ -47,7 +47,7 @@ app.get("/", (req, res) => {
 //Server port
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
 
   //If there was an active timer when the server shut down, recreating the setInterval and continuing it.
