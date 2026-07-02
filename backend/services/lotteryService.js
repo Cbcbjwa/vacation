@@ -1,8 +1,8 @@
-const SysStateService = require("./sysStateService");
-const UserService = require("./userService");
-const RoundService = require("./roundService");
-const TimerStateService = require("./timerStateService");
-const EmailService = require("./emailService");
+const systemStateService = require("./sysStateService");
+const userService = require("./userService");
+const roundService = require("./roundService");
+const timerStateService = require("./timerStateService");
+const emailService = require("./emailService");
 const RoundEligibilityService = require('./roundEligibilityService');
 
 class LotteryService {
@@ -15,12 +15,6 @@ class LotteryService {
         this.threeMinuteNotificationSent = false;
         this.oneMinuteNotificationSent = false;
 
-        //Instantiating the database service classes into objects
-        this.systemStateService = new SysStateService();
-        this.userService = new UserService();
-        this.roundService = new RoundService();
-        this.timerStateService = new TimerStateService();
-        this.emailService = new EmailService();
         this.roundEligibilityService = new RoundEligibilityService();
 
         //Active user
@@ -39,13 +33,13 @@ class LotteryService {
     async load() {
 
         //Loading system state
-        this.systemState = await this.systemStateService.loadSystemState();
+        this.systemState = await systemStateService.loadSystemState();
 
         //Loading users
-        this.users = await this.userService.loadUsers();
+        this.users = await userService.loadUsers();
 
         //Loading rounds
-        this.rounds = await this.roundService.loadRounds();
+        this.rounds = await roundService.loadRounds();
 
         //Determining the name of the current round
         const currentRound = this.rounds.find(round => round.roundNumber === this.systemState.currentRoundNumber);
@@ -136,7 +130,7 @@ class LotteryService {
         const turnEndTime = new Date(Date.now() + 5 * 60 * 1000);
 
         //Updating timer state
-        await this.timerStateService.updateTimerState(1, true, turnEndTime);
+        await timerStateService.updateTimerState(1, true, turnEndTime);
 
         if(this.timer) {
             clearInterval(this.timer);
@@ -152,7 +146,7 @@ class LotteryService {
 
     //**Timer Tick**\\
     async handleTick() {
-        const timerState = await this.timerStateService.getTimerState();
+        const timerState = await timerStateService.getTimerState();
 
         if(!timerState.timerIsActive) {
             clearInterval(this.timer);
@@ -229,10 +223,10 @@ class LotteryService {
         await this.endTimer();
 
         //Updating the system state's round number
-        await this.systemStateService.updateCurrentRoundNumber(1, roundNumber);
+        await systemStateService.updateCurrentRoundNumber(1, roundNumber);
 
         //Setting the round's state to active
-        await this.roundService.updateRound(roundNumber, true);
+        await roundService.updateRound(roundNumber, true);
 
         await this.startTurn();
     }
@@ -312,11 +306,11 @@ class LotteryService {
         }
 
         //Nobody else can pick -- end of round
-        await this.roundService.updateRound(currentRound, false);
+        await roundService.updateRound(currentRound, false);
 
-        await this.roundService.updateRoundActivity(currentRound, true);
+        await roundService.updateRoundActivity(currentRound, true);
 
-        await this.systemStateService.updateCurrentTurnPriorityNumber(1, 1)
+        await systemStateService.updateCurrentTurnPriorityNumber(1, 1)
 
         //Ending timer
         await this.endTimer();
@@ -336,7 +330,7 @@ class LotteryService {
         this.oneMinuteNotificationSent = false;
 
         //Persisting timer state in MySQL
-        await this.timerStateService.updateTimerState(
+        await timerStateService.updateTimerState(
             1,          // timerStateId
             false,      // timerIsActive
             null        // turnEndTime
@@ -348,7 +342,7 @@ class LotteryService {
     //Method to resume the timer
     async resumeTimerIfNeeded() {
 
-        const timerState = await this.timerStateService.getTimerState();
+        const timerState = await timerStateService.getTimerState();
 
         if (!timerState.timerIsActive) {
             console.log("No active timer.");
