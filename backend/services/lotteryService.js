@@ -67,6 +67,11 @@ class LotteryService {
     //Method to send an email to inform the user that their turn has begun
     async emailNotificationOfTurnStart() {
 
+        if(!this.userWithActiveTurn) {
+            console.log("No active user.");
+            return;
+        }
+
         //Loading everything
         await this.load();
 
@@ -79,6 +84,11 @@ class LotteryService {
     //Method to send an email to remind the user to make a selection
     async emailReminderToPick(timeRemaining) {
 
+        if(!this.userWithActiveTurn) {
+            console.log("No active user.");
+            return;
+        }
+
         //Loading everything
         await this.load();
 
@@ -90,6 +100,11 @@ class LotteryService {
 
     //Method to send an email to inform the user that their window to select a week has closed
     async emailToInformOfWindowClosure() {
+
+        if(!this.userWithActiveTurn) {
+            console.log("No active user.");
+            return;
+        }
 
         //Loading everything
         await this.load();
@@ -152,12 +167,14 @@ class LotteryService {
 
         console.log("Remaining:", Math.floor(remainingTime/1000));
 
+        const remainingHours = Math.ceil(remainingTime / (1000 * 60 * 60));
+
         //3 minute email reminder
         if(!this.threeMinuteNotificationSent && remainingTime <= 180000) {
             this.threeMinuteNotificationSent = true;
 
             //Sending email reminder to pick a week
-            await this.emailReminderToPick(remainingTime);
+            await this.emailReminderToPick(remainingHours);
 
         }
 
@@ -166,7 +183,7 @@ class LotteryService {
             this.oneMinuteNotificationSent = true;
 
             //Sending email reminder to pick a week
-            await this.emailReminderToPick(remainingTime);
+            await this.emailReminderToPick(remainingHours);
         
         }
 
@@ -175,7 +192,7 @@ class LotteryService {
 
             //Ending timer
             clearInterval(this.timer);
-            this.timer = null
+            this.timer = null;
 
             //Sending an email to inform the user that their window to select a week has closed
             await this.emailToInformOfWindowClosure();
@@ -300,6 +317,9 @@ class LotteryService {
         await this.roundService.updateRoundActivity(currentRound, true);
 
         await this.systemStateService.updateCurrentTurnPriorityNumber(1, 1)
+
+        //Ending timer
+        await this.endTimer();
     }
 
     //Method to end the timer
@@ -312,8 +332,6 @@ class LotteryService {
             this.timer = null;
         }
 
-        this.endTime = null;
-
         this.threeMinuteNotificationSent = false;
         this.oneMinuteNotificationSent = false;
 
@@ -325,6 +343,27 @@ class LotteryService {
         );
 
         console.log("Timer ended");
+    }
+
+    //Method to resume the timer
+    async resumeTimerIfNeeded() {
+
+        const timerState = await this.timerStateService.getTimerState();
+
+        if (!timerState.timerIsActive) {
+            console.log("No active timer.");
+            return;
+        }
+
+        console.log("Resuming timer...");
+
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+
+        this.timer = setInterval(async () => {
+            await this.handleTick();
+        }, 1000);
     }
 }
 

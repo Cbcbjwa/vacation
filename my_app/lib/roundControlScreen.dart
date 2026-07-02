@@ -12,6 +12,7 @@ import 'systemStateService.dart';
 import 'roundService.dart';
 import 'round.dart';
 import 'dart:async';
+import 'lotteryService.dart';
 
 class RoundControlScreen extends StatefulWidget {
   const RoundControlScreen({super.key});
@@ -30,6 +31,9 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
 
   //Instantiating RoundService into an object
   RoundService roundService = RoundService();
+
+  //Instantiating LotteryService into an object
+  LotteryService lotteryService = LotteryService();
 
   //List of rounds
   List<Round> rounds = [];
@@ -203,7 +207,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
     final success3 = await systemStateService.updateCurrentTurnPriorityNumber(sysStateId: 1, currentTurnPriority: 1);
 
     //Ending timer
-    roundControlService.endTimer();
+    lotteryService.endTimer();
 
     //Refreshing
     await load();
@@ -277,7 +281,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
     }
 
     //Starting round
-    await roundControlService.startRound(roundNumber);
+    await lotteryService.startRound(roundNumber: roundNumber);
 
     //Refreshing
     await load();

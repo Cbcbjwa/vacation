@@ -15,6 +15,7 @@ import 'session.dart';
 import 'roundControlScreen.dart';
 import 'systemState.dart';
 import 'systemStateService.dart';
+import 'lotteryService.dart';
 
 class Prepicks1Screen extends StatefulWidget {
   const Prepicks1Screen({super.key});
@@ -33,6 +34,9 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
 
   //Instantiating RoundControlService into an object
   RoundControlService roundControlService = RoundControlService();
+
+  //Instantiating LotteryService into an object
+  LotteryService lotteryService = LotteryService();
 
   //Variable to hold the selected week ID
   int? selectedWeekId;
@@ -251,7 +255,7 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
                     SnackBar(content: Text("Selection Confirmed")),
                   );
                   
-                  await roundControlService.startTurn();
+                  await lotteryService.advanceTurn();
 
                   if (!mounted) return;
 

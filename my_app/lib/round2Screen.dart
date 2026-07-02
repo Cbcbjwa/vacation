@@ -15,6 +15,7 @@ import 'siteConstraintsChecker.dart';
 import 'systemState.dart';
 import 'roundControlService.dart';
 import 'systemStateService.dart';
+import 'lotteryService.dart';
 
 class Round2Screen extends StatefulWidget {
   const Round2Screen({super.key});
@@ -39,6 +40,9 @@ class _Round2ScreenState extends State<Round2Screen> {
 
   //Instantiating SystemStateService into an object
   SystemStateService systemStateService = SystemStateService();
+
+  //Instantiating LotteryService into an object
+  LotteryService lotteryService = LotteryService();
 
   //System state
   SystemState? systemState;
@@ -263,7 +267,7 @@ class _Round2ScreenState extends State<Round2Screen> {
                     SnackBar(content: Text("Selection Confirmed")),
                   );
 
-                  await roundControlService.startTurn();
+                  await lotteryService.advanceTurn();
 
                   if (!mounted) return;
 

@@ -14,6 +14,7 @@ import 'session.dart';
 import 'systemState.dart';
 import 'roundControlService.dart';
 import 'systemStateService.dart';
+import 'lotteryService.dart';
 
 class Prepicks2Screen extends StatefulWidget {
   const Prepicks2Screen({super.key});
@@ -35,6 +36,9 @@ class _Prepicks2ScreenState extends State<Prepicks2Screen> {
 
   //Instantiating SystemStateService into an object
   SystemStateService systemStateService = SystemStateService();
+
+  //Instantiating LotteryService into an object
+  LotteryService lotteryService = LotteryService();
 
   //System state
   SystemState? systemState;
@@ -249,7 +253,7 @@ class _Prepicks2ScreenState extends State<Prepicks2Screen> {
                     SnackBar(content: Text("Selection Confirmed")),
                   );
 
-                  await roundControlService.startTurn();
+                  await lotteryService.advanceTurn();
 
                   if (!mounted) return;
 
