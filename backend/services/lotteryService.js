@@ -33,7 +33,7 @@ class LotteryService {
     async load() {
 
         //Loading system state
-        this.systemState = await systemStateService.loadSystemState();
+        this.systemState = await systemStateService.loadSysState();
 
         //Loading users
         this.users = await userService.loadUsers();
