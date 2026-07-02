@@ -146,7 +146,7 @@ class LotteryService {
 
     //**Timer Tick**\\
     async handleTick() {
-        const timerState = await timerStateService.getTimerState();
+        const timerState = await timerStateService.loadTimerState();
 
         if(!timerState.timerIsActive) {
             clearInterval(this.timer);
@@ -342,7 +342,7 @@ class LotteryService {
     //Method to resume the timer
     async resumeTimerIfNeeded() {
 
-        const timerState = await timerStateService.getTimerState();
+        const timerState = await timerStateService.loadTimerState();
 
         if (!timerState.timerIsActive) {
             console.log("No active timer.");
