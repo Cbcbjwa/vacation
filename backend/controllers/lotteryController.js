@@ -18,10 +18,12 @@ async function beginTurn(req, res) {
 //Method for starting a round
 async function beginRound(req, res) {
 
+    console.log("START ROUND CONTROLLER");
+
     const { roundNumber } = req.body;
 
     try {
-        await lotteryService.startTurn(roundNumber);
+        await lotteryService.startRound(roundNumber);
         res.json({ success: true });
     } catch (error) {
         console.log("BEGIN ROUND ERROR:", error);

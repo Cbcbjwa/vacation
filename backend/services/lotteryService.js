@@ -61,52 +61,54 @@ class LotteryService {
     //Method to send an email to inform the user that their turn has begun
     async emailNotificationOfTurnStart() {
 
+        
+
+        //Loading everything
+        await this.load();
+
         if(!this.userWithActiveTurn) {
             console.log("No active user.");
             return;
         }
 
-        //Loading everything
-        await this.load();
-
         console.log(`Sending to: ${this.userWithActiveTurn.email}`);
 
         //Sending the email
-        await this.emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "Your Turn", text: `Your window is open to select a vacation week for ${this.roundName} of the 2027 ESA Vacation Lottery.\nYou have 24 hours to confirm your selection. Please use the ESA Vacation App to review available weeks and make your selection. After 24 hours, your window will be closed, and you will need to contact your administrator to secure a week for this round.`});
+        await emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "Your Turn", text: `Your window is open to select a vacation week for ${this.roundName} of the 2027 ESA Vacation Lottery.\nYou have 24 hours to confirm your selection. Please use the ESA Vacation App to review available weeks and make your selection. After 24 hours, your window will be closed, and you will need to contact your administrator to secure a week for this round.`});
     }
 
     //Method to send an email to remind the user to make a selection
     async emailReminderToPick(timeRemaining) {
 
+        //Loading everything
+        await this.load();
+
         if(!this.userWithActiveTurn) {
             console.log("No active user.");
             return;
         }
 
-        //Loading everything
-        await this.load();
-
         console.log(`Sending to: ${this.userWithActiveTurn.email}`);
 
         //Sending the email
-        await this.emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "**REMINDER**", text: `Your time-limited window for selecting a week for ${this.roundName} of the 2027 ESA Vacation Lottery is open. You have ${timeRemaining} hours to confirm your week. If you are having difficulties, or would prefer not to use the ESA Vacation App, please reach out to an administrator between the hours of 6am to 10pm for assistance.`});
+        await emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "**REMINDER**", text: `Your time-limited window for selecting a week for ${this.roundName} of the 2027 ESA Vacation Lottery is open. You have ${timeRemaining} hours to confirm your week. If you are having difficulties, or would prefer not to use the ESA Vacation App, please reach out to an administrator between the hours of 6am to 10pm for assistance.`});
     }
 
     //Method to send an email to inform the user that their window to select a week has closed
     async emailToInformOfWindowClosure() {
 
+        //Loading everything
+        await this.load();
+
         if(!this.userWithActiveTurn) {
             console.log("No active user.");
             return;
         }
 
-        //Loading everything
-        await this.load();
-
         console.log(`Sending to: ${this.userWithActiveTurn.email}`);
 
         //Sending the email
-        await this.emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "Your Window has Closed", text: `Your window to select a vacation week has closed. Please reach out to an administrator between the hours of 6am and 10pm to confirm a week for ${this.roundName}.`});
+        await emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "Your Window has Closed", text: `Your window to select a vacation week has closed. Please reach out to an administrator between the hours of 6am and 10pm to confirm a week for ${this.roundName}.`});
     }
 
 
@@ -295,7 +297,7 @@ class LotteryService {
             if(canPick) {
                 console.log(`Updating priority to ${nextPriority}`);
 
-                await this.systemStateService.updateCurrentTurnPriorityNumber(1, nextPriority);
+                await systemStateService.updateCurrentTurnPriorityNumber(1, nextPriority);
 
                 await this.load();
 
