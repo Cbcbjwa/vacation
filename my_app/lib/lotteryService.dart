@@ -17,7 +17,7 @@ class LotteryService {
     }) async {
 
       final res = await http.post(
-        Uri.parse("$baseUrl/lottery/startRound"),
+        Uri.parse("$baseUrl/lottery/beginRound"),
         headers: {
           "Content-Type": "application/json",
         },
@@ -36,7 +36,7 @@ class LotteryService {
   Future<bool> advanceTurn() async {
 
     final res = await http.post(
-      Uri.parse("$baseUrl/lottery/advanceTurn"),
+      Uri.parse("$baseUrl/lottery/beginTurn"),
       headers: {
         "Content-Type": "application/json",
       },
@@ -52,7 +52,7 @@ class LotteryService {
   Future<bool> endTimer() async {
 
     final res = await http.post(
-      Uri.parse("$baseUrl/lottery/endTimer"),
+      Uri.parse("$baseUrl/lottery/stopTimer"),
       headers: {
         "Content-Type": "application/json",
       },
