@@ -139,6 +139,7 @@ class LotteryService {
         }
 
         this.timer = setInterval(async () => {
+            console.log("INTERVAL FIRED");
             await this.handleTick();
         }, 1000);
 
@@ -148,6 +149,8 @@ class LotteryService {
 
     //**Timer Tick**\\
     async handleTick() {
+        console.log("HANDLE TICK");
+        
         const timerState = await timerStateService.loadTimerState();
 
         if(!timerState.timerIsActive) {
