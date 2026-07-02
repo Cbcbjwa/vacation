@@ -9,11 +9,11 @@ class LotteryService {
 
     //Fields of the class
     constructor() {
-        this.timer = null;
         this.users = [];
         this.processingTransition = false;
         this.threeMinuteNotificationSent = false;
         this.oneMinuteNotificationSent = false;
+        this.timerRunning = false;
 
         this.roundEligibilityService = new RoundEligibilityService();
 
@@ -61,11 +61,6 @@ class LotteryService {
     //Method to send an email to inform the user that their turn has begun
     async emailNotificationOfTurnStart() {
 
-        
-
-        //Loading everything
-        await this.load();
-
         if(!this.userWithActiveTurn) {
             console.log("No active user.");
             return;
@@ -80,9 +75,6 @@ class LotteryService {
     //Method to send an email to remind the user to make a selection
     async emailReminderToPick(timeRemaining) {
 
-        //Loading everything
-        await this.load();
-
         if(!this.userWithActiveTurn) {
             console.log("No active user.");
             return;
@@ -96,9 +88,6 @@ class LotteryService {
 
     //Method to send an email to inform the user that their window to select a week has closed
     async emailToInformOfWindowClosure() {
-
-        //Loading everything
-        await this.load();
 
         if(!this.userWithActiveTurn) {
             console.log("No active user.");
@@ -134,14 +123,23 @@ class LotteryService {
         //Updating timer state
         await timerStateService.updateTimerState(1, true, turnEndTime);
 
-        if(this.timer) {
-            clearInterval(this.timer);
-        }
+        this.timerRunning = true;
 
-        this.timer = setInterval(async () => {
-            console.log("INTERVAL FIRED");
-            await this.handleTick();
-        }, 1000);
+        const runLoop = async () => {
+        
+            while(this.timerRunning) {
+                try {
+                    console.log("INTERVAL FIRED");
+                    await this.handleTick();
+                } catch (err) {
+                console.error("TICK ERROR:", err);
+            }
+
+            await new Promise(res => setTimeout(res, 1000));
+            }
+        };
+
+        runLoop();
 
         //Sending an email to inform the user that their window to select a vacation week has opened
         await this.emailNotificationOfTurnStart();
@@ -149,55 +147,57 @@ class LotteryService {
 
     //**Timer Tick**\\
     async handleTick() {
-        console.log("HANDLE TICK");
+        try {
+            console.log("HANDLE TICK");
 
-        const timerState = await timerStateService.loadTimerState();
+            const timerState = await timerStateService.loadTimerState();
 
-        if(!timerState.timerIsActive) {
-            clearInterval(this.timer);
-            this.timer = null;
-            return;
-        }
+            if(!timerState.timerIsActive) {
+                this.timerRunning = false;
+                return;
+            }
 
-        //Remaining time
-        const turnEndTime = new Date(timerState.turnEndTime);
+            //Remaining time
+            const turnEndTime = new Date(timerState.turnEndTime);
 
-        const remainingTime = turnEndTime.getTime() - Date.now();
+            const remainingTime = turnEndTime.getTime() - Date.now();
 
-        console.log("Remaining:", Math.floor(remainingTime/1000));
+            console.log("Remaining:", Math.floor(remainingTime/1000));
 
-        const remainingHours = Math.ceil(remainingTime / (1000 * 60 * 60));
+            const remainingHours = Math.ceil(remainingTime / (1000 * 60 * 60));
 
-        //3 minute email reminder
-        if(!this.threeMinuteNotificationSent && remainingTime <= 180000) {
-            this.threeMinuteNotificationSent = true;
+            //3 minute email reminder
+            if(!this.threeMinuteNotificationSent && remainingTime <= 180000) {
+                this.threeMinuteNotificationSent = true;
 
-            //Sending email reminder to pick a week
-            await this.emailReminderToPick(remainingHours);
+                //Sending email reminder to pick a week
+                await this.emailReminderToPick(remainingHours);
 
-        }
+            }
 
-        //1 minute email reminder
-        if(!this.oneMinuteNotificationSent && remainingTime <= 60000) {
-            this.oneMinuteNotificationSent = true;
+            //1 minute email reminder
+            if(!this.oneMinuteNotificationSent && remainingTime <= 60000) {
+                this.oneMinuteNotificationSent = true;
 
-            //Sending email reminder to pick a week
-            await this.emailReminderToPick(remainingHours);
-        
-        }
+                //Sending email reminder to pick a week
+                await this.emailReminderToPick(remainingHours);
+            
+            }
 
-        //End of timer
-        if(remainingTime <= 0) {
+            //End of timer
+            if(remainingTime <= 0) {
 
-            //Ending timer
-            clearInterval(this.timer);
-            this.timer = null;
+                //Ending timer
+                this.timerRunning = false;
 
-            //Sending an email to inform the user that their window to select a week has closed
-            await this.emailToInformOfWindowClosure();
+                //Sending an email to inform the user that their window to select a week has closed
+                await this.emailToInformOfWindowClosure();
 
 
-            await this.transition();
+                await this.transition();
+            }
+        } catch (error) {
+            console.log("Handle tick failure: ", error);
         }
     }
 
@@ -326,10 +326,7 @@ class LotteryService {
 
         console.log("ENDING TIMER");
 
-        if (this.timer) {
-            clearInterval(this.timer);
-            this.timer = null;
-        }
+        this.timerRunning = false;
 
         this.threeMinuteNotificationSent = false;
         this.oneMinuteNotificationSent = false;
@@ -346,7 +343,6 @@ class LotteryService {
 
     //Method to resume the timer
     async resumeTimerIfNeeded() {
-
         const timerState = await timerStateService.loadTimerState();
 
         if (!timerState.timerIsActive) {
@@ -356,13 +352,21 @@ class LotteryService {
 
         console.log("Resuming timer...");
 
-        if (this.timer) {
-            clearInterval(this.timer);
-        }
+        this.timerRunning = true;
 
-        this.timer = setInterval(async () => {
-            await this.handleTick();
-        }, 1000);
+        const runLoop = async () => {
+            while (this.timerRunning) {
+                try {
+                    await this.handleTick();
+                } catch (err) {
+                    console.error("TICK ERROR:", err);
+                }
+
+                await new Promise(res => setTimeout(res, 1000));
+            }
+        };
+
+        runLoop();
     }
 }
 
