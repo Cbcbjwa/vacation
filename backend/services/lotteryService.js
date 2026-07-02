@@ -150,7 +150,7 @@ class LotteryService {
     //**Timer Tick**\\
     async handleTick() {
         console.log("HANDLE TICK");
-        
+
         const timerState = await timerStateService.loadTimerState();
 
         if(!timerState.timerIsActive) {
@@ -300,7 +300,7 @@ class LotteryService {
             if(canPick) {
                 console.log(`Updating priority to ${nextPriority}`);
 
-                await systemStateService.updateCurrentTurnPriorityNumber(1, nextPriority);
+                await systemStateService.updateCurrentTurnPriority(1, nextPriority);
 
                 await this.load();
 
@@ -315,7 +315,7 @@ class LotteryService {
 
         await roundService.updateRoundActivity(currentRound, true);
 
-        await systemStateService.updateCurrentTurnPriorityNumber(1, 1)
+        await systemStateService.updateCurrentTurnPriority(1, 1)
 
         //Ending timer
         await this.endTimer();
