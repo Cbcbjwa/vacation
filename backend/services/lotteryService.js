@@ -32,7 +32,7 @@ class LotteryService {
 
 
 
-    //Method to load current round and the user with an active turn
+    //Method to load stuff
     async load() {
 
         //Loading system state
@@ -43,6 +43,10 @@ class LotteryService {
 
         //Loading rounds
         this.rounds = await roundService.loadRounds();
+    }
+
+    //Method to determine the user with an active turn
+    async determineActiveUser() {
 
         //Determining the name of the current round
         const currentRound = this.rounds.find(round => round.roundNumber === this.systemState.currentRoundNumber);
@@ -111,13 +115,14 @@ class LotteryService {
     }
 
     //Method to check for an active user
-    async ensureActiveUser() {
+    async ensureActiveUser(force = false) {
 
-        if(this.userWithActiveTurn) {
+        if(!force && this.userWithActiveTurn) {
             return;
         }
 
         await this.load();
+        await this.determineActiveUser();
 
         if(!this.userWithActiveTurn) {
             throw new Error(
@@ -130,7 +135,13 @@ class LotteryService {
 
     //**Timer Start**\\
     async startWindow() {
+
         await this.load();
+        await this.determineActiveUser();
+
+         if(!this.systemState) {
+            throw new Error("System state not loaded");
+        }
 
         console.log("START WINDOW");
 
@@ -148,32 +159,11 @@ class LotteryService {
 
         this.timerRunning = true;
 
-        const runLoop = async () => {
-
-            if(this.loopRunning) {
-                console.log("Loop already running [start window]");
-                return;
-            }
-            this.loopRunning = true;
-        
-            while(this.timerRunning) {
-                try {
-                    console.log("INTERVAL FIRED");
-                    await this.handleTick();
-                } catch (err) {
-                console.error("TICK ERROR:", err);
-                }
-
-                await new Promise(res => setTimeout(res, 1000));
-            }
-            this.loopRunning = false;
-
-        };
-
-        runLoop();
+        //Running timer loop
+        this.runLoop();
 
         //Sending an email to inform the user that their window to select a vacation week has opened
-        await this.ensureActiveUser();
+        await this.ensureActiveUser(true);
         await this.emailNotificationOfTurnStart();
     }
 
@@ -197,7 +187,7 @@ class LotteryService {
                 this.threeMinuteNotificationSent = true;
 
                 //Sending email reminder to pick a week
-                await this.ensureActiveUser();
+                await this.ensureActiveUser(true);
                 await this.emailReminderToPick(remainingHours);
 
             }
@@ -207,7 +197,7 @@ class LotteryService {
                 this.oneMinuteNotificationSent = true;
 
                 //Sending email reminder to pick a week
-                await this.ensureActiveUser();
+                await this.ensureActiveUser(true);
                 await this.emailReminderToPick(remainingHours);
             
             }
@@ -244,10 +234,34 @@ class LotteryService {
 
             await this.turnProgressionHandler();
 
+            await this.load();
+
             await this.startWindow();
         } finally {
             this.processingTransition=false;
         }
+    }
+
+    //Method for runnning the timer loop
+    async runLoop() {
+
+        if(this.loopRunning) {
+            return;
+        }
+
+        this.loopRunning = true;
+
+        while(this.timerRunning) {
+            try {
+                await this.handleTick();
+            } catch (err) {
+                console.error("TICK ERROR:", err);
+            }
+
+            await new Promise(res => setTimeout(res, 1000));
+        }
+
+        this.loopRunning = false;
     }
 
     //**Start Round**\\
@@ -274,6 +288,7 @@ class LotteryService {
 
         //Loading data
         await this.load();
+        await this.determineActiveUser();
 
         //Current round
         const currentRound = this.systemState.currentRoundNumber;
@@ -332,6 +347,7 @@ class LotteryService {
                 await systemStateService.updateCurrentTurnPriority(1, nextPriority);
 
                 await this.load();
+                await this.determineActiveUser();
 
                 return;
             }
@@ -374,6 +390,9 @@ class LotteryService {
     //Method to resume the timer
     async resumeTimerIfNeeded() {
 
+        await this.load();
+        await this.determineActiveUser();
+
         const timerState = await timerStateService.loadTimerState();
 
         if (!timerState.timerIsActive) {
@@ -397,27 +416,8 @@ class LotteryService {
 
         this.timerRunning = true;
 
-        const runLoop = async () => {
-
-            if(this.loopRunning) {
-                console.log("Loop already running [start window]");
-                return;
-            }
-            this.loopRunning = true;
-
-            while (this.timerRunning) {
-                try {
-                    await this.handleTick();
-                } catch (err) {
-                    console.error("TICK ERROR:", err);
-                }
-
-                await new Promise(res => setTimeout(res, 1000));
-            }
-            this.loopRunning = false;
-        };
-
-        runLoop();
+        //Running timer loop
+        this.runLoop();
     }
 }
 
