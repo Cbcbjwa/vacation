@@ -14,6 +14,7 @@ class LotteryService {
         this.threeMinuteNotificationSent = false;
         this.oneMinuteNotificationSent = false;
         this.timerRunning = false;
+        this.loopRunning = false;
 
         this.roundEligibilityService = new RoundEligibilityService();
 
@@ -25,6 +26,8 @@ class LotteryService {
 
         this.systemState = null;
         this.rounds = [];
+
+        this.turnEndTime = null;
     }
 
 
@@ -120,12 +123,20 @@ class LotteryService {
         //Turn end time
         const turnEndTime = new Date(Date.now() + 5 * 60 * 1000);
 
+        this.turnEndTime = turnEndTime;
+
         //Updating timer state
         await timerStateService.updateTimerState(1, true, turnEndTime);
 
         this.timerRunning = true;
 
         const runLoop = async () => {
+
+            if(this.loopRunning) {
+                console.log("Loop already running [start window]");
+                return;
+            }
+            this.loopRunning = true;
         
             while(this.timerRunning) {
                 try {
@@ -133,10 +144,12 @@ class LotteryService {
                     await this.handleTick();
                 } catch (err) {
                 console.error("TICK ERROR:", err);
-            }
+                }
 
-            await new Promise(res => setTimeout(res, 1000));
+                await new Promise(res => setTimeout(res, 1000));
             }
+            this.loopRunning = false;
+
         };
 
         runLoop();
@@ -150,19 +163,13 @@ class LotteryService {
         try {
             console.log("HANDLE TICK");
 
-            const timerState = await timerStateService.loadTimerState();
-
-            if(!timerState.timerIsActive) {
-                this.timerRunning = false;
+            if(!this.timerRunning || !this.turnEndTime) {
                 return;
             }
 
-            //Remaining time
-            const turnEndTime = new Date(timerState.turnEndTime);
+            const remainingTime = this.turnEndTime.getTime() - Date.now();
 
-            const remainingTime = turnEndTime.getTime() - Date.now();
-
-            console.log("Remaining:", Math.floor(remainingTime/1000));
+            console.log("Remaining: ", Math.floor(remainingTime/1000));
 
             const remainingHours = Math.ceil(remainingTime / (1000 * 60 * 60));
 
@@ -327,6 +334,7 @@ class LotteryService {
         console.log("ENDING TIMER");
 
         this.timerRunning = false;
+        this.turnEndTime = null;
 
         this.threeMinuteNotificationSent = false;
         this.oneMinuteNotificationSent = false;
@@ -343,6 +351,7 @@ class LotteryService {
 
     //Method to resume the timer
     async resumeTimerIfNeeded() {
+
         const timerState = await timerStateService.loadTimerState();
 
         if (!timerState.timerIsActive) {
@@ -350,11 +359,30 @@ class LotteryService {
             return;
         }
 
+        this.turnEndTime = new Date(timerState.turnEndTime);
+        
+        //If the timer already expired while the server was down
+        if(Date.now() >= this.turnEndTime.getTime()) {
+            console.log("Timer expired while server was offline.");
+
+            await this.transition();
+            return;
+        }
+
+        this.timerRunning = true;
+
         console.log("Resuming timer...");
 
         this.timerRunning = true;
 
         const runLoop = async () => {
+
+            if(this.loopRunning) {
+                console.log("Loop already running [start window]");
+                return;
+            }
+            this.loopRunning = true;
+
             while (this.timerRunning) {
                 try {
                     await this.handleTick();
@@ -364,6 +392,7 @@ class LotteryService {
 
                 await new Promise(res => setTimeout(res, 1000));
             }
+            this.loopRunning = false;
         };
 
         runLoop();
