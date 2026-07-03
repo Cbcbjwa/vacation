@@ -48,11 +48,24 @@ class LotteryService {
     //Method to determine the user with an active turn
     async determineActiveUser() {
 
-        await this.load();
-
         //Determining the name of the current round
         const currentRound = this.rounds.find(round => round.roundNumber === this.systemState.currentRoundNumber);
         this.roundName = currentRound ? currentRound.roundName : "";
+
+        console.log("Round:", this.systemState.currentRoundNumber);
+        console.log("Looking for priority:", this.systemState.currentTurnPriority);
+
+        for (const user of this.users) {
+            console.log(
+                user.displayName,
+                "priority:", user.priorityNumber,
+                "prepick:", user.prepicksPriorityNumber,
+                "match priority:",
+                user.priorityNumber === this.systemState.currentTurnPriority,
+                "match prepick:",
+                user.prepicksPriorityNumber === this.systemState.currentTurnPriority
+            );
+        }
 
         //Determining which user has an active turn
          if (this.systemState.currentRoundNumber < 1) {
@@ -63,6 +76,8 @@ class LotteryService {
 
             this.userWithActiveTurn = this.users.find(user => user.priorityNumber === this.systemState.currentTurnPriority);
         }
+
+        console.log("Active user:", this.userWithActiveTurn);
     }
 
     //**Email Sending Methods**\\
@@ -122,8 +137,7 @@ class LotteryService {
         if(!force && this.userWithActiveTurn) {
             return;
         }
-
-        await this.load();
+        
         await this.determineActiveUser();
 
         if(!this.userWithActiveTurn) {
