@@ -14,7 +14,7 @@ async function sendTestEmail() {
   });
 }
 
-async function sendEmail( to, subject, text ) {
+async function sendEmail({ to, subject, text }) {
   console.log("RAW TO:", to);
   console.log("TYPE:", typeof to);
   console.log("JSON:", JSON.stringify(to));

@@ -19,13 +19,12 @@ class SystemStateService {
     print("STATUS: ${res.statusCode}");
     print("BODY: ${res.body}");
 
-   if (res.statusCode == 200) {
-      final List data = jsonDecode(res.body);
+    if(res.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(res.body);
 
-      print(res.body);
-
-      return SystemState.fromJson(data.first);
+      return SystemState.fromJson(data);
     }
+
     throw Exception("Failed to load system state");
   }
 
