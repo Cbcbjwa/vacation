@@ -110,10 +110,28 @@ class LotteryService {
         await this.startWindow();
     }
 
+    //Method to check for an active user
+    async ensureActiveUser() {
+
+        if(this.userWithActiveTurn) {
+            return;
+        }
+
+        await this.load();
+
+        if(!this.userWithActiveTurn) {
+            throw new Error(
+                `No active user found for round ${this.systemState.currentRoundNumber}, priority ${this.systemState.currentTurnPriority}`
+            );
+        }
+    }
+
 
 
     //**Timer Start**\\
     async startWindow() {
+        await this.load();
+
         console.log("START WINDOW");
 
         //Email flags
@@ -155,6 +173,7 @@ class LotteryService {
         runLoop();
 
         //Sending an email to inform the user that their window to select a vacation week has opened
+        await this.ensureActiveUser();
         await this.emailNotificationOfTurnStart();
     }
 
@@ -178,6 +197,7 @@ class LotteryService {
                 this.threeMinuteNotificationSent = true;
 
                 //Sending email reminder to pick a week
+                await this.ensureActiveUser();
                 await this.emailReminderToPick(remainingHours);
 
             }
@@ -187,6 +207,7 @@ class LotteryService {
                 this.oneMinuteNotificationSent = true;
 
                 //Sending email reminder to pick a week
+                await this.ensureActiveUser();
                 await this.emailReminderToPick(remainingHours);
             
             }
@@ -198,6 +219,7 @@ class LotteryService {
                 this.timerRunning = false;
 
                 //Sending an email to inform the user that their window to select a week has closed
+                await this.ensureActiveUser();
                 await this.emailToInformOfWindowClosure();
 
 
