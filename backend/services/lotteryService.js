@@ -48,6 +48,8 @@ class LotteryService {
     //Method to determine the user with an active turn
     async determineActiveUser() {
 
+        await this.load();
+
         //Determining the name of the current round
         const currentRound = this.rounds.find(round => round.roundNumber === this.systemState.currentRoundNumber);
         this.roundName = currentRound ? currentRound.roundName : "";
