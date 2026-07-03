@@ -12,7 +12,7 @@ async function loadSysState() {
     const [rows] = await pool.query(
         "SELECT * FROM systemstate"
     );
-    return rows;
+    return rows[0];
 }
 
 //Method for updating the current round number in the database

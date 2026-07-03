@@ -131,23 +131,6 @@ class LotteryService {
         await this.startWindow();
     }
 
-    //Method to check for an active user
-    async ensureActiveUser(force = false) {
-
-        if(!force && this.userWithActiveTurn) {
-            return;
-        }
-        
-        await this.determineActiveUser();
-
-        if(!this.userWithActiveTurn) {
-            throw new Error(
-                `No active user found for round ${this.systemState.currentRoundNumber}, priority ${this.systemState.currentTurnPriority}`
-            );
-        }
-    }
-
-
 
     //**Timer Start**\\
     async startWindow() {
@@ -179,7 +162,6 @@ class LotteryService {
         this.runLoop();
 
         //Sending an email to inform the user that their window to select a vacation week has opened
-        await this.ensureActiveUser(true);
         await this.emailNotificationOfTurnStart();
     }
 
@@ -203,7 +185,6 @@ class LotteryService {
                 this.threeMinuteNotificationSent = true;
 
                 //Sending email reminder to pick a week
-                await this.ensureActiveUser(true);
                 await this.emailReminderToPick(remainingHours);
 
             }
@@ -213,7 +194,6 @@ class LotteryService {
                 this.oneMinuteNotificationSent = true;
 
                 //Sending email reminder to pick a week
-                await this.ensureActiveUser(true);
                 await this.emailReminderToPick(remainingHours);
             
             }
@@ -225,7 +205,6 @@ class LotteryService {
                 this.timerRunning = false;
 
                 //Sending an email to inform the user that their window to select a week has closed
-                await this.ensureActiveUser();
                 await this.emailToInformOfWindowClosure();
 
 
@@ -291,6 +270,9 @@ class LotteryService {
 
         //Setting the round's state to active
         await roundService.updateRound(roundNumber, true);
+
+        //Updating the current turn priority
+        await systemStateService.updateCurrentTurnPriority(1, 1);
 
         await this.startTurn();
     }
