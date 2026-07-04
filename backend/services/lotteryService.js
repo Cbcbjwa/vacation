@@ -419,4 +419,4 @@ class LotteryService {
     }
 }
 
-module.exports = LotteryService;
+module.exports = new LotteryService();

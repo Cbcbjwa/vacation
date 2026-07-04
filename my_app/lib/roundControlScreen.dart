@@ -33,7 +33,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   RoundService roundService = RoundService();
 
   //Instantiating LotteryService into an object
-  LotteryService lotteryService = LotteryService();
+  final lotteryService = LotteryService();
 
   //List of rounds
   List<Round> rounds = [];
@@ -206,8 +206,13 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
     //Resetting current turn priority to 1
     final success3 = await systemStateService.updateCurrentTurnPriorityNumber(sysStateId: 1, currentTurnPriority: 1);
 
+    //Resetting completion state of the rounds
+    for(int i = -1; i <= 9; i++) {
+      await roundService.updateRoundActivity(roundNumber: i, isComplete: false);
+    }
+
     //Ending timer
-    lotteryService.endTimer();
+    await lotteryService.endTimer();
 
     //Refreshing
     await load();

@@ -11,8 +11,7 @@ const authRoutes = require("./routes/authRoutes");
 const weekRoutes = require("./routes/weekRoutes");
 
 //Lottery service object
-const LotteryService = require("./services/lotteryService");
-const lotteryService = new LotteryService();
+const lotteryService = require("./services/lotteryService");
 
 const app = express();
 

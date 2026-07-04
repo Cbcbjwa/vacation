@@ -1,5 +1,5 @@
 //Imports
-const { loadRounds, updateRound } = require("../services/roundService");
+const { loadRounds, updateRound, updateRoundActivity } = require("../services/roundService");
 
 //Method for loading rounds
 async function getRounds(req, res) {
@@ -30,10 +30,10 @@ async function updateActivity(req, res) {
     const { roundNumber, isComplete } = req.body;
 
     try {
-        await updateRound(roundNumber, isComplete)
+        await updateRoundActivity(roundNumber, isComplete)
         res.json({ success: true });
     } catch (error) {
-        console.log("UPDATE ERROR: ", error);
+        console.log("UPDATE ACTIVITY ERROR: ", error);
         res.status(500).json({ success: false });
     }
 }
