@@ -1,7 +1,5 @@
 //Imports
-const LotteryService = require('../services/lotteryService');
-
-const lotteryService = new LotteryService();
+const lotteryService = require('../services/lotteryService');
 
 //Method for starting a user's turn
 async function beginTurn(req, res) {
