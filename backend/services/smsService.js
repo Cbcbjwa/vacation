@@ -1,7 +1,7 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
-const { formatPhoneNumber } = require("../utils/phoneUtils");
+const { formatPhoneNumber } = require("../utilities/phoneUtils");
 
 const twilio = require("twilio");
 
