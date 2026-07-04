@@ -4,6 +4,7 @@ const roundService = require("./roundService");
 const timerStateService = require("./timerStateService");
 const emailService = require("./emailService");
 const RoundEligibilityService = require('./roundEligibilityService');
+const SmsService = require("./smsService");
 
 class LotteryService {
 
@@ -17,6 +18,7 @@ class LotteryService {
         this.loopRunning = false;
 
         this.roundEligibilityService = new RoundEligibilityService();
+        this.smsService = new SmsService();
 
         //Active user
         this.userWithActiveTurn = null;
@@ -94,6 +96,9 @@ class LotteryService {
 
         //Sending the email
         await emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "Your Turn", text: `Your window is open to select a vacation week for ${this.roundName} of the 2027 ESA Vacation Lottery.\nYou have 24 hours to confirm your selection. Please use the ESA Vacation App to review available weeks and make your selection. After 24 hours, your window will be closed, and you will need to contact your administrator to secure a week for this round.`});
+
+        //Sending the text
+        await this.smsService.sendSMS(this.userWithActiveTurn.phoneNumber, `Your window is open to select a vacation week for ${this.roundName} of the 2027 ESA Vacation Lottery.\nYou have 24 hours to confirm your selection. Please use the ESA Vacation App to review available weeks and make your selection. After 24 hours, your window will be closed, and you will need to contact your administrator to secure a week for this round.`);
     }
 
     //Method to send an email to remind the user to make a selection
