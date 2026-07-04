@@ -1,6 +1,8 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
+const { formatPhoneNumber } = require("../utils/phoneUtils");
+
 const twilio = require("twilio");
 
 class SmsService {
@@ -13,21 +15,6 @@ class SmsService {
         );
 
         this.fromNumber = process.env.TWILIO_PHONE_NUMBER;
-    }
-
-    async formatPhoneNumber(phone) {
-
-        if(!phone) return null;
-
-        //Removing everything from the phone number string except the digits
-        let cleaned = phone.replace(/\D/g, "");
-
-        //If it's a US number without country code
-        if (cleaned.length === 10) {
-            cleaned = "1" + cleaned;
-        }
-
-        return "+" + cleaned;
     }
 
     async sendSMS(to, body) {
