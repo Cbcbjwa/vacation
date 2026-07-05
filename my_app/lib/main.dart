@@ -6,6 +6,7 @@
 
 //Imports section
 import 'package:flutter/material.dart';
+import 'package:my_app/splashScreen.dart';
 import 'loginScreen.dart';
 
 void main() {
@@ -22,7 +23,7 @@ class VacationApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Vacation Scheduler',
-      home: const LoginScreen(title: 'Login'),
+      home: const SplashScreen(),
     );
   }
 }
