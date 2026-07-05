@@ -1,5 +1,9 @@
+require("dotenv").config();
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+
 const { getUsersByEmail, getUserById} = require("../services/userService");
 const { insertRefreshToken, getRefreshToken, deleteRefreshToken} = require("../services/refreshTokenService");
 
