@@ -982,9 +982,16 @@ class _AdminScreenState extends State<AdminScreen> {
               title: const Text("Logout",
                 style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(title: "Login")));
-                await authService.logout();
-                Session.clear();
+                 await authService.logout();
+                 Session.clear();
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(title: "Login"),
+                  ),
+                  (route) => false,
+                );
               },
             )
           ],
