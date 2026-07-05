@@ -39,6 +39,7 @@ import 'user.dart';
 import 'systemState.dart';
 import 'systemStateService.dart';
 import 'session.dart';
+import 'dart:async';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -94,11 +95,18 @@ class _UserScreenState extends State<UserScreen> {
   //System state
   SystemState? systemState;
 
+  //Timer
+  Timer? refreshTimer;
+
   @override
   void initState() {
     super.initState();
+    
     print("INITSTATE RAN");
+
     load();
+
+    refreshTimer = Timer.periodic(Duration(minutes: 1), (_) => load());
   }
 
   //Method to load weeks/users/selections

@@ -32,11 +32,14 @@ dependencies:
     sdk: flutter
   http: ^1.2.0
   data_table_2: ^2.5.18
+  assets:
+    - vacationlotteryicon.png
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   logger: ^2.7.0
+  flutter_secure_storage: ^9.2.2
 
 flutter_launcher_icons:
   android: "launcher_icon"

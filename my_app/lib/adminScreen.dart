@@ -41,6 +41,8 @@ import 'session.dart';
 import 'systemState.dart';
 import 'systemStateService.dart';
 import 'user.dart';
+import 'dart:async';
+import 'authService.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -66,6 +68,9 @@ class _AdminScreenState extends State<AdminScreen> {
 
   //Instantiating SystemStateService into an object
   SystemStateService systemStateService = SystemStateService();
+
+  //Instantiating AuthService into an object
+  AuthService authService = AuthService();
 
   //List to hold the weeks
   List<Week> listOfWeeks = [];
@@ -101,6 +106,9 @@ class _AdminScreenState extends State<AdminScreen> {
 
   //Current user
   User? currentUser;
+
+  //Timer
+  Timer? refreshTimer;
 
   //Method to load weeks/users/selections
   Future<void> load() async {
@@ -147,8 +155,12 @@ class _AdminScreenState extends State<AdminScreen> {
   @override
   void initState() {
     super.initState();
+
     print("INITSTATE RAN");
+
     load();
+
+    refreshTimer = Timer.periodic(Duration(minutes: 1), (_) => load());
   }
 
   //Method for building the list view version of the weeks display
@@ -971,7 +983,8 @@ class _AdminScreenState extends State<AdminScreen> {
                 style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
                 await Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(title: "Login")));
-                load();
+                await authService.logout();
+                Session.clear();
               },
             )
           ],

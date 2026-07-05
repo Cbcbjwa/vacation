@@ -102,4 +102,15 @@ async function changePassword(userId, currentPassword, newPassword) {
     );
 }
 
-module.exports = {getUsersByEmail, createUser, loadUsers, updateUser, deleteUser, changePassword};
+//Method to load a user by their id
+async function getUserById(userId) {
+    const[rows] = await pool.query(
+        "SELECT * FROM users WHERE id=?",
+        [userId]
+    );
+
+    //Returning users
+    return rows[0];
+}
+
+module.exports = {getUsersByEmail, createUser, loadUsers, updateUser, deleteUser, changePassword, getUserById };

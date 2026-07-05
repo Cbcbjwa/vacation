@@ -19,11 +19,18 @@ class SmsService {
 
     async sendSMS(to, body) {
 
+        console.log("📱 SMS ATTEMPT");
+        console.log("TO:", to);
+        console.log("FROM:", this.fromNumber);
+        console.log("BODY:", body);
+
         if (!to) {
             throw new Error("Recipient phone number is required.");
         }
 
         const formattedTo = formatPhoneNumber(to);
+
+        console.log("FORMATTED TO:", formattedTo);
 
         return await this.client.messages.create({
 
@@ -32,6 +39,10 @@ class SmsService {
             body
 
         });
+
+        console.log("📱 TWILIO RESULT:", result.sid);
+
+        return result;
     }
 }
 
