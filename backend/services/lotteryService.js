@@ -305,12 +305,12 @@ class LotteryService {
         }
 
         if(!number1CanPick) {
-            await this.turnProgressionHandler();
+            await this.turnProgressionHandler(true);
         }
     }
 
     //**Turn Progression**\\
-    async turnProgressionHandler() {
+    async turnProgressionHandler(startAtCurrent = false) {
 
         console.log("===TURN PROGRESSION===");
 
@@ -340,7 +340,9 @@ class LotteryService {
         const maxTurnPriority = users.length;
 
         //Next turn priority
-        let nextPriority = this.systemState.currentTurnPriority + 1;
+        let nextPriority = startAtCurrent
+            ? this.systemState.currentTurnPriority
+            : this.systemState.currentTurnPriority + 1;
 
         console.log(`Users: ${users.length}`);
         console.log(`Current Round: ${currentRound}`);
