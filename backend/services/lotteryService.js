@@ -288,20 +288,23 @@ class LotteryService {
     //Method to check if turn priority 1 can pick or if the turn should be advanced upon round start
     async checkIfNumber1CanPickOnStart() {
 
+        await this.load();
         await this.determineActiveUser();
         
         //Variable to represent whether or not number 1 can pick
         let number1CanPick = false;
 
         if(this.systemState.currentRoundNumber < 1) {
-            number1CanPick = this.roundEligibilityService.computePrepickEligibility(this.userWithActiveTurn.prepicksAllowed);
+            const eligibility = this.roundEligibilityService.computePrepickEligibility(this.userWithActiveTurn.prepicksAllowed);
+
+            number1CanPick = eligibility[this.systemState.currentRoundNumber + 1];
         } else {
-            number1CanPick = this.roundEligibilityService.computeRoundEligibility(this.userWithActiveTurn.weeksAllowed);
+            const eligibility = this.roundEligibilityService.computeRoundEligibility(this.userWithActiveTurn.weeksAllowed);
+
+            number1CanPick = eligibility[this.systemState.currentRoundNumber - 1];
         }
 
-        if(number1CanPick) {
-            return;
-        } else {
+        if(!number1CanPick) {
             await this.turnProgressionHandler();
         }
     }
