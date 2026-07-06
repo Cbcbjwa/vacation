@@ -287,6 +287,8 @@ class LotteryService {
 
     //Method to check if turn priority 1 can pick or if the turn should be advanced upon round start
     async checkIfNumber1CanPickOnStart() {
+
+        await this.determineActiveUser();
         
         //Variable to represent whether or not number 1 can pick
         let number1CanPick = false;
@@ -300,7 +302,7 @@ class LotteryService {
         if(number1CanPick) {
             return;
         } else {
-            this.turnProgressionHandler();
+            await this.turnProgressionHandler();
         }
     }
 
