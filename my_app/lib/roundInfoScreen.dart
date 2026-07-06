@@ -184,7 +184,7 @@ class _RoundInfoScreenState extends State<RoundInfoScreen> {
             //User's prepicks turn priority
             Row(
               children: [
-                currentUser!.prepicksPriorityNumber! > 0
+                currentUser!.prepicksAllowed > 0
                 ? Text("Your Prepick Priority #: ${currentUser!.prepicksPriorityNumber}",
                   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 19),
                 )

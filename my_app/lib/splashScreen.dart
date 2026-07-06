@@ -27,15 +27,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (!mounted) return;
 
-    if (user != null) {
+    if(user != null) {
 
-        Session.load(user);
+      Session.load(user);
 
-        if(user.docRole == Role.admin) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => AdminScreen()));
-        } else {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => UserScreen()));
-        }
+      print("Loaded Session:");
+      print(Session.userId);
+      print(Session.userName);
+      print(Session.email);
+
+      if(user.docRole == Role.admin) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdminScreen()));
+      } else {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UserScreen()));
+      }
 
     } else {
 

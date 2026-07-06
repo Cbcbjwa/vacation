@@ -20,19 +20,26 @@ class Session {
   //Helper methods
   static void load(User user) {
     userId = user.id;
+    userName = user.userName;
     displayName = user.displayName;
     email = user.email;
-    weeksAllowed = user.weeksAllowed;
     prepicksAllowed = user.prepicksAllowed;
+    weeksAllowed = user.weeksAllowed;
     siteName = user.label;
+    priorityNumber = user.priorityNumber;
+    prepicksPriorityNumber = user.prepicksPriorityNumber;
   }
 
   static void clear() {
     userId = null;
+    userName = null;
     displayName = null;
     email = null;
     weeksAllowed = null;
     prepicksAllowed = null;
+    weeksAllowed = null;
     siteName = null;
+    priorityNumber = null;
+    prepicksPriorityNumber = null;
   }
 }

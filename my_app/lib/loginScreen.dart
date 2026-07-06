@@ -163,6 +163,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     return;
                   }
 
+                  Session.load(user);
+
                   print("${user.label}");
 
                   Session.userId = user.id;

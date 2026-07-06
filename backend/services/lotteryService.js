@@ -279,7 +279,29 @@ class LotteryService {
         //Updating the current turn priority
         await systemStateService.updateCurrentTurnPriority(1, 1);
 
+        //Checking if priority number 1 can pick or if the turn needs to be advanced
+        await this.checkIfNumber1CanPickOnStart();
+
         await this.startTurn();
+    }
+
+    //Method to check if turn priority 1 can pick or if the turn should be advanced upon round start
+    async checkIfNumber1CanPickOnStart() {
+        
+        //Variable to represent whether or not number 1 can pick
+        let number1CanPick = false;
+
+        if(this.systemState.currentRoundNumber < 1) {
+            number1CanPick = this.roundEligibilityService.computePrepickEligibility(this.userWithActiveTurn.prepicksAllowed);
+        } else {
+            number1CanPick = this.roundEligibilityService.computeRoundEligibility(this.userWithActiveTurn.weeksAllowed);
+        }
+
+        if(number1CanPick) {
+            return;
+        } else {
+            this.turnProgressionHandler();
+        }
     }
 
     //**Turn Progression**\\

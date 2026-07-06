@@ -131,6 +131,10 @@ class _AdminScreenState extends State<AdminScreen> {
 
     systemState = await systemStateService.getSystemState();
 
+    if(!mounted) {
+      return;
+    }
+
     setState(() {
       listOfWeeks = data;
       allSelections = selections;
