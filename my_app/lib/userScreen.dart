@@ -40,6 +40,7 @@ import 'systemState.dart';
 import 'systemStateService.dart';
 import 'session.dart';
 import 'dart:async';
+import 'authService.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -65,6 +66,9 @@ class _UserScreenState extends State<UserScreen> {
 
   //Instantiating RoundEligibilityService into an object
   RoundEligibilityService roundEligibilityService = RoundEligibilityService();
+
+  //Instantiating AuthService into an object
+  AuthService authService = AuthService();
 
   //List to hold the weeks
   List<Week> listOfWeeks = [];
@@ -101,7 +105,7 @@ class _UserScreenState extends State<UserScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     print("INITSTATE RAN");
 
     load();
@@ -854,8 +858,17 @@ class _UserScreenState extends State<UserScreen> {
               leading: const Icon(Icons.logout, fontWeight: FontWeight.bold, color: Colors.red),
               title: const Text("Logout",
                 style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18)),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(title: "Login")));
+              onTap: () async {
+                await authService.logout();
+                Session.clear();
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(title: "Login"),
+                  ),
+                  (route) => false,
+                );
               }
             )
           ],

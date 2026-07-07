@@ -441,7 +441,7 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                     print("selectedRound = $selectedRound");
                     print("selectedWeekId = $selectedWeekId");
 
-                    final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, selectedUser!.label!);
+                    final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, selectedUser!.label!, selectedUser!.label2!);
 
                     if(reason != null) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -499,7 +499,7 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                     print("currentWeekSelection = $currentWeekSelection");
                     print("UPDATE selectedUser.label = ${selectedUser!.label}");
 
-                    final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, selectedUser!.label!, selectionIdToIgnore: currentWeekSelection!.selectionId);
+                    final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, selectedUser!.label!, selectedUser!.label2!, selectionIdToIgnore: currentWeekSelection!.selectionId);
 
                     if(reason != null) {
                       ScaffoldMessenger.of(context).showSnackBar(

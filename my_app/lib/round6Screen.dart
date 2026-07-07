@@ -244,7 +244,7 @@ class _Round6ScreenState extends State<Round6Screen> {
                   return;
                 }
 
-                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!);
+                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, Session.site2Name!);
 
                 if(reason != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -252,7 +252,6 @@ class _Round6ScreenState extends State<Round6Screen> {
                   );
                   return;
                 }
-
 
                 try {
 
@@ -308,7 +307,7 @@ class _Round6ScreenState extends State<Round6Screen> {
                 }
 
                 //Checking if the user can select the week
-                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, selectionIdToIgnore: currentWeekSelection!.selectionId);
+                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, Session.site2Name!, selectionIdToIgnore: currentWeekSelection!.selectionId);
 
                 if(reason != null) {
                   ScaffoldMessenger.of(context).showSnackBar(

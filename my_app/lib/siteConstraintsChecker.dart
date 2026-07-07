@@ -62,13 +62,15 @@ class SiteConstraintsChecker {
   Future<String?> canSelectWeek(
     int weekId,
     String siteName,
+    String site2Name,
     {int? selectionIdToIgnore}
     
   ) async {
     
     await load();
 
-    int siteCountForWeek = 0;
+    int site1CountForWeek = 0;
+    int site2CountForWeek = 0;
     List<String> violatingSites = [];
 
     for(final selection in selections) {
@@ -83,18 +85,30 @@ class SiteConstraintsChecker {
 
       final user = users.firstWhere((user) => user.id == selection.userId);
 
-      if(user.label == siteName) {
-        siteCountForWeek++;
-        violatingSites.add(user.label ?? "Unknown");
+      if(user.label == siteName || user.label2 == siteName) {
+        site1CountForWeek++;
+      }
+
+      if(user.label2 == site2Name || user.label == site2Name) {
+        site2CountForWeek++;
       }
     }
 
-    final site = sites.firstWhere((site) => site.siteName == siteName,
-    );
+    final site1 = sites.firstWhere((site) => site.siteName == siteName);
+    final site2 = sites.firstWhere((site) => site.siteName == site2Name);
 
     //Selection permitted
-    if(siteCountForWeek < site.maxDocsOffPerWeek) {
+    if(site1CountForWeek < site1.maxDocsOffPerWeek && site2CountForWeek < site2.maxDocsOffPerWeek) {
       return null;      
+    }
+
+    //Selection not permitted
+    if(site2CountForWeek >= site2.maxDocsOffPerWeek) {
+      violatingSites.add(site2Name);
+    }
+
+    if(site1CountForWeek >= site1.maxDocsOffPerWeek) {
+      violatingSites.add(siteName);
     }
 
     final uniqueSites = violatingSites.toSet().toList();

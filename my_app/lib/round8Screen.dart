@@ -244,7 +244,7 @@ class _Round8ScreenState extends State<Round8Screen> {
                   return;
                 }
 
-                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!);
+                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, Session.site2Name!);
 
                 if(reason != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -257,6 +257,7 @@ class _Round8ScreenState extends State<Round8Screen> {
 
                   final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: 8);
                 
+
                   setState(() {
                     currentWeekSelection = created; 
                   });
@@ -307,7 +308,7 @@ class _Round8ScreenState extends State<Round8Screen> {
                 }
 
                 //Checking if the user can select the week
-                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, selectionIdToIgnore: currentWeekSelection!.selectionId);
+                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, Session.site2Name!, selectionIdToIgnore: currentWeekSelection!.selectionId);
 
                 if(reason != null) {
                   ScaffoldMessenger.of(context).showSnackBar(

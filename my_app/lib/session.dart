@@ -16,6 +16,7 @@ class Session {
   static String? siteName;
   static int? priorityNumber;
   static int? prepicksPriorityNumber;
+  static String? site2Name;
 
   //Helper methods
   static void load(User user) {
@@ -28,6 +29,7 @@ class Session {
     siteName = user.label;
     priorityNumber = user.priorityNumber;
     prepicksPriorityNumber = user.prepicksPriorityNumber;
+    site2Name = user.label2;
   }
 
   static void clear() {
@@ -41,5 +43,6 @@ class Session {
     siteName = null;
     priorityNumber = null;
     prepicksPriorityNumber = null;
+    site2Name = null;
   }
 }

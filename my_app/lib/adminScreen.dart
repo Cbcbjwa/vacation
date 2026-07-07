@@ -532,7 +532,9 @@ class _AdminScreenState extends State<AdminScreen> {
                     Center( 
                       child: Text(
                         textAlign: TextAlign.center,
-                        week.weekDate,
+                        week.specialSpecification != "N/A" && week.specialSpecification != "n/a"
+                        ?"${week.weekDate}\n${week.specialSpecification}"
+                        : week.weekDate,
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
