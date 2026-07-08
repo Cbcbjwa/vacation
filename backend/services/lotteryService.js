@@ -113,6 +113,10 @@ class LotteryService {
 
         //Sending the email
         await emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "**REMINDER**", text: `Your time-limited window for selecting a week for ${this.roundName} of the 2027 ESA Vacation Lottery is open. You have ${timeRemaining} hours to confirm your week. If you are having difficulties, or would prefer not to use the ESA Vacation App, please reach out to an administrator between the hours of 6am to 10pm for assistance.`});
+        
+        //Sending the text
+        await this.smsService.sendSMS(this.userWithActiveTurn.phoneNumber, `Your time-limited window for selecting a week for ${this.roundName} of the 2027 ESA Vacation Lottery is open. You have ${timeRemaining} hours to confirm your week. If you are having difficulties, or would prefer not to use the ESA Vacation App, please reach out to an administrator between the hours of 6am to 10pm for assistance.`);
+    
     }
 
     //Method to send an email to inform the user that their window to select a week has closed
@@ -127,6 +131,10 @@ class LotteryService {
 
         //Sending the email
         await emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "Your Window has Closed", text: `Your window to select a vacation week has closed. Please reach out to an administrator between the hours of 6am and 10pm to confirm a week for ${this.roundName}.`});
+        
+        //Sending the text
+        await this.smsService.sendSMS(this.userWithActiveTurn.phoneNumber, `Your window to select a vacation week has closed. Please reach out to an administrator between the hours of 6am and 10pm to confirm a week for ${this.roundName}.`);
+    
     }
 
 
@@ -183,7 +191,7 @@ class LotteryService {
 
             console.log("Remaining: ", Math.floor(remainingTime/1000));
 
-            const remainingHours = Math.ceil(remainingTime / (1000 * 60 * 60));
+            const remainingHours = remainingTime / (1000 * 60 * 60);
 
             //3 minute email reminder
             if(!this.threeMinuteNotificationSent && remainingTime <= 180000) {

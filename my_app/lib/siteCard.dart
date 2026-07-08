@@ -185,7 +185,7 @@ class _SiteCardState extends State<SiteCard> {
         ),
         borderRadius: BorderRadius.circular(10.0),
       ),
-      color: const Color.fromARGB(255, 19, 19, 19),
+      color: const Color.fromARGB(255, 18, 18, 18),
 
       margin: EdgeInsets.symmetric(
         horizontal: 12,

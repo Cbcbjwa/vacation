@@ -198,8 +198,7 @@ class _WeekCardState extends State<WeekCard> {
         ),
         borderRadius: BorderRadius.circular(10.0),
       ),
-      color: const Color.fromARGB(255, 19, 19, 19),
-
+      color: const Color.fromARGB(255, 18, 18, 18),
       margin: EdgeInsets.symmetric(
         horizontal: 12,
         vertical: 30,
@@ -282,7 +281,7 @@ class _WeekCardState extends State<WeekCard> {
               controller: specialSpecController,
 
               decoration: InputDecoration(
-                labelText: "Special Spec.",
+                labelText: "Label",
 
                 labelStyle: TextStyle(
                   fontSize: 20,

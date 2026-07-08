@@ -126,7 +126,7 @@ class _AddWeeksScreenState extends State<AddWeeksScreen> {
                       color: Colors.grey,
                     ),
                     decoration: InputDecoration(
-                      labelText: "Special spec.",
+                      labelText: "Label",
                       labelStyle: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold,),
                       hintStyle: TextStyle(
                         color: Color.fromARGB(255, 75, 75, 75),
