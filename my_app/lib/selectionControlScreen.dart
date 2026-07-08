@@ -458,6 +458,8 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                         currentWeekSelection = created; 
                       });
 
+                      await loadAllUserSelections();
+
                       if (!mounted) return;
 
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -515,9 +517,10 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
                         currentWeekSelection!.weekId = selectedWeekId!;
                       });
 
+                      await loadAllUserSelections();
+
                       if (!mounted) return;
 
-                      //await loadRoundSelection();
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Selection Updated")),

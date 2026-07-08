@@ -36,12 +36,17 @@ async function loadSelections() {
 //Method for updating a selection in the database
 async function updateSelection(selectionId, weekId) {
 
+    console.log("selectionId:", selectionId);
+    console.log("new weekId:", weekId);
+
     const [rows] = await pool.query(
         "SELECT weekId FROM selections WHERE selectionId=?",
         [selectionId]
     );
 
     const oldWeekId = rows[0].weekId;
+
+    console.log("oldWeekId:", oldWeekId);
 
     if(oldWeekId === weekId) {
         return;
@@ -75,9 +80,26 @@ async function updateSelection(selectionId, weekId) {
 
 //Method for deleting selections from the database
 async function deleteSelection(selectionId) {
+
+    const [rows] = await pool.query(
+        "SELECT weekId FROM selections WHERE selectionId=?",
+        [selectionId]
+    );
+
+    if (rows.length === 0) {
+        return;
+    }
+
+    const weekId = rows[0].weekId;
+    
     await pool.query(
         "DELETE FROM selections WHERE selectionId=?;",
         [selectionId]
+    );
+
+    await pool.query(
+        "UPDATE weeks SET availableSlots = availableSlots + 1 WHERE weekId=?",
+        [weekId]
     );
 }
 
