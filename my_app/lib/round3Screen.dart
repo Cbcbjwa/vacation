@@ -262,7 +262,11 @@ class _Round3ScreenState extends State<Round3Screen> {
                     currentWeekSelection = created; 
                   });
 
-                   if (!mounted) return;
+                  
+
+                  if (!mounted) return;
+
+                  await load();
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Confirmed")),

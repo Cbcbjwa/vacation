@@ -105,6 +105,21 @@ class _AccountScreenState extends State<AccountScreen> {
                       ),
                     ),
                   ),
+
+                   //Spacing
+                  SizedBox(height: 15),
+
+                  //User's phone number
+                  Center(
+                    child: Text(
+                      Session.phoneNumber!,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                  ),
                 ]
               ),
 

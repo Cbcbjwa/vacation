@@ -251,6 +251,8 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
 
                   if (!mounted) return;
 
+                  await load();
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Confirmed")),
                   );

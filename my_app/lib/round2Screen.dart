@@ -262,7 +262,11 @@ class _Round2ScreenState extends State<Round2Screen> {
                     currentWeekSelection = created; 
                   });
 
+                  
+
                  if (!mounted) return;
+
+                 await load();
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Confirmed")),

@@ -264,6 +264,8 @@ class _Round8ScreenState extends State<Round8Screen> {
 
                   if (!mounted) return;
 
+                  await load();
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Confirmed")),
                   );

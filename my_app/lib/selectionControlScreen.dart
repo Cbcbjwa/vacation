@@ -113,6 +113,7 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
     }
 
     setState(() {
+      
       //Disabling weeks already selected by the user in the dropdown
       lockedWeekIds = loadedSelections.map((selection) => selection.weekId).toList();
     });

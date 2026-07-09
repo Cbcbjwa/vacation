@@ -174,7 +174,7 @@ class LotteryService {
         //Running timer loop
         this.runLoop();
 
-        //Sending an email to inform the user that their window to select a vacation week has opened
+        //Sending an email and text to inform the user that their window to select a vacation week has opened
         await this.emailNotificationOfTurnStart();
     }
 
@@ -193,7 +193,7 @@ class LotteryService {
 
             const remainingHours = remainingTime / (1000 * 60 * 60);
 
-            //3 minute email reminder
+            //3 minute email/text reminder
             if(!this.threeMinuteNotificationSent && remainingTime <= 180000) {
                 this.threeMinuteNotificationSent = true;
 
@@ -202,7 +202,7 @@ class LotteryService {
 
             }
 
-            //1 minute email reminder
+            //1 minute email/text reminder
             if(!this.oneMinuteNotificationSent && remainingTime <= 60000) {
                 this.oneMinuteNotificationSent = true;
 
@@ -217,7 +217,7 @@ class LotteryService {
                 //Ending timer
                 this.timerRunning = false;
 
-                //Sending an email to inform the user that their window to select a week has closed
+                //Sending an email and text to inform the user that their window to select a week has closed
                 await this.emailToInformOfWindowClosure();
 
 

@@ -262,6 +262,8 @@ class _Round1ScreenState extends State<Round1Screen> {
                     currentWeekSelection = created; 
                   });
 
+                  await load();
+
                   if (!mounted) return;
 
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -275,13 +277,13 @@ class _Round1ScreenState extends State<Round1Screen> {
                   SystemState updatedState = await systemStateService.getSystemState();
                   print("UPDATED TURN PRIORITY ${updatedState.currentTurnPriority}");
 
-                  await load();
-
                 } catch (error) {
 
                   if(!mounted) {
                     return;
                   }
+
+                  await load();
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Confirmation Failed")),
@@ -329,6 +331,7 @@ class _Round1ScreenState extends State<Round1Screen> {
                   setState(() {
                     currentWeekSelection!.weekId = selectedWeekId!;
                   });
+
 
                   if(!mounted) {
                     return;

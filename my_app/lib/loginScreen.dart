@@ -176,6 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   Session.siteName = user.label;
                   Session.priorityNumber = user.priorityNumber;
                   Session.prepicksPriorityNumber = user.prepicksPriorityNumber;
+                  Session.phoneNumber = user.phoneNumber;
+                  Session.site2Name = user.label2;
 
                   print("LOGIN SET SESSION LABEL = ${Session.siteName}");
 
