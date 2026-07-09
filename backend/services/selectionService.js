@@ -5,7 +5,6 @@
 */
 
 //Importing the database connection
-const { update } = require('../controllers/selectionController');
 const pool = require('../db');
 
 //Method for adding a new site to the database
