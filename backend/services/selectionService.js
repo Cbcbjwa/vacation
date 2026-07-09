@@ -5,6 +5,7 @@
 */
 
 //Importing the database connection
+const { update } = require('../controllers/selectionController');
 const pool = require('../db');
 
 //Method for adding a new site to the database
@@ -71,11 +72,7 @@ async function updateSelection(selectionId, weekId) {
         [weekId, selectionId]
     )
     
-   /*const [result] = await pool.query(
-        "UPDATE selections SET weekId=? WHERE selectionId=?",
-        [weekId, selectionId]
-    );
-    return result;*/
+   
 }
 
 //Method for deleting selections from the database
@@ -122,5 +119,7 @@ async function getSelectionsByUser(userId) {
 
     return rows;
 }
+
+
 
 module.exports = { createSelection, loadSelections, updateSelection, deleteSelection, getSelectionByUserAndRound, getSelectionsByUser};

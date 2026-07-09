@@ -5,7 +5,7 @@ const {
     updateSelection,
     deleteSelection,
     getSelectionByUserAndRound,
-    getSelectionsByUser
+    getSelectionsByUser,
 } = require("../services/selectionService");
 
 //Method for adding new selections

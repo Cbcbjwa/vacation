@@ -4,6 +4,7 @@ const {
     loadWeeks,
     updateWeek,
     deleteWeek,
+    updateAvailableSlots
 } = require("../services/weekService");
 
 //Method for adding new weeks
@@ -64,5 +65,18 @@ async function remove(req, res) {
     }
 }
 
+//Method for updating available slots
+async function updateAvailSlots(req, res) {
+    const { weekId, availableSlots } = req.body;
 
-module.exports = { addWeek, getWeeks, update, remove };
+    try {
+        await updateAvailableSlots(weekId, availableSlots);
+        res.json({ success: true });
+    } catch (error) {
+        console.log("UPDATE AVAILABLE SLOTS ERROR: ", error);
+        res.status(500).json({ success: false });
+    }
+}
+
+
+module.exports = { addWeek, getWeeks, update, remove, updateAvailSlots };

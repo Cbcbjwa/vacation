@@ -51,4 +51,12 @@ async function deleteWeek(weekId) {
     )
 }
 
-module.exports = { createWeek, loadWeeks, updateWeek, deleteWeek };
+//Method to update number of available slots
+async function updateAvailableSlots(weekId, availableSlots) {
+    const [rows] = await pool.query(
+        "UPDATE weeks SET availableSlots=? WHERE weekId=?",
+        [availableSlots, weekId]
+    );
+}
+
+module.exports = { createWeek, loadWeeks, updateWeek, deleteWeek, updateAvailableSlots };

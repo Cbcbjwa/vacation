@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:my_app/weekRepository.dart';
 import 'week.dart';
 import 'weekService.dart';
+import 'slotControl.dart';
 
 class WeekCard extends StatefulWidget {
   const WeekCard({super.key, required this.week, required this.onDelete});
@@ -28,6 +29,9 @@ class _WeekCardState extends State<WeekCard> {
 
   //Instantiating WeekRepository class into an object
   WeekRepository weekRepository = WeekRepository();
+
+  //Instantiating SlotControl into an object
+  SlotControl slotControl = SlotControl();
 
   //Controllers
   late TextEditingController weekNumberController;
@@ -65,6 +69,9 @@ class _WeekCardState extends State<WeekCard> {
   //Method for saving changes to a record
   void saveChanges() async {
 
+    final int oldTotalSlots = widget.week.totalSlots;
+    final int newTotalSlots = int.parse(totalSlotsController.text);
+
     widget.week.weekNumber = int.parse(weekNumberController.text);
     widget.week.weekDate = weekDateController.text;
     widget.week.specialSpecification = specialSpecController.text;
@@ -72,6 +79,8 @@ class _WeekCardState extends State<WeekCard> {
 
     //Pushing changes to backend to be updated in the MySQL table
     final success = await weekService.updateWeek(weekId: widget.week.weekId, weekNumber: widget.week.weekNumber, weekDate: widget.week.weekDate, specialSpecification: widget.week.specialSpecification, totalSlots: widget.week.totalSlots);
+    
+    await slotControl.ensureAvailableSlotsAccuracy(widget.week.weekId, oldTotalSlots, newTotalSlots);
 
     print("UPDATE WEEK RESULT: $success");
 

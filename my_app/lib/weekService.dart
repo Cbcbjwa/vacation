@@ -106,4 +106,29 @@ class WeekService {
 
   return res.statusCode == 200;
   }
+
+  //Method to update available slots
+  Future<bool> updateAvailableSlots({
+    required int weekId,
+    required int availableSlots
+  }) async {
+    print ("UPDATING AVAILABLE SLOTS");
+
+    final res = await http.put(
+      Uri.parse("$baseUrl/weeks/updateAvailSlots"),
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: jsonEncode({
+        "weekId": weekId,
+        "availableSlots": availableSlots
+      }),
+    );
+  print("STATUS: ${res.statusCode}");
+  print("BODY: ${res.body}");
+
+  return res.statusCode == 200;
+  }
 }

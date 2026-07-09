@@ -113,7 +113,7 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
     }
 
     setState(() {
-      
+
       //Disabling weeks already selected by the user in the dropdown
       lockedWeekIds = loadedSelections.map((selection) => selection.weekId).toList();
     });
@@ -356,7 +356,7 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
 
                   //Dropdown menu for selecting a week
                   child: DropdownMenu<Week>(
-                    key: ValueKey("${selectedUser?.id}-${selectedRound?.roundNumber}"),
+                    key: ValueKey("${selectedUser?.id}-${selectedRound?.roundNumber}-${lockedWeekIds.join(',')}"),
                     enabled: canSelectWeekDropdown,
                     width: 230,
                     initialSelection: getInitialWeek(),

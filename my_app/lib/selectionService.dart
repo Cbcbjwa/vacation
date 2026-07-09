@@ -157,4 +157,5 @@ class SelectionService {
         .map((e) => Selection.fromJson(e))
         .toList();
   }
+
 }
