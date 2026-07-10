@@ -121,9 +121,8 @@ async function getSelectionsByUser(userId) {
 
 //Method for deleting all selections upon a lottery reset
 async function deleteAllSelections() {
-    await pool.query(
-        "DELETE * FROM selections;",
-    );
+    await pool.query("DELETE FROM selections;");
+    await pool.query("ALTER TABLE selections AUTO_INCREMENT = 1;");
 }
 
 

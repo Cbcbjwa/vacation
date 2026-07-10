@@ -22,6 +22,12 @@ class VacationApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        textSelectionTheme: TextSelectionThemeData(
+          selectionHandleColor: Colors.blueGrey,
+          selectionColor: Colors.blueGrey
+        )
+      ),
       title: 'Vacation Scheduler',
       home: const SplashScreen(),
     );

@@ -16,6 +16,7 @@ import 'lotteryService.dart';
 import 'week.dart';
 import 'weekRepository.dart';
 import 'weekService.dart';
+import 'selectionService.dart';
 
 class RoundControlScreen extends StatefulWidget {
   const RoundControlScreen({super.key});
@@ -40,6 +41,9 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
 
   //Instantiating WeekService into an object
   WeekService weekService = WeekService();
+
+  //Instantiating SelectionService into an object
+  SelectionService selectionService = SelectionService();
 
   //Instantiating LotteryService into an object
   final lotteryService = LotteryService();
@@ -130,6 +134,11 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
     for(Week week in weeks) {
       await weekService.updateAvailableSlots(weekId: week.weekId, availableSlots: week.totalSlots);
     }
+  }
+
+  //Method to delete all selections upon a lottery reset
+  void deleteAllSelections() async {
+    await selectionService.deleteAllSelections();
   }
 
   //Method to show a dialog box to confirm if the user wants to continue with reseting the lottery

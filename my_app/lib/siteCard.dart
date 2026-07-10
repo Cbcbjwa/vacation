@@ -202,7 +202,6 @@ class _SiteCardState extends State<SiteCard> {
 
               //Site name
               TextField(
-                enableInteractiveSelection: false,
                 cursorColor: Colors.blueGrey,
                 style: TextStyle(
                   color: Colors.white,
@@ -231,7 +230,6 @@ class _SiteCardState extends State<SiteCard> {
 
             //Max docs off per week
             TextField(
-              enableInteractiveSelection: false,
               cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,

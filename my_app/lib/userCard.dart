@@ -290,7 +290,6 @@ class _UserCardState extends State<UserCard> {
 
               //Name
               TextField(
-                enableInteractiveSelection: false,
                 cursorColor: Colors.blueGrey,
                 style: TextStyle(
                   color: Colors.white,
@@ -319,7 +318,6 @@ class _UserCardState extends State<UserCard> {
 
               //Display name
               TextField(
-                enableInteractiveSelection: false,
                 cursorColor: Colors.blueGrey,
                 style: TextStyle(
                   color: Colors.white,
@@ -348,7 +346,6 @@ class _UserCardState extends State<UserCard> {
 
             //Email
             TextField(
-              enableInteractiveSelection: false,
               cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
@@ -380,7 +377,6 @@ class _UserCardState extends State<UserCard> {
 
             //Phone number
             TextField(
-              enableInteractiveSelection: false,
               cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
@@ -539,7 +535,6 @@ class _UserCardState extends State<UserCard> {
 
             //Weeks Allowed
             TextField(
-              enableInteractiveSelection: false,
               cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
@@ -568,7 +563,6 @@ class _UserCardState extends State<UserCard> {
 
             //Prepicks Allowed
             TextField(
-              enableInteractiveSelection: false,
               cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
@@ -597,7 +591,6 @@ class _UserCardState extends State<UserCard> {
 
             //Priority Number
             TextField(
-              enableInteractiveSelection: false,
               cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
@@ -627,7 +620,6 @@ class _UserCardState extends State<UserCard> {
 
             //Prepicks Priority Number
             TextField(
-              enableInteractiveSelection: false,
               cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,

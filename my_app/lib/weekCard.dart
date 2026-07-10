@@ -223,7 +223,6 @@ class _WeekCardState extends State<WeekCard> {
 
               //Week number
               TextField(
-                enableInteractiveSelection: false,
                 cursorColor: Colors.blueGrey,
                 style: TextStyle(
                   color: Colors.white,
@@ -252,7 +251,6 @@ class _WeekCardState extends State<WeekCard> {
 
             //Week date
             TextField(
-              enableInteractiveSelection: false,
               cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
@@ -281,7 +279,6 @@ class _WeekCardState extends State<WeekCard> {
 
             //Special week specification
             TextField(
-              enableInteractiveSelection: false,
               cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
@@ -311,7 +308,6 @@ class _WeekCardState extends State<WeekCard> {
 
             //Total slots
             TextField(
-              enableInteractiveSelection: false,
               cursorColor: Colors.blueGrey,
               style: TextStyle(
                 color: Colors.white,
