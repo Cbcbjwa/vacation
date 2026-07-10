@@ -167,6 +167,7 @@ class _Round9ScreenState extends State<Round9Screen> {
 
                 //Dropdown menu for selecting a week
                 child: DropdownMenu<Week>(
+                key: ValueKey("$lockedWeekIds"),
                 width: 230,
                 initialSelection: getInitialWeek(),
                 hintText: "Select a week...",

@@ -18,7 +18,7 @@ async function createSelection(userId, weekId, roundNumber) {
     await pool.query(
         "UPDATE weeks SET availableSlots = availableSlots - 1 WHERE weekId = ?",
         [weekId]
-);
+    );
 
     console.log("INSERT RESULT:", result);
 
@@ -119,6 +119,13 @@ async function getSelectionsByUser(userId) {
     return rows;
 }
 
+//Method for deleting all selections upon a lottery reset
+async function deleteAllSelections() {
+    await pool.query(
+        "DELETE * FROM selections;",
+    );
+}
 
 
-module.exports = { createSelection, loadSelections, updateSelection, deleteSelection, getSelectionByUserAndRound, getSelectionsByUser};
+
+module.exports = { createSelection, loadSelections, updateSelection, deleteSelection, getSelectionByUserAndRound, getSelectionsByUser, deleteAllSelections};

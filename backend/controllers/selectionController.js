@@ -6,6 +6,7 @@ const {
     deleteSelection,
     getSelectionByUserAndRound,
     getSelectionsByUser,
+    deleteAllSelections
 } = require("../services/selectionService");
 
 //Method for adding new selections
@@ -110,4 +111,16 @@ async function getUserSelections(req, res) {
     });
 }
 
-module.exports = { addSelection, getSelections, update, remove, getSelection, getUserSelections };
+//Method to delete all selections upon a lottery reset
+async function deleteEverySelection(req, res) {
+    try {
+        await deleteAllSelections();
+        res.json({ success: true });
+    } catch (error) {
+        console.log("DELETE EVERY SELECTION ERROR: ", error);
+        res.status(500).json({ success: false });
+    }
+}
+
+
+module.exports = { addSelection, getSelections, update, remove, getSelection, getUserSelections, deleteEverySelection };

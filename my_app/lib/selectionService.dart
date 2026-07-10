@@ -14,6 +14,7 @@ class SelectionService {
 
   //Method for loading selections
   Future<List<Selection>> getSelections() async {
+
     final res = await http.get(Uri.parse("$baseUrl/selections"));
 
     print("STATUS: ${res.statusCode}");
@@ -92,7 +93,7 @@ class SelectionService {
   return res.statusCode == 200;
   }
 
-   //Method for deleting a selection
+  //Method for deleting a selection
   Future<bool> deleteSelectionRecord({
 
     required int selectionId,
@@ -158,4 +159,18 @@ class SelectionService {
         .toList();
   }
 
+  //Method to delete all selections upon a lottery reset
+  Future<bool> deleteAllSelections() async {
+
+    print("DELETING ALL SELECTIONS...");
+
+    final res = await http.delete(
+      Uri.parse("$baseUrl/selections/deleteEverySelection"),
+    );
+
+    print("STATUS: ${res.statusCode}");
+    print("BODY: ${res.body}");
+
+    return res.statusCode == 200;
+  }
 }

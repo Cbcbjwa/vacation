@@ -13,6 +13,9 @@ import 'roundService.dart';
 import 'round.dart';
 import 'dart:async';
 import 'lotteryService.dart';
+import 'week.dart';
+import 'weekRepository.dart';
+import 'weekService.dart';
 
 class RoundControlScreen extends StatefulWidget {
   const RoundControlScreen({super.key});
@@ -31,6 +34,12 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
 
   //Instantiating RoundService into an object
   RoundService roundService = RoundService();
+
+  //Instantiating WeekRepository into an object
+  WeekRepository weekRepository = WeekRepository();
+
+  //Instantiating WeekService into an object
+  WeekService weekService = WeekService();
 
   //Instantiating LotteryService into an object
   final lotteryService = LotteryService();
@@ -56,6 +65,9 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   //Timer
   Timer? refreshTimer;
 
+  //List of weeks
+  List<Week> weeks = [];
+
   Future<void> load() async {
 
     print("LOAD CALLED");
@@ -79,7 +91,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
       rounds = loadedRounds;
       isLoading = false;
     });
+  }
 
+  //Method to load weeks
+  Future<void> loadWeeks() async {
+    final loadedWeeks = await weekRepository.loadWeekRecords();
+
+    setState(() {
+      weeks = loadedWeeks;
+    });
   }
 
   @override
@@ -98,6 +118,18 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
     print("DISPOSE: $hashCode");
     refreshTimer?.cancel();
     super.dispose();
+  }
+
+  //Method to reset all available slots upon a lottery reset
+  void resetAvailableSlots() async {
+
+    //Loading weeks
+    await loadWeeks();
+
+    //Looping through weeks to reset their available slots
+    for(Week week in weeks) {
+      await weekService.updateAvailableSlots(weekId: week.weekId, availableSlots: week.totalSlots);
+    }
   }
 
   //Method to show a dialog box to confirm if the user wants to continue with reseting the lottery

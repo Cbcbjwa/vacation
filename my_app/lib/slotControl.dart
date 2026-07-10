@@ -37,6 +37,9 @@ class SlotControl {
   //Method to ensure that available slots stays correct
   Future<void> ensureAvailableSlotsAccuracy(int weekId, int oldTotalSlots, int newTotalSlots) async {
 
+    //Loading data
+    await load();
+
     //Taken slots counter
     int takenSlots = 0;
 
@@ -64,6 +67,6 @@ class SlotControl {
     }
 
     //Updating the number of available slots in the database
-    weekService.updateAvailableSlots(weekId: weekId, availableSlots: newAvailableSlots);
+    await weekService.updateAvailableSlots(weekId: weekId, availableSlots: newAvailableSlots);
   }
 }

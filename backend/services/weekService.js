@@ -53,7 +53,7 @@ async function deleteWeek(weekId) {
 
 //Method to update number of available slots
 async function updateAvailableSlots(weekId, availableSlots) {
-    const [rows] = await pool.query(
+    await pool.query(
         "UPDATE weeks SET availableSlots=? WHERE weekId=?",
         [availableSlots, weekId]
     );
