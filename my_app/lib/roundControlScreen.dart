@@ -125,7 +125,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   }
 
   //Method to reset all available slots upon a lottery reset
-  void resetAvailableSlots() async {
+  Future<void> resetAvailableSlots() async {
 
     //Loading weeks
     await loadWeeks();
@@ -137,12 +137,12 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   }
 
   //Method to delete all selections upon a lottery reset
-  void deleteAllSelections() async {
+  Future<void> deleteAllSelections() async {
     await selectionService.deleteAllSelections();
   }
 
   //Method to show a dialog box to confirm if the user wants to continue with reseting the lottery
-  void confirmLotteryReset() async {
+  Future<void> confirmLotteryReset() async {
     final bool? confirmation = await showDialog<bool>(
       context: context,
       builder: (BuildContext context){
@@ -188,11 +188,11 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
       return;
     }
 
-    resetLottery();
+    await resetLottery();
   }
 
   //Method to show a dialog box to confirm whether the admin wants to reset the lottery
-  void resetLottery() async {
+  Future<void> resetLottery() async {
     final bool? confirmation = await showDialog<bool>(
       context: context,
       builder: (BuildContext context){
@@ -258,6 +258,12 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
     //Refreshing
     await load();
 
+    //Resetting the available slots of weeks
+    await resetAvailableSlots();
+
+    //Deleting all selections
+    await deleteAllSelections();
+
     if(!mounted) {
       return;
     }
@@ -280,7 +286,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   }
 
   //Method to show a dialog box to confirm that the user wants to start a round
-  void startARound(int roundNumber, roundIndex) async {
+  Future<void> startARound(int roundNumber, roundIndex) async {
     final bool? confirmation = await showDialog<bool>(
       context: context,
       builder: (BuildContext context){
@@ -432,7 +438,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                     : () async {
 
                       //Starting round
-                      startARound(-1, 0);
+                      await startARound(-1, 0);
                     },
                     icon: Icon(Icons.play_arrow),
                     label: Text("Prepicks 1",
@@ -452,10 +458,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                     ),
                     onPressed: rounds[1].isActive || rounds[1].isComplete
                     ? null
-                    : () {
+                    : () async {
 
                       //Starting round
-                      startARound(0, 1);
+                      await startARound(0, 1);
                     },
                     icon: Icon(Icons.play_arrow),
                     label: Text("Prepicks 2",
@@ -479,10 +485,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   ),
                   onPressed: rounds[2].isActive || rounds[2].isComplete
                   ? null
-                  : () {
+                  : () async {
                     
                     //Starting round
-                    startARound(1, 2);
+                    await startARound(1, 2);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 1",
@@ -502,10 +508,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   ),
                   onPressed: rounds[3].isActive || rounds[3].isComplete
                   ? null 
-                  : () {
+                  : () async {
                     
                     //Starting round
-                    startARound(2, 3);
+                    await startARound(2, 3);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 2",
@@ -529,10 +535,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   ),
                   onPressed: rounds[4].isActive || rounds[4].isComplete
                   ? null
-                  : () {
+                  : () async {
                     
                     //Starting round
-                    startARound(3, 4);
+                    await startARound(3, 4);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 3",
@@ -552,10 +558,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   ),
                   onPressed: rounds[5].isActive || rounds[5].isComplete
                   ? null
-                  : () {
+                  : () async {
                     
                     //Starting round
-                    startARound(4, 5);
+                    await startARound(4, 5);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 4",
@@ -579,10 +585,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   ),
                   onPressed: rounds[6].isActive || rounds[6].isComplete
                   ? null
-                  : () {
+                  : () async {
                     
                     //Starting round
-                    startARound(5, 6);
+                    await startARound(5, 6);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 5",
@@ -602,10 +608,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   ),
                   onPressed: rounds[7].isActive || rounds[7].isComplete
                   ? null
-                  : () {
+                  : () async {
                     
                     //Starting round
-                    startARound(6, 7);
+                    await startARound(6, 7);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 6",
@@ -629,10 +635,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   ),
                   onPressed: rounds[8].isActive || rounds[8].isComplete
                   ? null
-                  : () {
+                  : () async {
                     
                     //Starting round
-                    startARound(7, 8);
+                    await startARound(7, 8);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 7",
@@ -652,10 +658,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                   ),
                   onPressed: rounds[9].isActive || rounds[9].isComplete
                   ? null
-                  : () {
+                  : () async {
                     
                     //Starting round
-                    startARound(8, 9);
+                    await startARound(8, 9);
                   },
                   icon: Icon(Icons.play_arrow),
                   label: Text("Round 8",
@@ -683,10 +689,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                     ),
                     onPressed: rounds[10].isActive || rounds[10].isComplete
                     ? null
-                    : () {
+                    : () async {
                       
                       //Starting round
-                      startARound(9, 10);
+                      await startARound(9, 10);
                     },
                     icon: Icon(Icons.play_arrow),
                     label: Text("Round 9",
@@ -715,7 +721,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                       foregroundColor: Colors.white,
                     ),
                     onPressed: () async {
-                      confirmLotteryReset();
+                      await confirmLotteryReset();
                     },
                     child: Text("Reset Lottery"),
                   ),

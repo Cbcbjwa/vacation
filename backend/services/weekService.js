@@ -23,7 +23,7 @@ async function createWeek(weekNumber, weekDate, specialSpecification, totalSlots
 //Method for loading users from the database (cRud)
 async function loadWeeks() {
     const [rows] = await pool.query(
-        "SELECT w.*, (w.totalSlots - COUNT(s.selectionId)) AS availableSlots FROM weeks w LEFT JOIN selections s ON s.weekId = w.weekId GROUP BY w.weekId;"
+        "SELECT * FROM weeks ORDER BY weekNumber;",
     );
     console.log("DB ROWS:", rows);
     return rows;

@@ -43,11 +43,13 @@ class SlotControl {
     //Taken slots counter
     int takenSlots = 0;
 
-    //Flag to represent whether oldTotalSlots is different than newTotalSlots
-    bool oldAndNewTotalSlotsAreDiff = false;
-
     //Variable to represent the new number of available slots
     int newAvailableSlots = 0;
+
+    //Checking to see if newTotalSlots is different than oldTotalSlots
+    if(oldTotalSlots == newTotalSlots) {
+      return;
+    }
 
     //Looping through selections to determine how many slots have been taken in a week
     for(Selection selection in allSelections) {
@@ -56,15 +58,8 @@ class SlotControl {
       }
     }
 
-    //Checking to see if newTotalSlots is different than oldTotalSlots
-    if(oldTotalSlots != newTotalSlots) {
-      oldAndNewTotalSlotsAreDiff = true;
-    }
-
     //Calculating the new number of available slots if old and new total slots are different
-    if(oldAndNewTotalSlotsAreDiff) {
-      newAvailableSlots = newTotalSlots - takenSlots;
-    }
+    newAvailableSlots = newTotalSlots - takenSlots;
 
     //Updating the number of available slots in the database
     await weekService.updateAvailableSlots(weekId: weekId, availableSlots: newAvailableSlots);

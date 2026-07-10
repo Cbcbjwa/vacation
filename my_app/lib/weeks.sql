@@ -15,6 +15,6 @@ CREATE TABLE weeks (
     ADD totalSlots int;
     
     UPDATE weeks
-    SET availableSlots = 8
-    WHERE weekId = 11;
+    SET availableSlots = 6
+    WHERE weekId = 17;
     
