@@ -26,9 +26,9 @@ class VacationApp extends StatelessWidget {
         textSelectionTheme: TextSelectionThemeData(
           selectionHandleColor: Colors.blueGrey,
           selectionColor: Colors.blueGrey
-        )
+        ),
       ),
-      title: 'Vacation Scheduler',
+      title: 'ESA Vacation',
       home: const SplashScreen(),
     );
   }

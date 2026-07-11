@@ -134,11 +134,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
     for(Week week in weeks) {
       await weekService.updateAvailableSlots(weekId: week.weekId, availableSlots: week.totalSlots);
     }
+
+    print("Available slots reset");
   }
 
   //Method to delete all selections upon a lottery reset
   Future<void> deleteAllSelections() async {
     await selectionService.deleteAllSelections();
+
+    print("All selections deleted");
   }
 
   //Method to show a dialog box to confirm if the user wants to continue with reseting the lottery
