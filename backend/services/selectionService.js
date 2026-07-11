@@ -123,7 +123,11 @@ async function getSelectionsByUser(userId) {
 async function deleteAllSelections() {
     const [result] = await pool.query("TRUNCATE TABLE selections");
 
-    console.log("Deleted rows:", result.affectedRows);
+    const [rows] = await pool.query(
+        "SELECT COUNT(*) AS count FROM selections"
+    );
+
+    console.log("Remaining selections:", rows[0].count);
 }
 
 
