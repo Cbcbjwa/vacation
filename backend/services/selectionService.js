@@ -121,7 +121,9 @@ async function getSelectionsByUser(userId) {
 
 //Method for deleting all selections upon a lottery reset
 async function deleteAllSelections() {
-    await pool.query("TRUNCATE TABLE selections");
+    const [result] = await pool.query("TRUNCATE TABLE selections");
+
+    console.log("Deleted rows:", result.affectedRows);
 }
 
 
