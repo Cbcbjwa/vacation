@@ -140,9 +140,16 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
 
   //Method to delete all selections upon a lottery reset
   Future<void> deleteAllSelections() async {
-    await selectionService.deleteAllSelections();
+    final success = await selectionService.deleteAllSelections();
 
-    print("All selections deleted");
+    
+    print("Delete selections success: $success");
+
+    if(!success) {
+      print("FAILED TO DELETE ALL SELECTIONS");
+    } else {
+      print("All selections deleted");
+    }
   }
 
   //Method to show a dialog box to confirm if the user wants to continue with reseting the lottery
@@ -262,11 +269,11 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
     //Refreshing
     await load();
 
-    //Resetting the available slots of weeks
-    await resetAvailableSlots();
-
     //Deleting all selections
     await deleteAllSelections();
+
+    //Resetting the available slots of weeks
+    await resetAvailableSlots();
 
     if(!mounted) {
       return;
