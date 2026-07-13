@@ -147,8 +147,15 @@ class _PhysiciansRecordsState extends State<PhysiciansRecords> {
 
                   TextField(
                     controller: searchController,
+                    cursorColor: Color.fromARGB(255, 40, 89, 113),
                     decoration: InputDecoration(
                       hintText: "Enter Physician Name..",
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 40, 89, 113), // underline color when typing
+                          width: 2,
+                        ),
+                      ),
                     ),
                   ),
                 ],

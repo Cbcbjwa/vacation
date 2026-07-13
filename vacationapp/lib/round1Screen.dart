@@ -16,6 +16,7 @@ import 'systemState.dart';
 import 'roundControlService.dart';
 import 'systemStateService.dart';
 import 'lotteryService.dart';
+import 'dart:async';
 
 class Round1Screen extends StatefulWidget {
   const Round1Screen({super.key});
@@ -25,6 +26,9 @@ class Round1Screen extends StatefulWidget {
 }
 
 class _Round1ScreenState extends State<Round1Screen> {
+
+  //Timer
+  Timer? selectionTimer;
 
   //Instantiating WeekRepository class into an object
   WeekRepository weekRepository = WeekRepository();
@@ -99,6 +103,26 @@ class _Round1ScreenState extends State<Round1Screen> {
   void initState() {
     super.initState();
     load();
+  }
+
+  void startSelectionTimer() {
+    selectionTimer?.cancel(); // just in case
+
+    selectionTimer = Timer(
+      const Duration(minutes: 2),
+      () {
+
+        if (!mounted) return;
+
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    selectionTimer?.cancel();
+    super.dispose();
   }
 
   //Method for getting the intial week
@@ -263,15 +287,19 @@ class _Round1ScreenState extends State<Round1Screen> {
                     currentWeekSelection = created; 
                   });
 
-                  await load();
+                  await lotteryService.transition();
 
                   if (!mounted) return;
+
+                  startSelectionTimer();
+
+                  await load();
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Confirmed")),
                   );
 
-                  await lotteryService.advanceTurn();
+              
 
                   if (!mounted) return;
 

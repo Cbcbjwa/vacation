@@ -72,6 +72,9 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   //List of weeks
   List<Week> weeks = [];
 
+  //Flag to represent whether reset lottery is running
+  bool resetLotteryIsRunning = false;
+
   Future<void> load() async {
 
     print("LOAD CALLED");
@@ -205,6 +208,11 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
 
   //Method to show a dialog box to confirm whether the admin wants to reset the lottery
   Future<void> resetLottery() async {
+
+    setState(() {
+      resetLotteryIsRunning = true;
+    });
+
     final bool? confirmation = await showDialog<bool>(
       context: context,
       builder: (BuildContext context){
@@ -250,50 +258,60 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
       return;
     }
 
-    //Setting round state to inactive
-    final success = await roundService.updateRound(roundNumber: systemState!.currentRoundNumber, isActive: false);
+    try {
 
-    //Setting round number to something invalid
-    final success2 = await systemStateService.updateCurrentRoundNum(sysStateId: 1, currentRoundNumber: 100);
+      //Setting round state to inactive
+      final success = await roundService.updateRound(roundNumber: systemState!.currentRoundNumber, isActive: false);
 
-    //Resetting current turn priority to 1
-    final success3 = await systemStateService.updateCurrentTurnPriorityNumber(sysStateId: 1, currentTurnPriority: 1);
+      //Setting round number to something invalid
+      final success2 = await systemStateService.updateCurrentRoundNum(sysStateId: 1, currentRoundNumber: 100);
 
-    //Resetting completion state of the rounds
-    for(int i = -1; i <= 9; i++) {
-      await roundService.updateRoundActivity(roundNumber: i, isComplete: false);
-    }
+      //Resetting current turn priority to 1
+      final success3 = await systemStateService.updateCurrentTurnPriorityNumber(sysStateId: 1, currentTurnPriority: 1);
 
-    //Ending timer
-    await lotteryService.endTimer();
+      //Resetting completion state of the rounds
+      for(int i = -1; i <= 9; i++) {
+        await roundService.updateRoundActivity(roundNumber: i, isComplete: false);
+      }
 
-    //Refreshing
-    await load();
+      //Ending timer
+      await lotteryService.endTimer();
 
-    //Deleting all selections
-    await deleteSelections();
+      //Refreshing
+      await load();
 
-    //Resetting the available slots of weeks
-    await resetAvailableSlots();
+      //Deleting all selections
+      await deleteSelections();
 
-    if(!mounted) {
-      return;
-    }
-
-    if(success && success2 && success3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Lottery Reset Successfully")),
-      );
-
-    } else {
+      //Resetting the available slots of weeks
+      await resetAvailableSlots();
 
       if(!mounted) {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Lottery Termination Failed")),
-      );
+      if(success && success2 && success3) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Lottery Reset Successfully")),
+        );
+
+      } else {
+
+        if(!mounted) {
+          return;
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Lottery Termination Failed")),
+        );
+      }
+      
+    } finally {
+
+      setState(() {
+        resetLotteryIsRunning = false;
+      });
+
     }
   }
 
@@ -383,77 +401,132 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
       isActiveRound = false;
     }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.grey),
+    return PopScope(
+      canPop: !resetLotteryIsRunning,
+        child: Scaffold(
         backgroundColor: Colors.black,
-        centerTitle: true,
-        title: Text("Round Control",
-          style: TextStyle(
-            color: Colors.grey,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.grey),
+          backgroundColor: Colors.black,
+          centerTitle: true,
+          title: Text("Round Control",
+            style: TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        )
-      ),
-
-      body: SingleChildScrollView(
-        padding: EdgeInsetsGeometry.only(
-          top: 45,
-          right: 20,
-          left: 65,
+          leading: resetLotteryIsRunning
+          ? const Icon(Icons.arrow_back, color: Colors.black)
+          : null
         ),
 
-        child: Column(
-          children: [
+        body: SingleChildScrollView(
+          padding: EdgeInsetsGeometry.only(
+            top: 45,
+            right: 20,
+            left: 65,
+          ),
 
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  isActiveRound
-                  ? Text("Active Round: $roundName\n\nCurrent Turn Priority: ${systemState!.currentTurnPriority}",
+          child: Column(
+            children: [
+
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    isActiveRound
+                    ? Text("Active Round: $roundName\n\nCurrent Turn Priority: ${systemState!.currentTurnPriority}",
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 40, 89, 113),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 21,
+                          ),
+                        )
+                    : Text("No Active Round",
                       style: TextStyle(
                         color: const Color.fromARGB(255, 40, 89, 113),
                         fontWeight: FontWeight.bold,
                         fontSize: 21,
-                        ),
-                      )
-                  : Text("No Active Round",
-                    style: TextStyle(
-                      color: const Color.fromARGB(255, 40, 89, 113),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 21,
+                      ),
                     ),
-                  ),
-                ] ,
+                  ] ,
+                ),
               ),
-            ),
 
-            //Spacing
-            SizedBox(height: 55),
+              //Spacing
+              SizedBox(height: 55),
 
 
-              Row(
+                Row(
+                  children: [
+      
+                    ElevatedButton.icon(
+                      
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                          disabledBackgroundColor: Colors.grey.shade800,
+                          disabledForegroundColor: Colors.white60,
+                      ),
+                      onPressed: rounds[0].isActive || rounds[0].isComplete
+                      ? null
+                      : () async {
+
+                        //Starting round
+                        await startARound(-1, 0);
+                      },
+                      icon: Icon(Icons.play_arrow),
+                      label: Text("Prepicks 1",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+
+                    //Spacing
+                    SizedBox(width: 25),
+
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                          disabledBackgroundColor: Colors.grey.shade800,
+                          disabledForegroundColor: Colors.white60,
+                      ),
+                      onPressed: rounds[1].isActive || rounds[1].isComplete
+                      ? null
+                      : () async {
+
+                        //Starting round
+                        await startARound(0, 1);
+                      },
+                      icon: Icon(Icons.play_arrow),
+                      label: Text("Prepicks 2",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+
+                //Spacing
+                SizedBox(height: 40),
+
+                Row(
                 children: [
-    
                   ElevatedButton.icon(
-                    
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: const Color.fromARGB(255, 40, 89, 113),
                         disabledBackgroundColor: Colors.grey.shade800,
                         disabledForegroundColor: Colors.white60,
                     ),
-                    onPressed: rounds[0].isActive || rounds[0].isComplete
+                    onPressed: rounds[2].isActive || rounds[2].isComplete
                     ? null
                     : () async {
-
+                      
                       //Starting round
-                      await startARound(-1, 0);
+                      await startARound(1, 2);
                     },
                     icon: Icon(Icons.play_arrow),
-                    label: Text("Prepicks 1",
+                    label: Text("Round 1",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -468,15 +541,15 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
                         disabledBackgroundColor: Colors.grey.shade800,
                         disabledForegroundColor: Colors.white60,
                     ),
-                    onPressed: rounds[1].isActive || rounds[1].isComplete
-                    ? null
+                    onPressed: rounds[3].isActive || rounds[3].isComplete
+                    ? null 
                     : () async {
-
+                      
                       //Starting round
-                      await startARound(0, 1);
+                      await startARound(2, 3);
                     },
                     icon: Icon(Icons.play_arrow),
-                    label: Text("Prepicks 2",
+                    label: Text("Round 2",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -487,260 +560,211 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
               SizedBox(height: 40),
 
               Row(
-              children: [
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                      disabledBackgroundColor: Colors.grey.shade800,
-                      disabledForegroundColor: Colors.white60,
-                  ),
-                  onPressed: rounds[2].isActive || rounds[2].isComplete
-                  ? null
-                  : () async {
-                    
-                    //Starting round
-                    await startARound(1, 2);
-                  },
-                  icon: Icon(Icons.play_arrow),
-                  label: Text("Round 1",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-
-                //Spacing
-                SizedBox(width: 25),
-
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                      disabledBackgroundColor: Colors.grey.shade800,
-                      disabledForegroundColor: Colors.white60,
-                  ),
-                  onPressed: rounds[3].isActive || rounds[3].isComplete
-                  ? null 
-                  : () async {
-                    
-                    //Starting round
-                    await startARound(2, 3);
-                  },
-                  icon: Icon(Icons.play_arrow),
-                  label: Text("Round 2",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-
-            //Spacing
-            SizedBox(height: 40),
-
-            Row(
-              children: [
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                      disabledBackgroundColor: Colors.grey.shade800,
-                      disabledForegroundColor: Colors.white60,
-                  ),
-                  onPressed: rounds[4].isActive || rounds[4].isComplete
-                  ? null
-                  : () async {
-                    
-                    //Starting round
-                    await startARound(3, 4);
-                  },
-                  icon: Icon(Icons.play_arrow),
-                  label: Text("Round 3",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-
-                //Spacing
-                SizedBox(width: 25),
-
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                      disabledBackgroundColor: Colors.grey.shade800,
-                      disabledForegroundColor: Colors.white60,
-                  ),
-                  onPressed: rounds[5].isActive || rounds[5].isComplete
-                  ? null
-                  : () async {
-                    
-                    //Starting round
-                    await startARound(4, 5);
-                  },
-                  icon: Icon(Icons.play_arrow),
-                  label: Text("Round 4",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-
-            //Spacing
-            SizedBox(height: 40),
-
-            Row(
-              children: [
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                      disabledBackgroundColor: Colors.grey.shade800,
-                      disabledForegroundColor: Colors.white60,
-                  ),
-                  onPressed: rounds[6].isActive || rounds[6].isComplete
-                  ? null
-                  : () async {
-                    
-                    //Starting round
-                    await startARound(5, 6);
-                  },
-                  icon: Icon(Icons.play_arrow),
-                  label: Text("Round 5",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-
-                //Spacing
-                SizedBox(width: 25),
-
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                      disabledBackgroundColor: Colors.grey.shade800,
-                      disabledForegroundColor: Colors.white60,
-                  ),
-                  onPressed: rounds[7].isActive || rounds[7].isComplete
-                  ? null
-                  : () async {
-                    
-                    //Starting round
-                    await startARound(6, 7);
-                  },
-                  icon: Icon(Icons.play_arrow),
-                  label: Text("Round 6",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-
-            //Spacing
-            SizedBox(height: 40),
-
-            Row(
-              children: [
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                      disabledBackgroundColor: Colors.grey.shade800,
-                      disabledForegroundColor: Colors.white60,
-                  ),
-                  onPressed: rounds[8].isActive || rounds[8].isComplete
-                  ? null
-                  : () async {
-                    
-                    //Starting round
-                    await startARound(7, 8);
-                  },
-                  icon: Icon(Icons.play_arrow),
-                  label: Text("Round 7",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-
-                //Spacing
-                SizedBox(width: 25),
-
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                      disabledBackgroundColor: Colors.grey.shade800,
-                      disabledForegroundColor: Colors.white60,
-                  ),
-                  onPressed: rounds[9].isActive || rounds[9].isComplete
-                  ? null
-                  : () async {
-                    
-                    //Starting round
-                    await startARound(8, 9);
-                  },
-                  icon: Icon(Icons.play_arrow),
-                  label: Text("Round 8",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-
-            //Spacing
-            SizedBox(height: 40),
-
-            Padding(
-              padding: EdgeInsets.only(right: 40),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                      disabledBackgroundColor: Colors.grey.shade800,
-                      disabledForegroundColor: Colors.white60,
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        disabledBackgroundColor: Colors.grey.shade800,
+                        disabledForegroundColor: Colors.white60,
                     ),
-                    onPressed: rounds[10].isActive || rounds[10].isComplete
+                    onPressed: rounds[4].isActive || rounds[4].isComplete
                     ? null
                     : () async {
                       
                       //Starting round
-                      await startARound(9, 10);
+                      await startARound(3, 4);
                     },
                     icon: Icon(Icons.play_arrow),
-                    label: Text("Round 9",
+                    label: Text("Round 3",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+
+                  //Spacing
+                  SizedBox(width: 25),
+
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        disabledBackgroundColor: Colors.grey.shade800,
+                        disabledForegroundColor: Colors.white60,
+                    ),
+                    onPressed: rounds[5].isActive || rounds[5].isComplete
+                    ? null
+                    : () async {
+                      
+                      //Starting round
+                      await startARound(4, 5);
+                    },
+                    icon: Icon(Icons.play_arrow),
+                    label: Text("Round 4",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
               ),
-            ),
 
-            Padding(
-              padding: EdgeInsetsGeometry.only(
-                top: 80,
-                right: 40,
-                bottom: 40,
-              ),
-              child: 
+              //Spacing
+              SizedBox(height: 40),
+
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-
                 children: [
-                  ElevatedButton(
+                  ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 123, 9, 1),
-                      foregroundColor: Colors.white,
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        disabledBackgroundColor: Colors.grey.shade800,
+                        disabledForegroundColor: Colors.white60,
                     ),
-                    onPressed: () async {
-                      await confirmLotteryReset();
+                    onPressed: rounds[6].isActive || rounds[6].isComplete
+                    ? null
+                    : () async {
+                      
+                      //Starting round
+                      await startARound(5, 6);
                     },
-                    child: Text("Reset Lottery"),
+                    icon: Icon(Icons.play_arrow),
+                    label: Text("Round 5",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+
+                  //Spacing
+                  SizedBox(width: 25),
+
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        disabledBackgroundColor: Colors.grey.shade800,
+                        disabledForegroundColor: Colors.white60,
+                    ),
+                    onPressed: rounds[7].isActive || rounds[7].isComplete
+                    ? null
+                    : () async {
+                      
+                      //Starting round
+                      await startARound(6, 7);
+                    },
+                    icon: Icon(Icons.play_arrow),
+                    label: Text("Round 6",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
-            )
-          ],
+
+              //Spacing
+              SizedBox(height: 40),
+
+              Row(
+                children: [
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        disabledBackgroundColor: Colors.grey.shade800,
+                        disabledForegroundColor: Colors.white60,
+                    ),
+                    onPressed: rounds[8].isActive || rounds[8].isComplete
+                    ? null
+                    : () async {
+                      
+                      //Starting round
+                      await startARound(7, 8);
+                    },
+                    icon: Icon(Icons.play_arrow),
+                    label: Text("Round 7",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+
+                  //Spacing
+                  SizedBox(width: 25),
+
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        disabledBackgroundColor: Colors.grey.shade800,
+                        disabledForegroundColor: Colors.white60,
+                    ),
+                    onPressed: rounds[9].isActive || rounds[9].isComplete
+                    ? null
+                    : () async {
+                      
+                      //Starting round
+                      await startARound(8, 9);
+                    },
+                    icon: Icon(Icons.play_arrow),
+                    label: Text("Round 8",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+
+              //Spacing
+              SizedBox(height: 40),
+
+              Padding(
+                padding: EdgeInsets.only(right: 40),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                        disabledBackgroundColor: Colors.grey.shade800,
+                        disabledForegroundColor: Colors.white60,
+                      ),
+                      onPressed: rounds[10].isActive || rounds[10].isComplete
+                      ? null
+                      : () async {
+                        
+                        //Starting round
+                        await startARound(9, 10);
+                      },
+                      icon: Icon(Icons.play_arrow),
+                      label: Text("Round 9",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Padding(
+                padding: EdgeInsetsGeometry.only(
+                  top: 80,
+                  right: 40,
+                  bottom: 40,
+                ),
+                child: 
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 123, 9, 1),
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () async {
+                        await confirmLotteryReset();
+                      },
+                      child: Text("Reset Lottery"),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
         )
       )
     );
