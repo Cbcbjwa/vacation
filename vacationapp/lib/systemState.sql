@@ -4,7 +4,7 @@ CREATE TABLE systemState (
     currentTurnPriority int
     );
     
-    SELECT * FROM systemState;
+    SELECT * FROM systemstate;
     
     INSERT INTO systemState (currentRoundNumber, currentTurnPriority, sysStateId)
     VALUES (100, 1, 1);

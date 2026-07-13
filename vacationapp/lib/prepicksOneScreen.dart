@@ -16,6 +16,7 @@ import 'roundControlScreen.dart';
 import 'systemState.dart';
 import 'systemStateService.dart';
 import 'lotteryService.dart';
+import 'dart:async';
 
 class Prepicks1Screen extends StatefulWidget {
   const Prepicks1Screen({super.key});
@@ -25,6 +26,9 @@ class Prepicks1Screen extends StatefulWidget {
 }
 
 class _Prepicks1ScreenState extends State<Prepicks1Screen> {
+
+  //Timer
+  Timer? selectionTimer;
 
   //Instantiating WeekRepository class into an object
   WeekRepository weekRepository = WeekRepository();
@@ -111,6 +115,26 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
     }
 
     return null;
+  }
+
+  void startSelectionTimer() {
+    selectionTimer?.cancel(); // just in case
+
+    selectionTimer = Timer(
+      const Duration(minutes: 2),
+      () {
+
+        if (!mounted) return;
+
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    selectionTimer?.cancel();
+    super.dispose();
   }
 
 
@@ -250,6 +274,12 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
                     currentWeekSelection = created; 
                   });
 
+                  await lotteryService.transition();
+
+                  if(!mounted) return;
+
+                  startSelectionTimer();
+
                   if (!mounted) return;
 
                   await load();
@@ -257,8 +287,6 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Selection Confirmed")),
                   );
-                  
-                  await lotteryService.advanceTurn();
 
                   if (!mounted) return;
 

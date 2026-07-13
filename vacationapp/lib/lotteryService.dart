@@ -63,4 +63,19 @@ class LotteryService {
 
     return res.statusCode == 200;
   }
+
+  //Method for transitioning the turn
+  Future<bool> transition() async {
+     final res = await http.post(
+      Uri.parse("$baseUrl/lottery/transitionTurn"),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    );
+
+    print("STATUS: ${res.statusCode}");
+    print("BODY: ${res.body}");
+
+    return res.statusCode == 200;
+  }
 }

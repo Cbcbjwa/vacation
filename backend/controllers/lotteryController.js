@@ -40,4 +40,15 @@ async function stopTimer(req, res) {
     }
 }
 
-module.exports = { beginTurn, beginRound, stopTimer };
+//Method for transitioning to the next turn
+async function transitionTurn(req, res) {
+     try {
+        await lotteryService.transition();
+        res.json({ success: true });
+    } catch (error) {
+        console.log("TRANSITION TURN ERROR:", error);
+        res.status(500).json({ success: false });
+    }
+}
+
+module.exports = { beginTurn, beginRound, stopTimer, transitionTurn };
