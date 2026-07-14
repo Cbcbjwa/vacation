@@ -72,6 +72,9 @@ class _AllSelectionsScreenState extends State<AllSelectionsScreen> {
   @override
   Widget build(BuildContext context) {
 
+    //Only showing participating physicians
+    physicians = physicians.where((physician) => physician.priorityNumber! > 0).toList();
+
     //Sorting physicians by priority number
     physicians.sort((a, b) => a.priorityNumber!.compareTo(b.priorityNumber!));
 
