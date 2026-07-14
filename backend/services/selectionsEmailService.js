@@ -11,7 +11,7 @@ async function emailSelections() {
                 u.userName,
                 s.roundNumber
             FROM selections s
-            JOIN users u ON s.userId = u.userId
+            JOIN users u ON s.userId = u.id
             JOIN weeks w ON s.weekId = w.weekId
             ORDER BY
                 s.roundNumber,
