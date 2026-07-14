@@ -64,6 +64,9 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
   //System state
   SystemState? systemState;
 
+  //Flag to represent whether a user's selection is being inserted/the turn is advancing
+  bool selectionInsertAndTurnAdvancementAreOccurring = false;
+
   //Method to load data
   Future<void> load() async {
 
@@ -158,203 +161,231 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
 
     print("WEEKS LENGTH ROUND -1 SEL SCN: ${weeks.length}");
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.grey),
+    return PopScope(
+      canPop: !selectionInsertAndTurnAdvancementAreOccurring,
+      child: Scaffold(
         backgroundColor: Colors.black,
-        centerTitle: true,
-        title: Text("Prepicks Round 1",
-          style: TextStyle(
-            color: Colors.grey,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.grey),
+          backgroundColor: Colors.black,
+          centerTitle: true,
+          title: Text("Prepicks Round 1",
+            style: TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        )
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.only(
-          top: 100,
-          right: 20,
-          left: 20,
-          bottom: 20
+          leading: selectionInsertAndTurnAdvancementAreOccurring
+          ?  Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: const Color.fromARGB(255, 40, 89, 113))))
+          : null
         ),
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        body: Padding(
+          padding: const EdgeInsets.only(
+            top: 100,
+            right: 20,
+            left: 20,
+            bottom: 20
+          ),
 
-          children: [
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
 
-            Center(
-              child: SizedBox(
-                width: 230,
+            children: [
 
-                //Dropdown menu for selecting a week
-                child: DropdownMenu<Week>(
-                key: ValueKey("$lockedWeekIds"),
-                width: 230,
-                initialSelection: getInitialWeek(),
-                hintText: "Select a week...",
-              
+              Center(
+                child: SizedBox(
+                  width: 230,
 
-                textStyle: TextStyle(
-                  color: const Color.fromARGB(255, 195, 194, 194),
-                  fontWeight: FontWeight.bold,
-                ),
+                  //Dropdown menu for selecting a week
+                  child: DropdownMenu<Week>(
+                  key: ValueKey("$lockedWeekIds"),
+                  width: 230,
+                  initialSelection: getInitialWeek(),
+                  hintText: "Select a week...",
+                
 
-                //Dropdown menu item colors
-                menuStyle: MenuStyle(
-                  backgroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 59, 59, 59)),
-                  surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
-                ),
+                  textStyle: TextStyle(
+                    color: const Color.fromARGB(255, 195, 194, 194),
+                    fontWeight: FontWeight.bold,
+                  ),
+
+                  //Dropdown menu item colors
+                  menuStyle: MenuStyle(
+                    backgroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 59, 59, 59)),
+                    surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+                  ),
 
 
-                dropdownMenuEntries: filteredWeeks.map((week) {
+                  dropdownMenuEntries: filteredWeeks.map((week) {
 
-                  final isLocked = lockedWeekIds.contains(week.weekId);
+                    final isLocked = lockedWeekIds.contains(week.weekId);
 
-                  return DropdownMenuEntry<Week>(
-                    value: week,
-                    label: "Week ${week.weekNumber}: ${week.weekDate}",
-                    labelWidget: Text(
-                      isLocked 
-                      ? "Week ${week.weekNumber}: (Already selected)"
-                      : "Week ${week.weekNumber}: ${week.weekDate}",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    return DropdownMenuEntry<Week>(
+                      value: week,
+                      label: "Week ${week.weekNumber}: ${week.weekDate}",
+                      labelWidget: Text(
+                        isLocked 
+                        ? "Week ${week.weekNumber}: (Already selected)"
+                        : "Week ${week.weekNumber}: ${week.weekDate}",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
 
-                    enabled: !isLocked,
+                      enabled: !isLocked,
 
-                    style: MenuItemButton.styleFrom(
-                      backgroundColor: isLocked
-                          ? const Color.fromARGB(255, 35, 35, 35)
-                          : null,
-                    ),
+                      style: MenuItemButton.styleFrom(
+                        backgroundColor: isLocked
+                            ? const Color.fromARGB(255, 35, 35, 35)
+                            : null,
+                      ),
 
-                  );
-                }).toList(),
+                    );
+                  }).toList(),
 
-                onSelected: (Week? week) {
-                  setState(() {
-                    selectedWeekId = week?.weekId;
-                  });
+                  onSelected: (Week? week) {
+                    setState(() {
+                      selectedWeekId = week?.weekId;
+                    });
+                  },
+                ),
+                ),
+              ),
+      
+              //Spacing
+              SizedBox(height: 20),
+
+              //Confirm button
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                  disabledBackgroundColor: Colors.grey.shade800,
+                  disabledForegroundColor: Colors.white60,
+                ),
+                onPressed: currentWeekSelection != null
+                ? null
+                : () async {
+                  if(selectedWeekId == null) {
+                    return;
+                  }
+
+                  try {
+                    print("CURRENT TURN PRIORITY SELECTING ${systemState!.currentTurnPriority}");
+
+                    setState(() {
+                      selectionInsertAndTurnAdvancementAreOccurring = true;
+                    });
+
+                    try {
+                    
+                      final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: -1);
+                      
+                      setState(() {
+                        currentWeekSelection = created; 
+                      });
+
+                      await lotteryService.transition();
+
+                      if(!mounted) return;
+
+                      startSelectionTimer();
+
+                      if (!mounted) return;
+
+                      await load();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Selection Confirmed")),
+                      );
+
+                    } finally {
+                      setState(() {
+                        selectionInsertAndTurnAdvancementAreOccurring = false;
+                      });
+                    }
+
+                    if (!mounted) return;
+
+                    SystemState updatedState = await systemStateService.getSystemState();
+                    print("UPDATED TURN PRIORITY ${systemState!.currentTurnPriority}");
+
+
+                    await load();
+
+                  } catch (error) {
+                    if (!mounted) return;
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Confirmation Failed")),
+                    );
+                    print("CONFIRM ERROR: $error");
+                  }
                 },
+                child: Text("Confirm"),
               ),
+
+              //Spacing
+              SizedBox(height: 10),
+
+              //Update button
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                  disabledBackgroundColor: Colors.grey.shade800,
+                  disabledForegroundColor: Colors.white60,
+                ),
+                onPressed: (currentWeekSelection == null || selectedWeekId == null)
+                ? null
+                : () async {
+                  if(selectedWeekId == null || currentWeekSelection == null) {
+                    return;
+                  }
+
+                  try {
+
+                    setState(() {
+                      selectionInsertAndTurnAdvancementAreOccurring = true;
+                    });
+
+                    final success = await selectionService.updateSelection(selectionId: currentWeekSelection!.selectionId, weekId: selectedWeekId!);
+
+                    if(success) {
+                      setState(() {
+                        currentWeekSelection!.weekId = selectedWeekId!;
+                      });
+
+                      if (!mounted) return;
+
+                      await load();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Selection Updated")),
+                      );
+                    } else {
+
+                      if (!mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Update Failed")),
+                      );
+                    }
+                  } finally {
+                    setState(() {
+                      selectionInsertAndTurnAdvancementAreOccurring = false;
+                    });
+                  }
+                },
+                child: Text("Update"),
               ),
-            ),
-    
-            //Spacing
-            SizedBox(height: 20),
 
-            //Confirm button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                disabledBackgroundColor: Colors.grey.shade800,
-                disabledForegroundColor: Colors.white60,
-              ),
-              onPressed: currentWeekSelection != null
-              ? null
-              : () async {
-                if(selectedWeekId == null) {
-                  return;
-                }
-
-                try {
-                  print("CURRENT TURN PRIORITY SELECTING ${systemState!.currentTurnPriority}");
-                  
-                  final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: -1);
-                  
-                  setState(() {
-                    currentWeekSelection = created; 
-                  });
-
-                  await lotteryService.transition();
-
-                  if(!mounted) return;
-
-                  startSelectionTimer();
-
-                  if (!mounted) return;
-
-                  await load();
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Selection Confirmed")),
-                  );
-
-                  if (!mounted) return;
-
-                  SystemState updatedState = await systemStateService.getSystemState();
-                  print("UPDATED TURN PRIORITY ${systemState!.currentTurnPriority}");
-
-
-                  await load();
-
-                } catch (error) {
-                  if (!mounted) return;
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Confirmation Failed")),
-                  );
-                  print("CONFIRM ERROR: $error");
-                }
-              },
-              child: Text("Confirm"),
-            ),
-
-            //Spacing
-            SizedBox(height: 10),
-
-            //Update button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                disabledBackgroundColor: Colors.grey.shade800,
-                disabledForegroundColor: Colors.white60,
-              ),
-              onPressed: (currentWeekSelection == null || selectedWeekId == null)
-              ? null
-              : () async {
-                if(selectedWeekId == null || currentWeekSelection == null) {
-                  return;
-                }
-
-                final success = await selectionService.updateSelection(selectionId: currentWeekSelection!.selectionId, weekId: selectedWeekId!);
-
-                if(success) {
-                  setState(() {
-                    currentWeekSelection!.weekId = selectedWeekId!;
-                  });
-
-                  if (!mounted) return;
-
-                  await load();
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Selection Updated")),
-                  );
-                } else {
-
-                  if (!mounted) return;
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Update Failed")),
-                  );
-                }
-              },
-              child: Text("Update"),
-            ),
-
-          ],
+            ],
+          )
         )
       )
-
     );
   }
 }

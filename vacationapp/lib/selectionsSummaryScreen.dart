@@ -109,40 +109,37 @@ class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
         ),
       ),
 
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: 50,
-          left: 40,
-        ),
-      
-        child: Container(
-        padding: EdgeInsets.only(
-          top: 20,
-          bottom: 20,
-          right: 20,
-          left: 20,
-        ),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: EdgeInsets.only(top: 50),
 
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.blueGrey,
-            width: 2
-          ),
+          child: Container(
+            padding: EdgeInsets.all(20),
+          
 
-          borderRadius: BorderRadius.circular(12),
-        ),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.blueGrey,
+                width: 2
+              ),
 
-        child: weekSelections.isEmpty
-        ? Text("N/A",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-        )
+              borderRadius: BorderRadius.circular(12),
+            ),
+          
 
-        : Text(
-          buildSummary(),
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+            child: weekSelections.isEmpty
+            ? Text("N/A",
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+            )
+
+            : Text(
+              buildSummary(),
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+            )
+          )
         )
       )
-    )
     );
   }
 }

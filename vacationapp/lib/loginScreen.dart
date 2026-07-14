@@ -68,132 +68,134 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
       ),
     
-      body: Container(
-        color: Colors.black,
-        
-        child: Padding (
-          padding: const EdgeInsets.only(
-            top: 250,
-            left: 20,
-            right: 20,
-          ),
+      body: SingleChildScrollView(
+        child: Container(
+          color: Colors.black,
           
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Padding (
+            padding: const EdgeInsets.only(
+              top: 250,
+              left: 20,
+              right: 20,
+            ),
             
-            children: [
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              
+              children: [
 
-              //Email text field
-              TextField(
-                cursorColor: Colors.blueGrey,
-                controller: emailController,
-                style: TextStyle(
-                  color: Colors.grey,
-                ),
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  labelStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-                  hintText: "Enter Email...",
-                  hintStyle: TextStyle(
-                    color: Color.fromARGB(255, 75, 75, 75),
-                    fontWeight: FontWeight.bold,
+                //Email text field
+                TextField(
+                  cursorColor: Colors.blueGrey,
+                  controller: emailController,
+                  style: TextStyle(
+                    color: Colors.grey,
                   ),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.blueGrey,
-                      width: 2,
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    labelStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                    hintText: "Enter Email...",
+                    hintStyle: TextStyle(
+                      color: Color.fromARGB(255, 75, 75, 75),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.blueGrey,
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              //Spacing the text fields
-              SizedBox(height: 40),
+                //Spacing the text fields
+                SizedBox(height: 40),
 
-              //Password text field
-              TextField(
-                cursorColor: Colors.blueGrey,
-                controller: passwordController,
-                obscureText: true,
-                style: TextStyle(
-                  color: Colors.grey,
-                ),
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  labelStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-                  hintText: "Enter Password...",
-                  hintStyle: TextStyle(
-                    color: Color.fromARGB(255, 75, 75, 75),
-                    fontWeight: FontWeight.bold,
+                //Password text field
+                TextField(
+                  cursorColor: Colors.blueGrey,
+                  controller: passwordController,
+                  obscureText: true,
+                  style: TextStyle(
+                    color: Colors.grey,
                   ),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.blueGrey,
-                      width: 2,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    labelStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                    hintText: "Enter Password...",
+                    hintStyle: TextStyle(
+                      color: Color.fromARGB(255, 75, 75, 75),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.blueGrey,
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              //Spacing the password field and login button
-              SizedBox(height: 20),
+                //Spacing the password field and login button
+                SizedBox(height: 20),
 
-              //Login button
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                //Login button
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                  ),
+                  onPressed: () async {
+
+                    print("BUTTON PRESSED");
+
+                    //Getting the login information entered by the user
+                    final email = emailController.text;
+                    final password = passwordController.text;
+
+                    final user = await authService.login(email, password);
+
+                    if(user == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Invalid email or password")),
+                      );
+                      return;
+                    }
+
+                    Session.load(user);
+
+                    print("${user.label}");
+
+                    Session.userId = user.id;
+                    Session.userName = user.userName;
+                    Session.displayName = user.displayName;
+                    Session.email = user.email;
+                    Session.prepicksAllowed = user.prepicksAllowed;
+                    Session.weeksAllowed = user.weeksAllowed;
+                    Session.siteName = user.label;
+                    Session.priorityNumber = user.priorityNumber;
+                    Session.prepicksPriorityNumber = user.prepicksPriorityNumber;
+                    Session.phoneNumber = user.phoneNumber;
+                    Session.site2Name = user.label2;
+
+                    print("LOGIN SET SESSION LABEL = ${Session.siteName}");
+
+                    if(user.docRole == Role.admin) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => AdminScreen()));
+                    } else {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserScreen()));
+                    }
+                  
+                  },
+                  child: Text("Login"),
                 ),
-                onPressed: () async {
-
-                  print("BUTTON PRESSED");
-
-                  //Getting the login information entered by the user
-                  final email = emailController.text;
-                  final password = passwordController.text;
-
-                  final user = await authService.login(email, password);
-
-                  if(user == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Invalid email or password")),
-                    );
-                    return;
-                  }
-
-                  Session.load(user);
-
-                  print("${user.label}");
-
-                  Session.userId = user.id;
-                  Session.userName = user.userName;
-                  Session.displayName = user.displayName;
-                  Session.email = user.email;
-                  Session.prepicksAllowed = user.prepicksAllowed;
-                  Session.weeksAllowed = user.weeksAllowed;
-                  Session.siteName = user.label;
-                  Session.priorityNumber = user.priorityNumber;
-                  Session.prepicksPriorityNumber = user.prepicksPriorityNumber;
-                  Session.phoneNumber = user.phoneNumber;
-                  Session.site2Name = user.label2;
-
-                  print("LOGIN SET SESSION LABEL = ${Session.siteName}");
-
-                  if(user.docRole == Role.admin) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AdminScreen()));
-                  } else {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserScreen()));
-                  }
-                 
-                },
-                child: Text("Login"),
-              ),
-            ],
-          )
-      ),
-      ),
+              ],
+            )
+          ),
+        ),
+      )
     );
   }
 }

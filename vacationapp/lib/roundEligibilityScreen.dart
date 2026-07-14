@@ -102,33 +102,28 @@ class _RoundEligibilityScreenState extends State<RoundEligibilityScreen> {
         )
       ),
 
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: 50,
-          left: 100,
-        ),
-      
-        child: Container(
-          padding: EdgeInsets.only(
-            top: 20,
-            bottom: 20,
-            right: 20,
-            left: 20,
-          ),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: EdgeInsets.only(top: 50),
 
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.blueGrey,
-              width: 2
+          child: Container(
+            padding: EdgeInsets.all(20),
+
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.blueGrey,
+                width: 2
+              ),
+
+              borderRadius: BorderRadius.circular(12),
             ),
 
-            borderRadius: BorderRadius.circular(12),
-          ),
-
-          child: Text(
-            buildSummary(),
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-          ),
+            child: Text(
+              buildSummary(),
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+          )
         ),
       ),
     );

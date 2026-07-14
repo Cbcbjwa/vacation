@@ -68,6 +68,9 @@ class _Round8ScreenState extends State<Round8Screen> {
   //Timer
   Timer? selectionTimer;
 
+  //Flag to represent whether a user's selection is being inserted/the turn is advancing
+  bool selectionInsertAndTurnAdvancementAreOccurring = false;
+
   //Method to load weeks
   Future<void> load() async {
 
@@ -162,218 +165,246 @@ class _Round8ScreenState extends State<Round8Screen> {
 
     print("WEEKS LENGTH ROUND 8 SEL SCN: ${weeks.length}");
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.grey),
+    return PopScope(
+      canPop: !selectionInsertAndTurnAdvancementAreOccurring,
+      child: Scaffold(
         backgroundColor: Colors.black,
-        centerTitle: true,
-        title: Text("Round 8 Week Selection",
-          style: TextStyle(
-            color: Colors.grey,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.grey),
+          backgroundColor: Colors.black,
+          centerTitle: true,
+          title: Text("Round 8 Week Selection",
+            style: TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        )
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.only(
-          top: 100,
-          right: 20,
-          left: 20,
-          bottom: 20
+          leading: selectionInsertAndTurnAdvancementAreOccurring
+          ?  Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: const Color.fromARGB(255, 40, 89, 113))))
+          : null
         ),
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        body: Padding(
+          padding: const EdgeInsets.only(
+            top: 100,
+            right: 20,
+            left: 20,
+            bottom: 20
+          ),
 
-          children: [
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
 
-            Center(
-              child: SizedBox(
-                width: 230,
+            children: [
 
-                //Dropdown menu for selecting a week
-                child: DropdownMenu<Week>(
-                key: ValueKey("$lockedWeekIds"),
-                width: 230,
-                initialSelection: getInitialWeek(),
-                hintText: "Select a week...",
-              
+              Center(
+                child: SizedBox(
+                  width: 230,
 
-                textStyle: TextStyle(
-                  color: const Color.fromARGB(255, 195, 194, 194),
-                  fontWeight: FontWeight.bold,
-                ),
-
-                //Dropdown menu item colors
-                menuStyle: MenuStyle(
-                  backgroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 59, 59, 59)),
-                  surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
-                ),
-
-
-                dropdownMenuEntries: filteredWeeks.map((week) {
-
-                  final isLocked = lockedWeekIds.contains(week.weekId);
-
-                  return DropdownMenuEntry<Week>(
-                    value: week,
-                    label: "Week ${week.weekNumber}: ${week.weekDate}",
-                    labelWidget: Text(
-                      isLocked 
-                      ? "Week ${week.weekNumber}: (Already selected)"
-                      : "Week ${week.weekNumber}: ${week.weekDate}",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    enabled: !isLocked,
-
-                    style: MenuItemButton.styleFrom(
-                      backgroundColor: isLocked
-                          ? const Color.fromARGB(255, 35, 35, 35)
-                          : null,
-                    ),
-
-                  );
-                }).toList(),
-
-                onSelected: (Week? week) {
-                  setState(() {
-                    selectedWeekId = week?.weekId;
-                  });
-                },
-              ),
-              ),
-            ),
-    
-            //Spacing
-            SizedBox(height: 20),
-
-            //Confirm button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                disabledBackgroundColor: Colors.grey.shade800,
-                disabledForegroundColor: Colors.white60,
-              ),
-              onPressed: currentWeekSelection != null
-              ? null
-              : () async {
-
-                if(selectedWeekId == null) {
-                  return;
-                }
-
-                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, Session.site2Name!);
-
-                if(reason != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(reason)),
-                  );
-                  return;
-                }
-
-                try {
-
-                  final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: 8);
+                  //Dropdown menu for selecting a week
+                  child: DropdownMenu<Week>(
+                  key: ValueKey("$lockedWeekIds"),
+                  width: 230,
+                  initialSelection: getInitialWeek(),
+                  hintText: "Select a week...",
                 
 
-                  setState(() {
-                    currentWeekSelection = created; 
-                  });
+                  textStyle: TextStyle(
+                    color: const Color.fromARGB(255, 195, 194, 194),
+                    fontWeight: FontWeight.bold,
+                  ),
 
-                  await lotteryService.transition();
+                  //Dropdown menu item colors
+                  menuStyle: MenuStyle(
+                    backgroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 59, 59, 59)),
+                    surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+                  ),
 
-                  if (!mounted) return;
 
-                  startSelectionTimer();
+                  dropdownMenuEntries: filteredWeeks.map((week) {
 
-                  await load();
+                    final isLocked = lockedWeekIds.contains(week.weekId);
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Selection Confirmed")),
-                  );
+                    return DropdownMenuEntry<Week>(
+                      value: week,
+                      label: "Week ${week.weekNumber}: ${week.weekDate}",
+                      labelWidget: Text(
+                        isLocked 
+                        ? "Week ${week.weekNumber}: (Already selected)"
+                        : "Week ${week.weekNumber}: ${week.weekDate}",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
 
-                  if (!mounted) return;
+                      enabled: !isLocked,
 
-                  SystemState updatedState = await systemStateService.getSystemState();
-                  print("UPDATED TURN PRIORITY ${updatedState.currentTurnPriority}");
+                      style: MenuItemButton.styleFrom(
+                        backgroundColor: isLocked
+                            ? const Color.fromARGB(255, 35, 35, 35)
+                            : null,
+                      ),
 
-                  await load();
+                    );
+                  }).toList(),
 
-                } catch (error) {
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Confirmation Failed")),
-                  );
-                  print("CONFIRM ERROR: $error");
-                }
-              },
-              child: Text("Confirm"),
-            ),
-
-            //Spacing
-            SizedBox(height: 10),
-
-            //Update button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color.fromARGB(255, 40, 89, 113),
-                disabledBackgroundColor: Colors.grey.shade800,
-                disabledForegroundColor: Colors.white60,
+                  onSelected: (Week? week) {
+                    setState(() {
+                      selectedWeekId = week?.weekId;
+                    });
+                  },
+                ),
+                ),
               ),
-              onPressed: (currentWeekSelection == null || selectedWeekId == null)
-              ? null
-              : () async {
+      
+              //Spacing
+              SizedBox(height: 20),
 
-                if(selectedWeekId == null || currentWeekSelection == null) {
-                  return;
-                }
+              //Confirm button
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                  disabledBackgroundColor: Colors.grey.shade800,
+                  disabledForegroundColor: Colors.white60,
+                ),
+                onPressed: currentWeekSelection != null
+                ? null
+                : () async {
 
-                //Checking if the user can select the week
-                final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, Session.site2Name!, selectionIdToIgnore: currentWeekSelection!.selectionId);
+                  if(selectedWeekId == null) {
+                    return;
+                  }
 
-                if(reason != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(reason)),
-                  );
-                  return;
-                }
+                  try {
 
-                final success = await selectionService.updateSelection(selectionId: currentWeekSelection!.selectionId, weekId: selectedWeekId!);
+                    try {
 
-                if(success) {
-                  setState(() {
-                    currentWeekSelection!.weekId = selectedWeekId!;
-                  });
+                      setState(() {
+                        selectionInsertAndTurnAdvancementAreOccurring = true;
+                      });
 
-                  if (!mounted) return;
+                      final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, Session.site2Name!);
 
-                  await load();
+                      if(reason != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(reason)),
+                        );
+                        return;
+                      }
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Selection Updated")),
-                  );
-                } else {
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Update Failed")),
-                  );
-                }
-              },
-              child: Text("Update"),
-            ),
+                      final created = await selectionService.createSelection(userId: Session.userId!, weekId: selectedWeekId!, roundNumber: 8);
+                  
 
-          ],
+                      setState(() {
+                        currentWeekSelection = created; 
+                      });
+
+                      await lotteryService.transition();
+
+                    } finally {
+                      setState(() {
+                        selectionInsertAndTurnAdvancementAreOccurring = false;
+                      });
+                    }
+
+                    if (!mounted) return;
+
+                    startSelectionTimer();
+
+                    await load();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Selection Confirmed")),
+                    );
+
+                    if (!mounted) return;
+
+                    SystemState updatedState = await systemStateService.getSystemState();
+                    print("UPDATED TURN PRIORITY ${updatedState.currentTurnPriority}");
+
+                    await load();
+
+                  } catch (error) {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Confirmation Failed")),
+                    );
+                    print("CONFIRM ERROR: $error");
+                  }
+                },
+                child: Text("Confirm"),
+              ),
+
+              //Spacing
+              SizedBox(height: 10),
+
+              //Update button
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                  disabledBackgroundColor: Colors.grey.shade800,
+                  disabledForegroundColor: Colors.white60,
+                ),
+                onPressed: (currentWeekSelection == null || selectedWeekId == null)
+                ? null
+                : () async {
+
+                  if(selectedWeekId == null || currentWeekSelection == null) {
+                    return;
+                  }
+
+                  try {
+
+                    setState(() {
+                      selectionInsertAndTurnAdvancementAreOccurring = true;
+                    });
+
+                    //Checking if the user can select the week
+                    final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, Session.site2Name!, selectionIdToIgnore: currentWeekSelection!.selectionId);
+
+                    if(reason != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(reason)),
+                      );
+                      return;
+                    }
+
+                    final success = await selectionService.updateSelection(selectionId: currentWeekSelection!.selectionId, weekId: selectedWeekId!);
+
+                    if(success) {
+                      setState(() {
+                        currentWeekSelection!.weekId = selectedWeekId!;
+                      });
+
+                      if (!mounted) return;
+
+                      await load();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Selection Updated")),
+                      );
+                    } else {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Update Failed")),
+                      );
+                    }
+                  } finally {
+                    setState(() {
+                      selectionInsertAndTurnAdvancementAreOccurring = false;
+                    });
+                  }
+                },
+                child: Text("Update"),
+              ),
+
+            ],
+          )
         )
       )
-
     );
   }
 }

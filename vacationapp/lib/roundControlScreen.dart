@@ -209,10 +209,6 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
   //Method to show a dialog box to confirm whether the admin wants to reset the lottery
   Future<void> resetLottery() async {
 
-    setState(() {
-      resetLotteryIsRunning = true;
-    });
-
     final bool? confirmation = await showDialog<bool>(
       context: context,
       builder: (BuildContext context){
@@ -259,6 +255,10 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
     }
 
     try {
+
+      setState(() {
+        resetLotteryIsRunning = true;
+      });
 
       //Setting round state to inactive
       final success = await roundService.updateRound(roundNumber: systemState!.currentRoundNumber, isActive: false);
@@ -416,7 +416,7 @@ class _RoundControlScreenState extends State<RoundControlScreen> {
             ),
           ),
           leading: resetLotteryIsRunning
-          ? const Icon(Icons.arrow_back, color: Colors.black)
+          ? Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: const Color.fromARGB(255, 40, 89, 113))))
           : null
         ),
 
