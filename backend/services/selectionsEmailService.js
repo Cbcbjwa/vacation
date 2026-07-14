@@ -17,6 +17,7 @@ async function emailSelections() {
                 s.roundNumber,
                 w.weekNumber,
                 u.userName
+            SORT BY s.roundNumber
         `);
 
         let csv = "Week Number,User Name,Round Number\n";
