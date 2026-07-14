@@ -14,6 +14,7 @@ import 'package:my_app/roundControlScreen.dart';
 import 'package:my_app/roundEligibilityScreen.dart';
 import 'package:my_app/roundInfoScreen.dart';
 import 'package:my_app/selectionControlScreen.dart';
+import 'package:my_app/selectionsEmailSendingScreen.dart';
 import 'package:my_app/selectionsSummaryScreen.dart';
 import 'physiciansRecords.dart';
 import 'loginScreen.dart';
@@ -682,6 +683,21 @@ class _AdminScreenState extends State<AdminScreen> {
                 style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
               onTap: () async {
                 await Navigator.push(context, MaterialPageRoute(builder: (context) => RoundControlScreen()));
+                load();
+              }
+            ),
+
+            //Spacing the menu items
+            SizedBox(height: 2),
+
+            //Selections email sending
+            ListTile(
+              tileColor: Colors.black,
+              leading: const Icon(Icons.email, fontWeight: FontWeight.bold, color: Colors.grey),
+              title: const Text("Selections Email Sending",
+                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 18)),
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => SelectionsEmailSendingScreen()));
                 load();
               }
             ),

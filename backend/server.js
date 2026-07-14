@@ -37,6 +37,7 @@ app.use("/sysState", require("./routes/sysStateRoutes"));
 app.use("/email", require("./routes/emailRoutes"));
 app.use("/timerState", require("./routes/timerStateRoutes"));
 app.use("/lottery", require("./routes/lotteryRoutes"));
+app.use("/emailSelections", require("./routes/selectionsEmailRoutes"));
 
 app.get("/", (req, res) => {
   res.send("Vacation API is running!");
