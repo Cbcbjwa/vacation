@@ -7,7 +7,7 @@ async function deliverEmail(req, res) {
     const { to, subject, text } = req.body;
 
     try {
-        await sendEmail(to, subject, text)
+        await sendEmail(req.body);
         res.json({ success: true });
     } catch (error) {
         console.log("DELIVER EMAIL ERROR:", error);
