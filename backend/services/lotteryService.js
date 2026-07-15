@@ -360,7 +360,14 @@ class LotteryService {
 
             console.log(`Checking priority ${nextPriority}`);
 
-            const user = users[nextPriority - 1];
+            const user = currentRound < 1
+                ? users.find(u => u.prepicksPriorityNumber === nextPriority)
+                : users.find(u => u.priorityNumber === nextPriority);
+
+            if (!user) {
+                nextPriority++;
+                continue;
+            }
 
             let canPick = false;
 

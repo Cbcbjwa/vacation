@@ -39,15 +39,18 @@ class _SelectionsEmailSendingScreenState extends State<SelectionsEmailSendingScr
       ),
 
       body: Center(
-        child: TextButton(
-          style: TextButton.styleFrom(
+        child: ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
             foregroundColor: const Color.fromARGB(255, 40, 89, 113),
           ),
           onPressed: () async {
             await selectionsEmailService.emailSelections();
           },
-          child: Text("Email Selections File"),
+          icon: Icon(Icons.send),
+          label: Text("Email Selections File",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)
+          ),
         ),
       ),
     );

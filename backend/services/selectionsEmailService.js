@@ -27,7 +27,7 @@ async function emailSelections() {
 
         await resend.emails.send({
             from: "notifications@esavacationlottery.com",
-            to: "voorheesvalorum@gmail.com",
+            to: "esavacationlottery@gmail.com",
             subject: "Vacation Selections",
             html: `
                 <p>Hello,</p>

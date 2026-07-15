@@ -23,7 +23,7 @@ async function sendEmail({ to, subject, text }) {
     const result = await resend.emails.send({
       from: "notifications@esavacationlottery.com",
       to,
-      cc: "fidesfalsus9@gmail.com",
+      cc: "esavacationlottery@gmail.com",
       subject,
       text,
     });
