@@ -10,7 +10,7 @@ const {
 } = require("../services/selectionService");
 
 //Lottery service object
-const lotteryService = require("./services/lotteryService");
+const lotteryService = require("../services/lotteryService");
 
 //Method for adding new selections
 async function addSelection(req, res) {
