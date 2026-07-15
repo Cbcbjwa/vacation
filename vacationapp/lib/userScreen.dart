@@ -130,6 +130,8 @@ class _UserScreenState extends State<UserScreen> {
 
     systemState = await systemStateService.getSystemState();
 
+    if (!mounted) return;
+
     setState(() {
       listOfWeeks = data;
 

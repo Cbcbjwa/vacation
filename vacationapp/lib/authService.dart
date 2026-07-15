@@ -42,6 +42,7 @@ class AuthService {
       print("priorityNumber: ${data["user"]["priorityNumber"]}");
       print("prepicksPriorityNumber: ${data["user"]["prepicksPriorityNumber"]}");
       print("label: ${data["user"]["label"]}");
+      print("label2: ${data["user"]["label2"]}");
 
     if(data["success"]) {
 

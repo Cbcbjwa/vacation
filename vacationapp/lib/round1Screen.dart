@@ -286,6 +286,11 @@ class _Round1ScreenState extends State<Round1Screen> {
                         selectionInsertAndTurnAdvancementAreOccurring = true;
                       });
 
+                      print("Before constraints check");
+                      print("weekId: $selectedWeekId");
+                      print("siteName: ${Session.siteName}");
+                      print("site2Name: ${Session.site2Name}");
+
                       final reason = await siteConstraintsChecker.canSelectWeek(selectedWeekId!, Session.siteName!, Session.site2Name!);
 
                       if(reason != null) {
@@ -324,7 +329,10 @@ class _Round1ScreenState extends State<Round1Screen> {
                     SystemState updatedState = await systemStateService.getSystemState();
                     print("UPDATED TURN PRIORITY ${updatedState.currentTurnPriority}");
 
-                  } catch (error) {
+                  } catch (error, stackTrace) {
+
+                    print("ROUND 1 CONFIRM ERROR: $error");
+                    print(stackTrace);
 
                     if(!mounted) {
                       return;

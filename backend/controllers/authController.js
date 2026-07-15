@@ -91,7 +91,8 @@ async function login(req, res) {
                 prepicksPriorityNumber: user.prepicksPriorityNumber,
                 label: user.label,
                 displayName: user.displayName,
-                phoneNumber: user.phoneNumber
+                phoneNumber: user.phoneNumber,
+                label2: user.label2
             },
         });
     } catch (err) {
