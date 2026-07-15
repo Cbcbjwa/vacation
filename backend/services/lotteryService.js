@@ -240,7 +240,11 @@ class LotteryService {
         try {
             console.log("TRANSITION");
 
-            await this.turnProgressionHandler();
+            const continueRound = await this.turnProgressionHandler();
+
+            if(!continueRound) {
+                return;
+            }
 
             await this.load();
 
@@ -398,7 +402,7 @@ class LotteryService {
                 await this.load();
                 await this.determineActiveUser();
 
-                return;
+                return true;        //Continue lottery
             }
             nextPriority++;
  
@@ -413,6 +417,8 @@ class LotteryService {
 
         //Ending timer
         await this.endTimer();
+
+        return false;       //Round complete
     }
 
     //Method to end the timer
