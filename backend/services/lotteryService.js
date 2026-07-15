@@ -415,6 +415,8 @@ class LotteryService {
 
         await systemStateService.updateCurrentTurnPriority(1, 1)
 
+        await systemStateService.updateCurrentRoundNumber(1, 100);
+
         //Ending timer
         await this.endTimer();
 
