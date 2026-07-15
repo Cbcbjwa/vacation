@@ -306,7 +306,7 @@ class _Round1ScreenState extends State<Round1Screen> {
                         currentWeekSelection = created; 
                       });
 
-                      await lotteryService.transition();
+                      //await lotteryService.transition();
 
                     } finally {
                       setState(() {

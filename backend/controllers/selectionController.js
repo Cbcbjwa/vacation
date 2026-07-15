@@ -9,6 +9,9 @@ const {
     deleteAllSelections
 } = require("../services/selectionService");
 
+//Lottery service object
+const lotteryService = require("./services/lotteryService");
+
 //Method for adding new selections
 async function addSelection(req, res) {
 
@@ -30,6 +33,12 @@ async function addSelection(req, res) {
                 roundNumber
             }
          });
+
+        const shouldAdvance = await lotteryService.isActiveTurnUser(userId);
+
+        if(shouldAdvance) {
+            await lotteryService.transition();
+        }
 
     } catch (error) {
         console.log("ADD SELECTION ERROR: ", error);

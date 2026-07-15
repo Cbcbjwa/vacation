@@ -287,7 +287,7 @@ class _Prepicks1ScreenState extends State<Prepicks1Screen> {
                         currentWeekSelection = created; 
                       });
 
-                      await lotteryService.transition();
+                      //await lotteryService.transition();
 
                       if(!mounted) return;
 

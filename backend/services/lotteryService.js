@@ -47,6 +47,19 @@ class LotteryService {
         this.rounds = await roundService.loadRounds();
     }
 
+    async isActiveTurnUser(userId) {
+
+        const systemState = await getSystemState();
+
+        const user = await userService.getUserById(userId);
+
+        if(systemState.currentRoundNumber < 1) {
+            return user.prepicksPriorityNumber === systemState.currentTurnPriority;
+        } else {
+            return user.priorityNumber === systemState.currentTurnPriority;
+        }
+    }
+
     //Method to determine the user with an active turn
     async determineActiveUser() {
 

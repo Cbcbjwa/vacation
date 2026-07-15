@@ -232,8 +232,23 @@ class _SelectionControlScreenState extends State<SelectionControlScreen> {
 
           child: Column(
             children: [
+
               Row(
                 children: [
+                  SizedBox(
+                    child: Text("Only create a selection AFTER\n the user's turn has ENDED",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: Colors.red),
+                    ),
+                  ),
+                ],
+              ),
+
+              //Spacing
+              SizedBox(height: 55),
+
+              Row(
+                children: [
+
                   SizedBox(
                     width: 230,
 
