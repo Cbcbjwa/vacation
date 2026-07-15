@@ -345,7 +345,9 @@ class LotteryService {
         }
 
         //Max turn priority
-        const maxTurnPriority = users.length;
+        const maxTurnPriority = currentRound < 1
+            ? Math.max(...users.map(u => u.prepicksPriorityNumber))
+            : Math.max(...users.map(u => u.priorityNumber));
 
         //Next turn priority
         let nextPriority = startAtCurrent
