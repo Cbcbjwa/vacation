@@ -49,7 +49,7 @@ class LotteryService {
 
     async isActiveTurnUser(userId, roundNumber) {
 
-        const systemState = await getSystemState();
+        const systemState = await systemStateService.loadSysState();
 
         const user = await userService.getUserById(userId);
 
