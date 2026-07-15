@@ -25,20 +25,25 @@ async function addSelection(req, res) {
 
     try {
         const result = await createSelection(userId, weekId, roundNumber);
-        res.json({ success: true,
+
+        const shouldAdvance = await lotteryService.isActiveTurnUser(userId, roundNumber);
+        console.log("SHOULD ADVANCE:", shouldAdvance);
+
+        if(shouldAdvance) {
+            console.log("ADVANCING TURN");
+            await lotteryService.transition();
+        }
+
+          res.json({
+            success: true,
+
             selection: {
                 selectionId: result.insertId,
                 userId,
                 weekId,
                 roundNumber
             }
-         });
-
-        const shouldAdvance = await lotteryService.isActiveTurnUser(userId);
-
-        if(shouldAdvance) {
-            await lotteryService.transition();
-        }
+        });
 
     } catch (error) {
         console.log("ADD SELECTION ERROR: ", error);

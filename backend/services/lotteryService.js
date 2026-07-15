@@ -47,13 +47,20 @@ class LotteryService {
         this.rounds = await roundService.loadRounds();
     }
 
-    async isActiveTurnUser(userId) {
+    async isActiveTurnUser(userId, roundNumber) {
 
         const systemState = await getSystemState();
 
         const user = await userService.getUserById(userId);
 
-        if(systemState.currentRoundNumber < 1) {
+        console.log("CURRENT ROUND:", systemState.currentRoundNumber);
+        console.log("CURRENT TURN:", systemState.currentTurnPriority);
+        console.log("SELECTION ROUND:", roundNumber);
+        console.log("CURRENT TURN:", systemState.currentTurnPriority);
+        console.log("USER PRIORITY:", user.priorityNumber);
+        console.log("USER PREPICK PRIORITY:", user.prepicksPriorityNumber);
+
+        if(roundNumber < 1) {
             return user.prepicksPriorityNumber === systemState.currentTurnPriority;
         } else {
             return user.priorityNumber === systemState.currentTurnPriority;
