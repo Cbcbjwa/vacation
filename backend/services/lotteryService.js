@@ -132,10 +132,10 @@ class LotteryService {
         console.log(`Sending to: ${this.userWithActiveTurn.email}`);
 
         //Sending the email
-        await emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "**REMINDER**", text: `Your time-limited window for selecting a week for ${this.roundName} of the 2027 ESA Vacation Lottery is open. You have ${timeRemaining} hours to confirm your week. If you are having difficulties, or would prefer not to use the ESA Vacation App, please reach out to an administrator between the hours of 6am to 10pm for assistance.`});
+        await emailService.sendEmail({to: this.userWithActiveTurn.email, subject: "**REMINDER**", text: `Your time-limited window for selecting a week for ${this.roundName} of the 2027 ESA Vacation Lottery is open. You have ${timeRemaining} hour(s) to confirm your week. If you are having difficulties, or would prefer not to use the ESA Vacation App, please reach out to an administrator between the hours of 6am to 10pm for assistance.`});
         
         //Sending the text
-        await this.smsService.sendSMS(this.userWithActiveTurn.phoneNumber, `Your time-limited window for selecting a week for ${this.roundName} of the 2027 ESA Vacation Lottery is open. You have ${timeRemaining} hours to confirm your week. If you are having difficulties, or would prefer not to use the ESA Vacation App, please reach out to an administrator between the hours of 6am to 10pm for assistance.`);
+        await this.smsService.sendSMS(this.userWithActiveTurn.phoneNumber, `Your time-limited window for selecting a week for ${this.roundName} of the 2027 ESA Vacation Lottery is open. You have ${timeRemaining} hour(s) to confirm your week. If you are having difficulties, or would prefer not to use the ESA Vacation App, please reach out to an administrator between the hours of 6am to 10pm for assistance.`);
     
     }
 
@@ -177,12 +177,16 @@ class LotteryService {
 
         console.log("START WINDOW");
 
-        //Email flags
-        this.threeMinuteNotificationSent = false;
-        this.oneMinuteNotificationSent = false;
+        //Email/text flags
+        this.twentyHourNotificationSent = false;
+        this.sixteenHourNotificationSent = false;
+        this.twelveHourNotificationSent = false;
+        this.eightHourNotificationSent = false;
+        this.fourHourNotificationSent = false;
+        this.oneHourNotifcationSent = false;
 
         //Turn end time
-        const turnEndTime = new Date(Date.now() + 5 * 60 * 1000);
+        const turnEndTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
         this.turnEndTime = turnEndTime;
 
@@ -209,26 +213,58 @@ class LotteryService {
 
             const remainingTime = this.turnEndTime.getTime() - Date.now();
 
-            console.log("Remaining: ", Math.floor(remainingTime/1000));
-
             const remainingHours = remainingTime / (1000 * 60 * 60);
 
-            //3 minute email/text reminder
-            if(!this.threeMinuteNotificationSent && remainingTime <= 180000) {
-                this.threeMinuteNotificationSent = true;
+            console.log("Hours Remaining: ", remainingHours.toFixed(2));
 
-                //Sending email reminder to pick a week
+            //20 hour email/text reminder
+            if(!this.twentyHourNotificationSent && remainingHours <= 20) {
+                this.twentyHourNotificationSent = true;
+
+                //Sending reminders to pick a week
                 await this.emailReminderToPick(remainingHours);
 
             }
 
-            //1 minute email/text reminder
-            if(!this.oneMinuteNotificationSent && remainingTime <= 60000) {
-                this.oneMinuteNotificationSent = true;
+            //16 hour email/text reminder
+            if(!this.sixteenHourNotificationSent && remainingHours <= 16) {
+                this.sixteenHourNotificationSent = true;
 
-                //Sending email reminder to pick a week
+                //Sending reminders to pick a week
                 await this.emailReminderToPick(remainingHours);
             
+            }
+
+            //12 Hour email/text reminder
+            if(!this.twelveHourNotificationSent && remainingHours <= 12) {
+                this.twelveHourNotificationSent = true;
+
+                //Sending reminders to pick a week
+                await this.emailReminderToPick(remainingHours);
+            }
+
+            //8 Hour email/text reminder
+            if(!this.eightHourNotificationSent && remainingHours <= 8) {
+                this.eightHourNotificationSent = true;
+
+                //Sending reminders to pick a week
+                await this.emailReminderToPick(remainingHours);
+            }
+
+            //4 Hour email/text reminder
+            if(!this.fourHourNotificationSent && remainingHours <= 4) {
+                this.fourHourNotificationSent = true;
+
+                //Sending reminders to pick a week
+                await this.emailReminderToPick(remainingHours);
+            }
+
+            //1 Hour email/text reminder
+            if(!this.oneHourNotificationSent && remainingHours <= 1) {
+                this.oneHourNotificationSent = true;
+
+                //Sending reminders to pick a week
+                await this.emailReminderToPick(remainingHours);
             }
 
             //End of timer
