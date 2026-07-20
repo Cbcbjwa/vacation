@@ -112,7 +112,7 @@ class _SelectionsSummaryScreenState extends State<SelectionsSummaryScreen> {
       body: Align(
         alignment: Alignment.topCenter,
         child: Padding(
-          padding: EdgeInsets.only(top: 50),
+          padding: EdgeInsets.only(top: 70),
 
           child: Container(
             padding: EdgeInsets.all(20),

@@ -7,7 +7,10 @@
 //Imports section
 import 'package:flutter/material.dart';
 import 'package:my_app/splashScreen.dart';
-import 'loginScreen.dart';
+import 'connectivityService.dart';
+import 'noInternetScreen.dart';
+import 'dart:async';
+import 'appWrapper.dart';
 
 void main() {
 
@@ -15,10 +18,50 @@ void main() {
   runApp(const VacationApp());
 }
 
-class VacationApp extends StatelessWidget {
+class VacationApp extends StatefulWidget {
   const VacationApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<VacationApp> createState() => _VacationAppState();
+
+}
+
+class _VacationAppState extends State<VacationApp> {
+
+  final ConnectivityService connectivityService = ConnectivityService();
+
+  bool isOnline = true;
+
+  StreamSubscription? subscription;
+
+  @override
+  void initState() {
+    super.initState();
+
+    checkConnection();
+
+    subscription = connectivityService.stream.listen((_) {
+    checkConnection();
+    });
+  }
+
+  Future<void> checkConnection() async {
+
+    bool online = await connectivityService.isOnline();
+
+    if (!mounted) return;
+
+    setState(() {
+      isOnline = online;
+    });
+  }
+
+  @override
+  void dispose() {
+    subscription?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,7 +72,7 @@ class VacationApp extends StatelessWidget {
         ),
       ),
       title: 'ESA Vacation',
-      home: const SplashScreen(),
+      home: const AppWrapper()
     );
   }
 }
