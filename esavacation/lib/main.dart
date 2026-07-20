@@ -7,15 +7,20 @@
 //Imports section
 import 'package:flutter/material.dart';
 import 'package:my_app/splashScreen.dart';
-import 'connectivityService.dart';
-import 'noInternetScreen.dart';
 import 'dart:async';
 import 'appWrapper.dart';
 
 void main() {
 
-  //Launching the app
-  runApp(const VacationApp());
+  runZonedGuarded(() {
+
+    //Launching the app
+    runApp(const VacationApp());
+  },
+    (error, stackTrace) {
+      print("GLOBAL ASYNC ERROR: $error");
+    },
+  );
 }
 
 class VacationApp extends StatefulWidget {
@@ -28,38 +33,9 @@ class VacationApp extends StatefulWidget {
 
 class _VacationAppState extends State<VacationApp> {
 
-  final ConnectivityService connectivityService = ConnectivityService();
-
-  bool isOnline = true;
-
-  StreamSubscription? subscription;
-
   @override
   void initState() {
     super.initState();
-
-    checkConnection();
-
-    subscription = connectivityService.stream.listen((_) {
-    checkConnection();
-    });
-  }
-
-  Future<void> checkConnection() async {
-
-    bool online = await connectivityService.isOnline();
-
-    if (!mounted) return;
-
-    setState(() {
-      isOnline = online;
-    });
-  }
-
-  @override
-  void dispose() {
-    subscription?.cancel();
-    super.dispose();
   }
 
   @override
@@ -72,7 +48,13 @@ class _VacationAppState extends State<VacationApp> {
         ),
       ),
       title: 'ESA Vacation',
-      home: const AppWrapper()
+      home: const SplashScreen(),
+
+      builder: (context, child) {
+        return AppWrapper(
+          child: child!,
+        );
+      },
     );
   }
 }

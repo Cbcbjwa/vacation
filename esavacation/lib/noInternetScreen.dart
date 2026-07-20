@@ -67,6 +67,7 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: Colors.grey,
                   ),
                 ),
 
@@ -75,13 +76,17 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                 Text(
                   "This application requires an internet connection to function.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
 
                 SizedBox(height: 35),
 
                 //Retry button
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color.fromARGB(255, 40, 89, 113),
+                  ),
                   onPressed: widget.onRetry,
                   child: Text("Retry"),
                 ),

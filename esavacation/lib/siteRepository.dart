@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'site.dart';
 import 'siteService.dart';
+import 'connectivityService.dart';
 
 class SiteRepository {
 
@@ -20,11 +21,19 @@ class SiteRepository {
 
   //Method to load sites
   Future<List<Site>> loadSiteRecords() async {
-    sites = await siteService.getSites();
 
-    print("SITES LENGTH: ${sites.length}");
-    print("RAW SITES: $sites");
+    try {
+      sites = await siteService.getSites();
 
-    return sites;
+      print("SITES LENGTH: ${sites.length}");
+      print("RAW SITES: $sites");
+
+      return sites;
+
+    } catch (error) {
+      print("SITE REPOSITORY ERROR: $error");
+      ConnectivityService.instance.connectionFailed();
+      throw Exception("Unable to load sites");
+    }
   }
 }

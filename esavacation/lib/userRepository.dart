@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'user.dart';
 import 'userService.dart';
+import 'connectivityService.dart';
 
 class UserRepository {
 
@@ -19,12 +20,20 @@ class UserRepository {
 
   //Method to load users
   Future<List<User>> loadRecords() async {
-    users = await userService.getUsers();
 
-    print("FIRST USER: ${users.isNotEmpty ? users[0].userName : 'EMPTY'}");
-    print("USERS LENGTH: ${users.length}");
-    print("RAW USERS: $users");
+    try {
+      users = await userService.getUsers();
 
-    return users;
+      print("FIRST USER: ${users.isNotEmpty ? users[0].userName : 'EMPTY'}");
+      print("USERS LENGTH: ${users.length}");
+      print("RAW USERS: $users");
+
+      return users;
+
+    } catch (error) {
+      print("USER RE POSITORY ERROR: $error");
+      ConnectivityService.instance.connectionFailed();
+      throw Exception("Unable to load users");
+    }
   }
 }

@@ -7,6 +7,7 @@
 //Imports section
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'connectivityService.dart';
 
 class EmailService {
   final String baseUrl = "https://vacation-xhxd.onrender.com";
@@ -42,7 +43,7 @@ class EmailService {
         return false;
       }
     } catch (error) {
-      print("ERROR SENDING EMAIL: $error");
+      ConnectivityService.instance.connectionFailed();
       return false;
     }
   }

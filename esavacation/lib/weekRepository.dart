@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'week.dart';
 import 'weekService.dart';
+import 'connectivityService.dart';
 
 class WeekRepository {
 
@@ -20,11 +21,18 @@ class WeekRepository {
 
   //Method to load weeks
   Future<List<Week>> loadWeekRecords() async {
-    weeks = await weekService.getWeeks();
 
-    print("WEEKS LENGTH: ${weeks.length}");
-    print("RAW WEEKS: $weeks");
+    try {
+      weeks = await weekService.getWeeks();
 
-    return weeks;
+      print("WEEKS LENGTH: ${weeks.length}");
+      print("RAW WEEKS: $weeks");
+
+      return weeks;
+    } catch (error) {
+      print("WEEK REPOSITORY ERROR: $error");
+      ConnectivityService.instance.connectionFailed();
+      throw Exception("Unable to load weeks");
+    }
   }
 }

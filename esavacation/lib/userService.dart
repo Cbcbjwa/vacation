@@ -9,25 +9,33 @@ import 'user.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'role.dart';
+import 'connectivityService.dart';
 
 class UserService {
   final String baseUrl = "https://vacation-xhxd.onrender.com";
 
-  //Method for loading users
-  Future<List<User>> getUsers() async {
-    final res = await http.get(Uri.parse("$baseUrl/users"));
+    //Method for loading users
+    Future<List<User>> getUsers() async {
 
-    print("STATUS: ${res.statusCode}");
-    print("BODY: ${res.body}");
+      try {
+        final res = await http.get(Uri.parse("$baseUrl/users"));
 
-   if (res.statusCode == 200) {
-      final List data = jsonDecode(res.body);
+        print("STATUS: ${res.statusCode}");
+        print("BODY: ${res.body}");
 
-      print(res.body);
+        if(res.statusCode == 200) {
+          final List data = jsonDecode(res.body);
 
-      return data.map((e) => User.fromJson(e)).toList();
+          print(res.body);
+
+          return data.map((e) => User.fromJson(e)).toList();
+        }
+        return [];
+    } catch (error) {
+      print("GET USERS ERROR: $error");
+      ConnectivityService.instance.connectionFailed();
+      throw Exception("No internet connection");
     }
-    return [];
   }
 
   //Method for creating users
@@ -45,6 +53,8 @@ class UserService {
     required String phoneNumber,
     String? label2
   }) async {
+
+    try {
 
     print("SENDING CREATE USER REQUEST...");
 
@@ -69,12 +79,17 @@ class UserService {
         "phoneNumber": phoneNumber,
         "label2": label2
       }),
-    );
+    ).timeout(Duration(seconds: 15));
 
-  print("STATUS: ${res.statusCode}");
-  print("BODY: ${res.body}");
+      print("STATUS: ${res.statusCode}");
+      print("BODY: ${res.body}");
 
-  return res.statusCode == 200;
+      return res.statusCode == 200;
+    } catch (error) {
+      print("CREATE USER ERROR: $error");
+      ConnectivityService.instance.connectionFailed();
+      throw Exception("No internet connection");
+    }
   }
 
   //Method for updating users
@@ -93,6 +108,8 @@ class UserService {
     String? label2
   }) async {
     print ("UPDATING USER...");
+
+    try {
 
     final res = await http.put(
       Uri.parse("$baseUrl/users/update"),
@@ -115,27 +132,41 @@ class UserService {
         "phoneNumber": phoneNumber,
         "label2": label2
       }),
-    );
-  print("STATUS: ${res.statusCode}");
-  print("BODY: ${res.body}");
+    ).timeout(Duration(seconds: 15));
 
-  return res.statusCode == 200;
+      print("STATUS: ${res.statusCode}");
+      print("BODY: ${res.body}");
+
+      return res.statusCode == 200;
+    } catch (error) {
+      print("UPDATE USER ERROR: $error");
+      ConnectivityService.instance.connectionFailed();
+      throw Exception("No internet connection");
+    }
   }
 
   //Method for deleting a user
   Future<bool> deleteUserRecord({
     required int id,
   }) async {
-    print("DELETING USER...");
 
-    final res = await http.delete(
-      Uri.parse("$baseUrl/users/$id"),
-    );
+    try {
+        print("DELETING USER...");
 
-  print("STATUS: ${res.statusCode}");
-  print("BODY: ${res.body}");
+        final res = await http.delete(
+          Uri.parse("$baseUrl/users/$id"),
+        ).timeout(Duration(seconds: 15));
 
-  return res.statusCode == 200;
+      print("STATUS: ${res.statusCode}");
+      print("BODY: ${res.body}");
+
+      return res.statusCode == 200;
+
+    } catch (error) {
+      print("DELETE USER ERROR: $error");
+      ConnectivityService.instance.connectionFailed();
+      throw Exception("No internet connection");
+    }
   }
 
   //Method for changing password
@@ -159,7 +190,7 @@ class UserService {
           "currentPassword": currentPassword,
           "newPassword": newPassword,
         }),
-      );
+      ).timeout(Duration(seconds: 15));
 
       if(response.statusCode == 200) {
         return "Success";
@@ -169,6 +200,7 @@ class UserService {
       return data["error"] ?? "Failed to change password";
 
     } catch (error) {
+      ConnectivityService.instance.connectionFailed();
       return "Failed to connect to server";
     }
   }

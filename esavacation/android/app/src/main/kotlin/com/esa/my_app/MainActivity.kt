@@ -1,4 +1,4 @@
-package com.esa.vacationapp
+package com.esa.esavacation
 
 import io.flutter.embedding.android.FlutterActivity
 
