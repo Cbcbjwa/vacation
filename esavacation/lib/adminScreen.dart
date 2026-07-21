@@ -1015,7 +1015,10 @@ class _AdminScreenState extends State<AdminScreen> {
                   (route) => false,
                 );
               },
-            )
+            ),
+
+            //Spacing the menu items
+            SizedBox(height: 25),
           ],
         ),
       ),

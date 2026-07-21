@@ -58,7 +58,7 @@ class _AccountScreenState extends State<AccountScreen> {
           children: [
 
             //Spacing
-            SizedBox(height: 150),
+            SizedBox(height: 100),
             
               //Section header
               Column(
@@ -277,7 +277,9 @@ class _AccountScreenState extends State<AccountScreen> {
                     child: Text("Cancel"),
                   )
                 ]
-              )
+              ),
+              //Spacing
+              SizedBox(width: 15),
             ],
           ],
         ),

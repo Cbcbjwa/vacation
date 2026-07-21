@@ -872,7 +872,10 @@ class _UserScreenState extends State<UserScreen> {
                   (route) => false,
                 );
               }
-            )
+            ),
+            
+            //Spacing the menu items
+            SizedBox(height: 25),
           ],
         ),
       ),
