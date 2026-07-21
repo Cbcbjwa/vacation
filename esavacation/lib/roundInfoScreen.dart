@@ -121,30 +121,30 @@ class _RoundInfoScreenState extends State<RoundInfoScreen> {
         )
       ),
 
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: 70,
-          left: 30,
-        ),
-        child: Container(
-        alignment: Alignment.center,
-        height: 300,
-        width: 360,
-        padding: EdgeInsets.only(
-          top: 20,
-          left: 20,
-          bottom: 20,
-        ),
-
-        
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.blueGrey,
-            width: 2
+      body: Align(
+        alignment: Alignment.topCenter,
+          child: Padding(
+            padding: EdgeInsets.only(top: 100),
+          
+          
+          child: Container(
+          height: 300,
+          width: 330,
+          padding: EdgeInsets.only(
+            top: 20,
+            left: 20,
+            bottom: 20,
           ),
 
-          borderRadius: BorderRadius.circular(12),
-        ),
+        
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.blueGrey,
+              width: 2
+            ),
+
+            borderRadius: BorderRadius.circular(12),
+          ),
 
         child: Column(
 
@@ -218,6 +218,7 @@ class _RoundInfoScreenState extends State<RoundInfoScreen> {
           ],
         ),
       ),
+      )
       )
     );
   }
