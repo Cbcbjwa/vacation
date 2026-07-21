@@ -43,7 +43,8 @@ dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "vacationlotteryicon.png"
+  image_path_android: "vacationlotteryicon.png"
+  image_path_ios: "vacationlotteryicon_ios.png"
   remove_alpha_ios: true
   adaptive_icon_background: "#e8ffee"
   adaptive_icon_foreground: "vacationlotteryicon.png"
