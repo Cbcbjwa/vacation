@@ -77,6 +77,10 @@ async function deleteUser(id) {
 //Method for changing password
 async function changePassword(userId, newPassword, confirmNewPassword) {
 
+    if(!newPassword.trim()) {
+        throw new Error("Password cannot be empty");
+    }
+
     if(newPassword !== confirmNewPassword) {
         throw new Error("Passwords do not match");
     }
@@ -88,10 +92,6 @@ async function changePassword(userId, newPassword, confirmNewPassword) {
         "UPDATE users SET passwordHash=? WHERE id=?",
         [newHash, userId]
     );
-
-    if (result.affectedRows === 0) {
-        throw new Error("User not found");
-    }
 }
 
 //Method to load a user by their id
