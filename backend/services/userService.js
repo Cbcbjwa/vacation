@@ -88,6 +88,10 @@ async function changePassword(userId, newPassword, confirmNewPassword) {
         "UPDATE users SET passwordHash=? WHERE id=?",
         [newHash, userId]
     );
+
+    if (result.affectedRows === 0) {
+        throw new Error("User not found");
+    }
 }
 
 //Method to load a user by their id

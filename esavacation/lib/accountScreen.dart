@@ -199,7 +199,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   obscureText: obscureConfirmNewPassword,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    labelText: "New Password",
+                    labelText: "Confirm New Password",
                     labelStyle: TextStyle(color: Colors.grey),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
