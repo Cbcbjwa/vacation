@@ -243,6 +243,20 @@ class _AccountScreenState extends State<AccountScreen> {
                       print("New Password: $newPassword");
                       print("Confirm New Password: $confirmNewPassword");
 
+                      if(newPassword.trim().isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Password cannot be empty")),
+                        );
+                        return;
+                      }
+
+                      if (newPassword != confirmNewPassword) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Passwords do not match")),
+                        );
+                        return;
+                      }
+
                       String result = await userService.changePassword(userId: Session.userId!, newPassword: newPassword, confirmNewPassword: confirmNewPassword);
                     
                       if(result == "Success") {
