@@ -75,22 +75,10 @@ async function deleteUser(id) {
 }
 
 //Method for changing password
-async function changePassword(userId, currentPassword, newPassword) {
+async function changePassword(userId, newPassword, confirmNewPassword) {
 
-    //Getting current password from the database
-    const [rows] = await pool.query(
-        "SELECT passwordHash FROM users WHERE id=?",
-        [userId]
-    );
-
-    if(rows.length === 0) {
-        throw new Error("User not found");
-    }
-
-    const matches = await bcrypt.compare(currentPassword, rows[0].passwordHash);
-
-    if(!matches) {
-        throw new Error("Current password is incorrect");
+    if(newPassword !== confirmNewPassword) {
+        throw new Error("Passwords do not match");
     }
 
     const newHash = await bcrypt.hash(newPassword, 10);

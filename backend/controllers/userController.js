@@ -75,10 +75,10 @@ async function remove(req, res) {
 //Method for changing password
 async function updatePassword(req, res) {
 
-  const { userId, currentPassword, newPassword } = req.body;
+  const { userId, newPassword, confirmNewPassword } = req.body;
 
   try {
-    await changePassword(userId, currentPassword, newPassword);
+    await changePassword(userId, newPassword, confirmNewPassword);
 
     res.json({
       success: true,

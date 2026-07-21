@@ -19,23 +19,19 @@ class _AccountScreenState extends State<AccountScreen> {
 
   bool showPasswordFields = false;
   bool obscureNewPassword = true;
+  bool obscureConfirmNewPassword = true;
 
-  final TextEditingController currentPasswordController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController confirmNewPasswordController = TextEditingController();
 
   //Instantiating UserService class into an object
   UserService userService = UserService();
 
   @override
   void dispose() {
-    currentPasswordController.dispose();
     newPasswordController.dispose();
+    confirmNewPasswordController.dispose();
     super.dispose();
-  }
-
-  //Method for changing a password
-  void changePassword() {
-
   }
 
   @override
@@ -163,18 +159,31 @@ class _AccountScreenState extends State<AccountScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
                   cursorColor: Colors.blueGrey,
-                  controller: currentPasswordController,
-                  obscureText: true,
+                  controller: newPasswordController,
+                  obscureText: obscureNewPassword,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    labelText: "Current Password",
+                    labelText: "New Password",
                     labelStyle: TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.blueGrey,
                         width: 2,
                       )
+                    ),
+                    border: OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscureNewPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                       onPressed: () {
+                        setState(() {
+                          obscureNewPassword = !obscureNewPassword;
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -186,8 +195,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
                   cursorColor: Colors.blueGrey,
-                  controller: newPasswordController,
-                  obscureText: obscureNewPassword,
+                  controller: confirmNewPasswordController,
+                  obscureText: obscureConfirmNewPassword,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: "New Password",
@@ -201,14 +210,14 @@ class _AccountScreenState extends State<AccountScreen> {
                     border: OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        obscureNewPassword
+                        obscureConfirmNewPassword
                             ? Icons.visibility
                             : Icons.visibility_off,
                         color: Colors.grey,
                       ),
                       onPressed: () {
                         setState(() {
-                          obscureNewPassword = !obscureNewPassword;
+                          obscureConfirmNewPassword = !obscureConfirmNewPassword;
                         });
                       },
                     ),
@@ -228,13 +237,13 @@ class _AccountScreenState extends State<AccountScreen> {
                       foregroundColor: const Color.fromARGB(255, 40, 89, 113),
                     ),
                     onPressed: () async {
-                      String currentPassword = currentPasswordController.text;
                       String newPassword = newPasswordController.text;
+                      String confirmNewPassword = confirmNewPasswordController.text;
 
-                      print("Current Password: $currentPassword");
                       print("New Password: $newPassword");
+                      print("Confirm New Password: $confirmNewPassword");
 
-                      String result = await userService.changePassword(userId: Session.userId!, currentPassword: currentPassword, newPassword: newPassword);
+                      String result = await userService.changePassword(userId: Session.userId!, newPassword: newPassword, confirmNewPassword: confirmNewPassword);
                     
                       if(result == "Success") {
                         ScaffoldMessenger.of(context).showSnackBar(

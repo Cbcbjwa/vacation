@@ -172,8 +172,8 @@ class UserService {
   //Method for changing password
   Future<String> changePassword ({
     required int userId,
-    required String currentPassword,
     required String newPassword,
+    required String confirmNewPassword,
   }) async {
     print("UPDATING PASSWORD..");
 
@@ -187,8 +187,8 @@ class UserService {
 
         body: jsonEncode({
           "userId": userId,
-          "currentPassword": currentPassword,
           "newPassword": newPassword,
+          "confirmNewPassword": confirmNewPassword,
         }),
       ).timeout(Duration(seconds: 15));
 
