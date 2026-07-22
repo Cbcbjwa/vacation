@@ -107,155 +107,158 @@ class _AllSelectionsScreenState extends State<AllSelectionsScreen> {
       body: Container(
           color: Colors.black,
 
-          child: DataTable2(
-            minWidth: 1500,
-            fixedLeftColumns: 2,
-            headingRowColor: WidgetStatePropertyAll(Colors.blueGrey),
-            dataRowColor: WidgetStatePropertyAll(Colors.black),
+          child: SingleChildScrollView(
 
-            columnSpacing: 10,
-            horizontalMargin: 6,
+            child: DataTable2(
+              minWidth: 1500,
+              fixedLeftColumns: 2,
+              headingRowColor: WidgetStatePropertyAll(Colors.blueGrey),
+              dataRowColor: WidgetStatePropertyAll(Colors.black),
 
-            columns: [
+              columnSpacing: 10,
+              horizontalMargin: 6,
 
-              const DataColumn2(
-                fixedWidth: 58,
-                label: Text(
-                  "Priority",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              columns: [
 
-              const DataColumn2(
-                fixedWidth: 130,
-                label: Text(
-                  "Physician",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              ...List.generate(9, (index) {
-
-                final roundNumber = index + 1;
-
-                return DataColumn2(
-                  fixedWidth: 100,
-
-                  label: Center(
-                    child: Text(
-                      "Round $roundNumber",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                );
-              }),
-            ],
-
-            rows: physicians.map((physician) {
-              final physicianSelections = selections.where((selection) => selection.userId == physician.id).toList();
-
-              String getRoundText(int roundNumber) {
-                final matchingSelections = physicianSelections.where((selection) => selection.roundNumber == roundNumber).toList();
-
-                if(matchingSelections.isEmpty) {
-                  return "N/A";
-                }
-
-                final selection = matchingSelections.first;
-
-                final matchingWeeks = weeks.where((week) => week.weekId == selection.weekId).toList();
-
-                if(matchingWeeks.isEmpty) {
-                  return "N/A";
-                }
-
-                final week = matchingWeeks.first;
-
-                return "Wk ${week.weekNumber} \n ${week.weekDate}";
-              }
-
-              Widget buildRoundCell(int roundNumber) {
-
-                final text = getRoundText(roundNumber);
-
-                final isNA = text == "N/A";
-
-                return Container(
-                  margin: EdgeInsets.symmetric(vertical: 4),
-
-                  alignment: Alignment.center,
-
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-
-                  decoration: BoxDecoration(
-                    color: isNA
-                      ? const Color.fromARGB(255, 35, 34, 34)
-                      : Colors.green,
-
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-
-                  child: Text(
-                    text,
+                const DataColumn2(
+                  fixedWidth: 58,
+                  label: Text(
+                    "Priority",
                     style: TextStyle(
-                      color: isNA
-                        ? Colors.grey
-                        : Colors. white,
-
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              }
+                ),
 
-              return DataRow2(
-                cells: [
-                  DataCell(
-                    Center(
+                const DataColumn2(
+                  fixedWidth: 130,
+                  label: Text(
+                    "Physician",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
+                ...List.generate(9, (index) {
+
+                  final roundNumber = index + 1;
+
+                  return DataColumn2(
+                    fixedWidth: 100,
+
+                    label: Center(
                       child: Text(
-                        physician.priorityNumber.toString(),
+                        "Round $roundNumber",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  );
+                }),
+              ],
+
+              rows: physicians.map((physician) {
+                final physicianSelections = selections.where((selection) => selection.userId == physician.id).toList();
+
+                String getRoundText(int roundNumber) {
+                  final matchingSelections = physicianSelections.where((selection) => selection.roundNumber == roundNumber).toList();
+
+                  if(matchingSelections.isEmpty) {
+                    return "N/A";
+                  }
+
+                  final selection = matchingSelections.first;
+
+                  final matchingWeeks = weeks.where((week) => week.weekId == selection.weekId).toList();
+
+                  if(matchingWeeks.isEmpty) {
+                    return "N/A";
+                  }
+
+                  final week = matchingWeeks.first;
+
+                  return "Wk ${week.weekNumber} \n ${week.weekDate}";
+                }
+
+                Widget buildRoundCell(int roundNumber) {
+
+                  final text = getRoundText(roundNumber);
+
+                  final isNA = text == "N/A";
+
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 4),
+
+                    alignment: Alignment.center,
+
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+
+                    decoration: BoxDecoration(
+                      color: isNA
+                        ? const Color.fromARGB(255, 35, 34, 34)
+                        : Colors.green,
+
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+
+                    child: Text(
+                      text,
+                      style: TextStyle(
+                        color: isNA
+                          ? Colors.grey
+                          : Colors. white,
+
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+
+                return DataRow2(
+                  cells: [
+                    DataCell(
+                      Center(
+                        child: Text(
+                          physician.priorityNumber.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    DataCell(
+                      Text(
+                        physician.displayName,
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                  ),
+                    
+                    ...List.generate(9, (index) {
+                      final roundNumber = index + 1;
 
-                  DataCell(
-                    Text(
-                      physician.displayName,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  
-                  ...List.generate(9, (index) {
-                    final roundNumber = index + 1;
-
-                    return DataCell(
-                      buildRoundCell(roundNumber),
-                    );
-                  }),
-                ],
-              );
-            }).toList(),
+                      return DataCell(
+                        buildRoundCell(roundNumber),
+                      );
+                    }),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
-        ),
+      )
     );
   }
 }
