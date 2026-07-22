@@ -41,6 +41,7 @@ class _VacationAppState extends State<VacationApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textSelectionTheme: TextSelectionThemeData(
           selectionHandleColor: Colors.blueGrey,

@@ -560,8 +560,10 @@ class _UserScreenState extends State<UserScreen> {
     }
 
     //Determining whether or not it's the user's turn to select a week
-    if(systemState!.currentTurnPriority == currentUser!.priorityNumber || systemState!.currentTurnPriority == currentUser!.prepicksPriorityNumber) {
+    if((systemState!.currentRoundNumber > 0 && systemState!.currentTurnPriority == currentUser!.priorityNumber) || (systemState!.currentRoundNumber < 1 && systemState!.currentTurnPriority == currentUser!.prepicksPriorityNumber)) {
       isUsersTurn = true;
+    } else {
+      isUsersTurn = false;
     }
 
     return Scaffold(
@@ -873,7 +875,7 @@ class _UserScreenState extends State<UserScreen> {
                 );
               }
             ),
-            
+
             //Spacing the menu items
             SizedBox(height: 25),
           ],
