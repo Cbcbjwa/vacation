@@ -491,7 +491,10 @@ class AddUsersScreen extends StatefulWidget {
                     child: isAdding
                     ? CircularProgressIndicator(color: Colors.white)
                     : Text("Add"),
-                  )
+                  ),
+
+                  //Spacing
+                  SizedBox(height: 15),
                 ]
               )
             ),
