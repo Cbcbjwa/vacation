@@ -7,6 +7,7 @@
 //Imports section
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'connectivityService.dart';
 
 class SelectionsEmailService {
   final String baseUrl = "https://vacation-xhxd.onrender.com";
@@ -23,7 +24,7 @@ class SelectionsEmailService {
         headers: {
         "Content-Type": "application/json",
         },
-      );
+      ).timeout(Duration(seconds: 15));
 
       if(response.statusCode == 200) {
         print("SELECTIONS EMAIL SENT SUCCESSFULLY");
@@ -33,8 +34,9 @@ class SelectionsEmailService {
         return false;
       }
     } catch (error) {
+      ConnectivityService.instance.connectionFailed();
       print("ERROR SENDING SELECTIONS EMAIL: $error");
-      return false;
+      throw Exception("No internet connection");
     }
   }
 }

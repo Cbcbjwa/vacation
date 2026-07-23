@@ -129,7 +129,7 @@ class _RoundInfoScreenState extends State<RoundInfoScreen> {
           
           child: Container(
           height: 300,
-          width: 330,
+          width: 350,
           padding: EdgeInsets.only(
             top: 20,
             left: 20,

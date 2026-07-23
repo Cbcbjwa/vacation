@@ -45,7 +45,17 @@ class _SelectionsEmailSendingScreenState extends State<SelectionsEmailSendingScr
             foregroundColor: const Color.fromARGB(255, 40, 89, 113),
           ),
           onPressed: () async {
-            await selectionsEmailService.emailSelections();
+            final success = await selectionsEmailService.emailSelections();
+
+            if(success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Email Sent")),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Email Failed to Send")),
+              );
+            }
           },
           icon: Icon(Icons.send),
           label: Text("Email Selections File",
